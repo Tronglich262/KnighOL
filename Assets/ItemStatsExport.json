@@ -1,0 +1,9 @@
+[
+{"Name":"Quan.AizenHeavyArmor","Type":"Belt","Description":"tăng chỉ số","Rarity":"0","Value":"0","Strength":10,"Defense":20,"Agility":15,"Intelligence":15,"Vitality":20},
+{"Name":"Gang.AizenHeavyArmor","Type":"Gloves","Description":"Tăng chỉ số","Rarity":"0","Value":"0","Strength":15,"Defense":15,"Agility":15,"Intelligence":20,"Vitality":20},
+{"Name":"Giapvai.AizenHeavyArmor","Type":"Pauldrons","Description":"Tăng chỉ số","Rarity":"0","Value":"0","Strength":20,"Defense":20,"Agility":20,"Intelligence":21,"Vitality":21},
+{"Name":"aotrong.AizenHeavyArmor","Type":"Vest","Description":"Tăng chỉ số","Rarity":"0","Value":"0","Strength":20,"Defense":20,"Agility":20,"Intelligence":22,"Vitality":22},
+{"Name":"Ao.AizenHeavyArmor","Type":"Armor","Description":"Tăng chỉ số","Rarity":"0","Value":"0","Strength":24,"Defense":24,"Agility":22,"Intelligence":25,"Vitality":25},
+{"Name":"Mu.AizenHeavyHelm","Type":"Helmet","Description":"Tăng chỉ số","Rarity":"0","Value":"0","Strength":25,"Defense":25,"Agility":25,"Intelligence":21,"Vitality":22},
+{"Name":"Giay.AizenHeavyArmor","Type":"Boots","Description":"Tăng chỉ số","Rarity":"0","Value":"0","Strength":21,"Defense":15,"Agility":15,"Intelligence":19,"Vitality":18}
+]

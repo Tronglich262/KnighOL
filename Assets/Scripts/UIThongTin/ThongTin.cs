@@ -16,6 +16,12 @@ public class ThongTin : MonoBehaviour
     public TextMeshProUGUI agilityitem;
     public TextMeshProUGUI vitalityitem;
     public static ThongTin instance;
+    public HealthBar healthBar;
+    public int maxHP = 0;
+    public int currentHP = 0;
+
+    public int maxMana = 100;
+    public int currentMana = 100;
     public void Awake()
     {
         instance = this;
@@ -58,6 +64,12 @@ public class ThongTin : MonoBehaviour
             defenseitem.text = "Phòng thủ trang bị: " + stats.finalDefense;
             agilityitem.text = "Nhanh nhẹn trang bị: " + stats.finalAgility;
             vitalityitem.text = "Sinh lực trang bị: " + stats.finalVitality;
+            if (healthBar != null)
+            {
+                maxHP = stats.vitality + stats.finalVitality;
+                currentHP = maxHP; // Set máu đầy khi vừa cập nhật (hoặc có thể giữ nguyên currentHP nếu bạn muốn logic khác)
+                healthBar.SetHealth(currentHP, maxHP);
+            }
         }
         else
         {

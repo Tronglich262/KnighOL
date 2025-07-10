@@ -1,5 +1,6 @@
 ﻿using Assets.HeroEditor.Common.CommonScripts;
 using Assets.HeroEditor.Common.ExampleScripts;
+using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using UnityEngine;
 using UnityEngine.UI;
 public class CharacterUIManager : MonoBehaviour
@@ -32,6 +33,7 @@ public class CharacterUIManager : MonoBehaviour
         codecharacterui1.SetActive(false);
         Vien.SetActive(false);
     }
+ 
     public void TogglePanel()
     {
         bool isActive = characterPanel.activeSelf;

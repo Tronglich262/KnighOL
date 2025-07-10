@@ -1,6 +1,7 @@
 ﻿using Assets.HeroEditor.Common.ExampleScripts;
 using Ookii.Dialogs;
 using System;
+using Unity.Jobs;
 using UnityEngine;
 
 public class CanvasShop : MonoBehaviour
@@ -52,6 +53,7 @@ public class CanvasShop : MonoBehaviour
         nv.SetActive(false);
         canvasShopPK.SetActive(false);
         diemdanh.SetActive(false);
+
         Tat();
     }
     public void OnClickshop()
@@ -62,6 +64,7 @@ public class CanvasShop : MonoBehaviour
         canvasShopvk.SetActive(false);
         canvasShopPK.SetActive(false);
         panelshoptp.SetActive(false);
+
         Tat();
 
     }
@@ -73,6 +76,7 @@ public class CanvasShop : MonoBehaviour
         canvasShopvk.SetActive(false);
         canvasShopPK.SetActive(false);
         diemdanh.SetActive(false);
+
         Tat();
     }
     public void OnClickshopvk()
@@ -83,6 +87,7 @@ public class CanvasShop : MonoBehaviour
         nv.SetActive(false);
         canvasShopPK.SetActive(false);
         panelshopvk.SetActive(false);
+
         Tat();
     }
     public void OnClickshoppk()
@@ -93,68 +98,78 @@ public class CanvasShop : MonoBehaviour
         nv.SetActive(false);
         canvasShopvk.SetActive(false);
         panelshoppk.SetActive(false);
+        SkillButtonManager.Instance.Skillbutton.SetActive(false);
         Tat();
     }
     public void ToogleTatTP()
     {
         panelshoptp.SetActive(!panelshoptp.activeSelf);
+        SkillButtonManager.Instance.Skillbutton.SetActive(false);
+
         Bat();
-        bool checktoggle = MovementExample.Instante.checktoggle = false;
 
     }
     public void ToogleTatpk()
     {
         panelshoppk.SetActive(!panelshoppk.activeSelf);
+        SkillButtonManager.Instance.Skillbutton.SetActive(false);
         Bat();
-        bool checktoggle = MovementExample.Instante.checktoggle =false;
     }
     public void ToogleTatvk()
     {
         panelshopvk.SetActive(!panelshopvk.activeSelf);
+        SkillButtonManager.Instance.Skillbutton.SetActive(false);
+
         Bat();
-        bool checktoggle = MovementExample.Instante.checktoggle = false;
 
     }
     public void ToogleTatdiemdanh()
     {
         diemdanh.SetActive(!diemdanh.activeSelf);
+        SkillButtonManager.Instance.Skillbutton.SetActive(false);
+
         Bat();
-        bool checktoggle = MovementExample.Instante.checktoggle = false;
 
     }
     public void ToogleTatTPshop()
     {
         canvasShop.SetActive(false);
-        panelshoptp.SetActive(true);
+        panelshoptp.SetActive(false);
         Bat();
+        bool checktoggle = MovementExample.Instante.checktoggle = false;
 
     }
     public void ToogleTatpkshop()
     {
         canvasShopPK.SetActive(false);
-        panelshoppk.SetActive(true);
+        panelshoppk.SetActive(false);
         Bat();
+        bool checktoggle = MovementExample.Instante.checktoggle = false;
+
 
     }
     public void ToogleTatvkshop()
     {
         canvasShopvk.SetActive(false);
-        panelshopvk.SetActive(true);
+        panelshopvk.SetActive(false);
         Bat();
+        bool checktoggle = MovementExample.Instante.checktoggle = false;
 
     }
     public void ToogleTatdiemdanhshop()
     {
         nv.SetActive(false);
-        diemdanh.SetActive(true);
+        diemdanh.SetActive(false);
         Bat();
+        bool checktoggle = MovementExample.Instante.checktoggle = false;
 
     }
     public void ToogleTatdiemdanhshop1()
     {
         canvasDaily.SetActive(false);
-        diemdanh.SetActive(true);
+        diemdanh.SetActive(false);
         Bat();
+        bool checktoggle = MovementExample.Instante.checktoggle = false;
 
     }
     //( cấm động )

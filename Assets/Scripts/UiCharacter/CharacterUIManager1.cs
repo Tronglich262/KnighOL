@@ -49,7 +49,7 @@ public class CharacterUIManager1 : MonoBehaviour
         if (PlayerDataHolder1.CharacterJson != null && character != null)
         {
             character.FromJson(PlayerDataHolder1.CharacterJson);
-            Debug.Log("🟢 Character UI đã load lại từ JSON khi vào lại game.");
+            Debug.Log(" Character UI đã load lại từ JSON khi vào lại game.");
         }
         LoadCharacterToUI();
     }
@@ -476,7 +476,7 @@ public class CharacterUIManager1 : MonoBehaviour
         // Ép lại các phần giáp
         StartCoroutine(EquipAllArmorAfterJson());
 
-        // 👇 NEW: Ép lại vũ khí Melee2H nếu đang dùng
+        //  NEW: Ép lại vũ khí Melee2H nếu đang dùng
         string melee2HId = GetItemIdFromJson(PlayerDataHolder1.CharacterJson, "SecondaryMeleeWeapon");
         if (!string.IsNullOrEmpty(melee2HId))
         {

@@ -100,9 +100,23 @@ public class CharacterPreviewPanel : MonoBehaviour
                     CharacterEquipHandler.EquipPartialArmorFromEntry(characterPreview, partId, type);
                 }
             }
-            characterPreview.Initialize(); // Gọi lại để cập nhật hoàn chỉnh visual
+            if (dict.TryGetValue("WeaponType", out string weaponType))
+            {
+                if (weaponType == "Melee2H" && dict.TryGetValue("SecondaryMeleeWeapon", out string weaponId) && !string.IsNullOrEmpty(weaponId))
+                {
+                    // Load MeleeWeapon2H đúng chuẩn
+                    var entry = characterPreview.SpriteCollection.MeleeWeapon2H.FirstOrDefault(e => e.Id == weaponId);
+                    if (entry != null)
+                    {
+                        characterPreview.WeaponType = WeaponType.Melee2H;
+                        characterPreview.Equip(entry, EquipmentPart.MeleeWeapon2H);
+                    }
+                }
+            }
+                    characterPreview.Initialize(); // Gọi lại để cập nhật hoàn chỉnh visual
                                            // ---- HẾT BỔ SUNG ----
         }
+
         else
         {
             Debug.LogError("[PREVIEW] characterPreview bị NULL!");

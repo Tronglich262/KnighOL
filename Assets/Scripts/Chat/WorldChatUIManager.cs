@@ -52,8 +52,8 @@ public class WorldChatUIManager : NetworkBehaviour
 
 
     [Header("========")]
-    public ChatInputUI chatInputUI; 
-
+    public ChatInputUI chatInputUI;
+    public GameObject Chat;
 
 
     private readonly List<(string sender, string message)> chatHistory = new();
@@ -89,9 +89,9 @@ public class WorldChatUIManager : NetworkBehaviour
 
     void ShowOnlyChatBar()
     {
-        chatBar.SetActive(true);
         chatPanel.SetActive(false);
         privateChatPanel.SetActive(false);
+        ToggleBatCharbarAndChatPrivateList();
         privateChatListPanel.SetActive(false);
         currentPrivateTargetName = null;
         
@@ -118,10 +118,10 @@ public class WorldChatUIManager : NetworkBehaviour
         if (isPreviewPanelActive || isCharacterUIActive || isShopPanelActive || isthongtinUI || isInventoryUI || isTiemNang || isShopPanelPKActive || isShopPanelTPTPActive || isShopPanelVKActive
             || isCanvasShoptp || isCanvasShopvk || isCanvasShoppk || isCanvasShopdiemdanh || isCanvasShopnv)
             return;
-        chatBar.SetActive(false);
         chatPanel.SetActive(true);
         privateChatPanel.SetActive(false);
         privateChatListPanel.SetActive(false);
+        ToggleTatCharbarAndChatPrivateList();
         foreach (Transform child in chatContent) Destroy(child.gameObject);
         foreach (var (sender, message) in chatHistory) AddMessageToPanel(sender, message);
         inputField.ActivateInputField();
@@ -170,6 +170,9 @@ public class WorldChatUIManager : NetworkBehaviour
         chatBar.SetActive(false);
         chatPanel.SetActive(false);
         privateChatPanel.SetActive(false);
+        Chat.SetActive(false);
+        SettingPanel.Instance.Setting.SetActive(false);
+        SkillButtonManager.Instance.Skillbutton.SetActive(false);
         privateChatListPanel.SetActive(true);
         currentPrivateTargetName = null;
     }
@@ -402,6 +405,9 @@ public class WorldChatUIManager : NetworkBehaviour
     {
         privateChatListPanel.SetActive(false);
         chatBar.SetActive(true);
+        Chat.SetActive(true);
+        SettingPanel.Instance.Setting.SetActive(true);
+        SkillButtonManager.Instance.Skillbutton.SetActive(true);
     }
 
     void UpdatePrivateMsgNotify()
@@ -511,10 +517,18 @@ public class WorldChatUIManager : NetworkBehaviour
     public void ToggleTatCharbarAndChatPrivateList()
     {
         chatBar.SetActive(false);
+        Chat.SetActive(false);
+        SettingPanel.Instance.Setting.SetActive(false);
+        SkillButtonManager.Instance.Skillbutton.SetActive(false);
     }
     public void ToggleBatCharbarAndChatPrivateList()
     {
         chatBar.SetActive(true);
+        Chat.SetActive(true);
+        SettingPanel.Instance.Setting.SetActive(true);
+        SkillButtonManager.Instance.Skillbutton.SetActive(true);
+
+
     }
     public void ToggleTatchatlive()
     {

@@ -4,6 +4,12 @@ using UnityEngine.SceneManagement;
 
 public class SettingPanel : MonoBehaviour
 {
+    public static SettingPanel Instance;
+    public GameObject Setting;
+    private void Awake()
+    {
+            Instance = this;
+    }
     public GameObject settingPanel;
     public NetworkRunner runner;
     void Start()

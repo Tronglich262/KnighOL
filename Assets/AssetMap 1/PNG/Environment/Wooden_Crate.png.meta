@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: df66dd06398443d49a0990420da84494
+guid: bde0d87d75c5fb342917d16882931c10
 TextureImporter:
   internalIDToNameTable:
   - first:
@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Wooden_Crate_0: 3193328784524029984
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

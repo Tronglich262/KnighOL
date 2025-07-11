@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 2f97c5d0c6a45944c82c84f21ef81e13
+guid: 61c630ac63796e444a955a68d59911d2
 TextureImporter:
   internalIDToNameTable:
   - first:
@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Street_Lantern_0: 6298081038464777728
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

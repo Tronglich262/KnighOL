@@ -65,18 +65,23 @@ namespace Assets.HeroEditor.Common.ExampleScripts
             float speed = 18.75f * Random.Range(0.85f, 1.15f);
             Vector3 direction = FireTransform.right * Mathf.Sign(Character.transform.lossyScale.x);
 
-            // Spawn arrow qua mạng
             NetworkObject arrowObj = Runner.Spawn(ArrowPrefab, spawnPos, spawnRot);
             GameObject arrow = arrowObj.gameObject;
 
             var sr = arrow.GetComponent<SpriteRenderer>();
-            var rb = arrow.GetComponent<Rigidbody>();
 
-            // Gán sprite cho mũi tên từ dữ liệu cung
+            // Lấy sát thương từ player
+            var stats = Character.GetComponent<CharacterStats>();
+            int damage = stats.strength + stats.finalStrength; // hoặc công thức bạn muốn
+
+            // Truyền damage vào Init:
+            var proj = arrow.GetComponent<Projectile>();
+            if (proj != null)
+            {
+                proj.Init(direction, speed, damage); // <-- truyền sát thương!
+            }
+
             sr.sprite = Character.Bow.FirstOrDefault(j => j.name.ToLower().Contains("arrow"));
-
-            // Gán vận tốc theo hướng bắn (client khác sync qua NetworkTransform)
-            rb.linearVelocity = direction * speed;
 
             // Tránh mũi tên va chạm người bắn
             var characterCollider = Character.GetComponent<Collider>();
@@ -86,9 +91,9 @@ namespace Assets.HeroEditor.Common.ExampleScripts
                 Physics.IgnoreCollision(arrowCollider, characterCollider);
             }
 
-            // Layer riêng cho projectile
             arrow.layer = 31;
             Physics.IgnoreLayerCollision(31, 31, true);
         }
+
     }
 }

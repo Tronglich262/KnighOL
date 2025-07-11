@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: b8ac418e0586a904ba55a3a18b5bbdac
+guid: 407450cbee2db59408173f1744fa528f
 TextureImporter:
   internalIDToNameTable:
   - first:
@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Chimney_01_0: 2172818646491677769
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

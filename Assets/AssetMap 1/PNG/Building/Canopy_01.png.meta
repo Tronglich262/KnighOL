@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: dabc688a9b432a046a1d381f7df73e53
+guid: 86a0ed58a650afd4794010acbeecad76
 TextureImporter:
   internalIDToNameTable:
   - first:
@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Canopy_01_0: 2565312132877532224
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

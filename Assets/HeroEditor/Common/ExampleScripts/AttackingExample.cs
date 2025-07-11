@@ -149,11 +149,30 @@ namespace Assets.HeroEditor.Common.ExampleScripts
         }
 
         // --- Networked attack methods (Fusion) ---
-
         [Rpc(RpcSources.InputAuthority, RpcTargets.All)]
         private void RPC_Slash()
         {
-            Character.Slash(); // All clients will see the slash animation
+            Character.Slash(); // Animation tất cả client
+
+            if (!HasStateAuthority) return;
+
+            var stats = Character.GetComponent<CharacterStats>();
+            int damage = stats.strength + stats.finalStrength;
+
+            float attackRange = 1.2f;
+            Vector2 center = (Vector2)Character.transform.position +
+                ((Character.transform.localScale.x > 0 ? Vector2.right : Vector2.left) * 0.8f);
+
+            Collider[] hits = Physics.OverlapSphere(center, attackRange, LayerMask.GetMask("Enemy"));
+
+            foreach (var hit in hits)
+            {
+                var enemy = hit.GetComponent<EnemyDamageHandler>();
+                if (enemy != null)
+                {
+                    enemy.RPC_TakeDamage(damage);
+                }
+            }
         }
 
         [Rpc(RpcSources.InputAuthority, RpcTargets.All)]

@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 93c043deebfa6b440b8ff11fc25cc63d
+guid: 0521d3ca2684bf14dbe09ef2714ed6d9
 TextureImporter:
   internalIDToNameTable:
   - first:
@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Decor_Cuirass_0: -2697602794970981799
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

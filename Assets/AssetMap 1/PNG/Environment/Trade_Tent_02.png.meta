@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 9edc466fca61b2d4abf2137299897a93
+guid: 97be4d8faa7dd5c41ab0911aceee8427
 TextureImporter:
   internalIDToNameTable:
   - first:
@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Trade_Tent_02_0: 207192110353629038
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

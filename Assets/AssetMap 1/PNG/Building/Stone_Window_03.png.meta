@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 1ecae84945f36b84483fc35181966c97
+guid: b59f7e8f2fc995c4f91ff39241a418dc
 TextureImporter:
   internalIDToNameTable:
   - first:
@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Stone_Window_03_0: 5429927594304031438
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

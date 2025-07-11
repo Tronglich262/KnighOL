@@ -13,6 +13,7 @@ namespace Assets.HeroEditor.Common.ExampleScripts
         public GameObject Trail;
         public GameObject Impact;
         public Rigidbody Rigidbody;
+        public int Damage = 10;
 
         private bool _hasBanged;
 
@@ -36,10 +37,17 @@ namespace Assets.HeroEditor.Common.ExampleScripts
         {
             if (!_hasBanged && HasStateAuthority)
             {
+                // Gây dame lên enemy nếu có
+                var enemy = other.GetComponent<EnemyDamageHandler>();
+                if (enemy != null)
+                {
+                    enemy.RPC_TakeDamage(Damage); // Gọi sát thương từ biến Damage đã truyền vào
+                }
                 _hasBanged = true;
                 RPC_Bang();
             }
         }
+
 
         public void OnCollisionEnter(Collision other)
         {
@@ -97,12 +105,15 @@ namespace Assets.HeroEditor.Common.ExampleScripts
         }
 
         // ✅ Add this
-        public void Init(Vector3 direction, float speed)
+
+        public void Init(Vector3 direction, float speed, int damage)
         {
             if (Rigidbody != null)
             {
                 Rigidbody.linearVelocity = direction.normalized * speed;
             }
+            Damage = damage; 
         }
+
     }
 }

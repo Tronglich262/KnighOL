@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 5657c7025c593e344916bcee67edbc39
+guid: cf704b4e7485b134eba1be869dd29b01
 TextureImporter:
   internalIDToNameTable:
   - first:
@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Decor_Helment_0: 5304508814661045224
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

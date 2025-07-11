@@ -5,6 +5,7 @@ using System.Collections;
 using HeroEditor.Common;
 using HeroEditor.Common.Enums;
 using Assets.HeroEditor.Common.CharacterScripts;
+using Fusion; // THÊM Fusion nếu chưa có
 
 public class SkillButtonManager : MonoBehaviour
 {
@@ -19,68 +20,73 @@ public class SkillButtonManager : MonoBehaviour
     public Sprite[] melee2HIcons;
     public Sprite[] bowIcons;
 
-    public Action[] melee1HActions = new Action[4];
-    public Action[] melee2HActions = new Action[4];
-    public Action[] bowActions = new Action[4];
+    public Action[] melee1HActions = new Action[5];
+    public Action[] melee2HActions = new Action[5];
+    public Action[] bowActions = new Action[5];
 
     private WeaponType lastWeaponType;
     private bool isReady = false;
-    public GameObject Skillbutton;
-    public static SkillButtonManager Instance;
-    public void Awake()
-    {
-        Instance = this;
-    }
+    public static SkillButtonManager Instance; 
+    
+    // KHÔNG dùng static Singleton nữa!
 
     void Start()
     {
-        StartCoroutine(DelayFindPlayer());
+        StartCoroutine(DelayFindLocalPlayer());
     }
 
-    IEnumerator DelayFindPlayer()
+    IEnumerator DelayFindLocalPlayer()
     {
-        // Đợi tới khi tìm được Player hoặc sau 2 giây (tránh lặp vô hạn)
         float timeout = 2f;
         float t = 0f;
+
         while (character == null && t < timeout)
         {
-            GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
-            if (playerObj != null)
+            // Tìm mọi GameObject có tag "Player"
+            foreach (var playerObj in GameObject.FindGameObjectsWithTag("Player"))
             {
-                character = playerObj.GetComponent<Character>();
+                var netObj = playerObj.GetComponent<NetworkObject>();
+                if (netObj != null && netObj.HasInputAuthority) // Chỉ lấy player local!
+                {
+                    character = playerObj.GetComponent<Character>();
+                    break;
+                }
             }
-            else
+            if (character == null)
             {
-                yield return null; // Chờ frame kế tiếp
+                yield return null;
                 t += Time.deltaTime;
             }
         }
 
         if (character == null)
         {
-            Debug.LogError("Không tìm thấy player (Character) gắn tag 'Player' sau khi chờ!");
+            Debug.LogError("Không tìm thấy player local (HasInputAuthority)!");
             enabled = false;
             yield break;
         }
 
-        // Gán function test (nếu bạn chưa gán từ script khác)
+        // Gán function test (giữ nguyên code mẫu hoặc custom theo từng loại vũ khí)
         melee1HActions[0] = () => Debug.Log("Kiếm 1 tay - Chém thường");
         melee1HActions[1] = () => Debug.Log("Kiếm 1 tay - Skill 2");
         melee1HActions[2] = () => Debug.Log("Kiếm 1 tay - Skill 3");
         melee1HActions[3] = () => Debug.Log("Kiếm 1 tay - Skill 4");
+        melee1HActions[4] = () => Debug.Log("Kiếm 1 tay - Skill 5");
 
         melee2HActions[0] = () => Debug.Log("Vũ khí 2 tay - Đập thường");
         melee2HActions[1] = () => Debug.Log("Vũ khí 2 tay - Skill 2");
         melee2HActions[2] = () => Debug.Log("Vũ khí 2 tay - Skill 3");
         melee2HActions[3] = () => Debug.Log("Vũ khí 2 tay - Skill 4");
+        melee2HActions[4] = () => Debug.Log("Vũ khí 2 tay - Skill 5");
 
         bowActions[0] = () => Debug.Log("Cung - Bắn thường");
         bowActions[1] = () => Debug.Log("Cung - Skill 2");
         bowActions[2] = () => Debug.Log("Cung - Skill 3");
         bowActions[3] = () => Debug.Log("Cung - Skill 4");
+        bowActions[4] = () => Debug.Log("Cung - Skill 5");
 
         lastWeaponType = character.WeaponType;
-        UpdateSkillButtons(lastWeaponType); // Set UI đúng lúc đã sẵn sàng
+        UpdateSkillButtons(lastWeaponType);
         isReady = true;
     }
 
@@ -115,8 +121,8 @@ public class SkillButtonManager : MonoBehaviour
                 actions = bowActions;
                 break;
             default:
-                icons = new Sprite[4];
-                actions = new Action[4];
+                icons = new Sprite[skillButtons.Length];
+                actions = new Action[skillButtons.Length];
                 break;
         }
 

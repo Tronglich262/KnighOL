@@ -172,7 +172,7 @@ public class WorldChatUIManager : NetworkBehaviour
         privateChatPanel.SetActive(false);
         Chat.SetActive(false);
         SettingPanel.Instance.Setting.SetActive(false);
-        SkillButtonManager.Instance.Skillbutton.SetActive(false);
+     //   SkillButtonManager.Instance.Skillbutton.SetActive(false);
         privateChatListPanel.SetActive(true);
         currentPrivateTargetName = null;
     }
@@ -407,7 +407,7 @@ public class WorldChatUIManager : NetworkBehaviour
         chatBar.SetActive(true);
         Chat.SetActive(true);
         SettingPanel.Instance.Setting.SetActive(true);
-        SkillButtonManager.Instance.Skillbutton.SetActive(true);
+      //  SkillButtonManager.Instance.Skillbutton.SetActive(true);
     }
 
     void UpdatePrivateMsgNotify()
@@ -519,14 +519,14 @@ public class WorldChatUIManager : NetworkBehaviour
         chatBar.SetActive(false);
         Chat.SetActive(false);
         SettingPanel.Instance.Setting.SetActive(false);
-        SkillButtonManager.Instance.Skillbutton.SetActive(false);
+       // SkillButtonManager.Instance.Skillbutton.SetActive(false);
     }
     public void ToggleBatCharbarAndChatPrivateList()
     {
         chatBar.SetActive(true);
         Chat.SetActive(true);
         SettingPanel.Instance.Setting.SetActive(true);
-        SkillButtonManager.Instance.Skillbutton.SetActive(true);
+       // SkillButtonManager.Instance.Skillbutton.SetActive(true);
 
 
     }

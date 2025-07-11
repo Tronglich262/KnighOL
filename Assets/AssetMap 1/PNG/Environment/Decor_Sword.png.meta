@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 0d413798a9cf3a54b8f8f0c85975bcb7
+guid: 6f27ca43b73ac9646850a593f0297ae1
 TextureImporter:
   internalIDToNameTable:
   - first:
@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Decor_Sword_0: 5878696942517665388
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

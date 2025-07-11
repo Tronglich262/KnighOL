@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 84918370abc7b7c4ab469c1ccf43c7ef
+guid: 893307db882dd9d4b88986026c38ae7b
 TextureImporter:
   internalIDToNameTable:
   - first:
@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Grass_02_0: -7897992978722926549
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

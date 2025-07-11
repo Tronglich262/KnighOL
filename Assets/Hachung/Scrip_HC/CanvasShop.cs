@@ -98,13 +98,15 @@ public class CanvasShop : MonoBehaviour
         nv.SetActive(false);
         canvasShopvk.SetActive(false);
         panelshoppk.SetActive(false);
-        SkillButtonManager.Instance.Skillbutton.SetActive(false);
+        //SkillButtonManager.Instance.Skillbutton.SetActive(false);
         Tat();
     }
     public void ToogleTatTP()
     {
         panelshoptp.SetActive(!panelshoptp.activeSelf);
-        SkillButtonManager.Instance.Skillbutton.SetActive(false);
+        //SkillButtonManager.Instance.Skillbutton.SetActive(false);
+        bool checktoggle = MovementExample.Instante.checktoggle = false;
+
 
         Bat();
 
@@ -112,13 +114,17 @@ public class CanvasShop : MonoBehaviour
     public void ToogleTatpk()
     {
         panelshoppk.SetActive(!panelshoppk.activeSelf);
-        SkillButtonManager.Instance.Skillbutton.SetActive(false);
+       // SkillButtonManager.Instance.Skillbutton.SetActive(false);
+        bool checktoggle = MovementExample.Instante.checktoggle = false;
+
         Bat();
     }
     public void ToogleTatvk()
     {
         panelshopvk.SetActive(!panelshopvk.activeSelf);
-        SkillButtonManager.Instance.Skillbutton.SetActive(false);
+     //   SkillButtonManager.Instance.Skillbutton.SetActive(false);
+        bool checktoggle = MovementExample.Instante.checktoggle = false;
+
 
         Bat();
 
@@ -126,7 +132,8 @@ public class CanvasShop : MonoBehaviour
     public void ToogleTatdiemdanh()
     {
         diemdanh.SetActive(!diemdanh.activeSelf);
-        SkillButtonManager.Instance.Skillbutton.SetActive(false);
+       // SkillButtonManager.Instance.Skillbutton.SetActive(false);
+        bool checktoggle = MovementExample.Instante.checktoggle = false;
 
         Bat();
 

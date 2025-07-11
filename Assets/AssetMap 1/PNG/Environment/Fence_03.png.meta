@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: eba835236d43e024f81478347f5b636b
+guid: 19284a3e2cb9b814a9cf52b3bf85912c
 TextureImporter:
   internalIDToNameTable:
   - first:
@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Fence_03_0: 4939690074196012786
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

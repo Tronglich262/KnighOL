@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 2f8989f1d934c004595c765742569348
+guid: b20983cdbac85c34b850a28a4c219930
 TextureImporter:
   internalIDToNameTable:
   - first:
@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Roof_A_03_0: -4414485266061531958
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

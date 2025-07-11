@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: e1ddf959b5a0a7542a14d12ce12d2196
+guid: 8a7b851dfd012f144a3e189b190f9439
 TextureImporter:
   internalIDToNameTable:
   - first:
@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Rock_06_0: 4811085196116789966
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

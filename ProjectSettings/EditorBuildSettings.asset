@@ -20,10 +20,10 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Test.unity
     guid: 268c21fa1e8a84a47bee0594d2e51e7a
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Test2.unity
     guid: e3deafa4df9d5a244ac34aa82e3b308f
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/TestShop.unity
     guid: d72b494672a75344e973f1889567bba1
   - enabled: 0
@@ -32,7 +32,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/HeroEditor/QUICK START.unity
     guid: cb276a8ee57340c9a153edf75bd96b62
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/tesstchung.unity
     guid: ab410df4b49fd2b4787c86715dc46438
   m_configObjects:

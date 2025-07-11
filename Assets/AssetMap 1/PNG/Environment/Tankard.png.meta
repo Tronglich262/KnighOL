@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 0fe51fc4a17dc9a429bab16a2ffcb42a
+guid: 183974d3a0a309c4ea0f678d4b6c1a7f
 TextureImporter:
   internalIDToNameTable:
   - first:
@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Tankard_0: 6845317366347376466
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -332,6 +332,7 @@ MonoBehaviour:
   Trail: {fileID: 1340644624321108}
   Impact: {fileID: 1291128175795340}
   Rigidbody: {fileID: 54188679937770806}
+  Damage: 10
 --- !u!212 &212251069274404834
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -375,7 +376,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 10
   m_Sprite: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0

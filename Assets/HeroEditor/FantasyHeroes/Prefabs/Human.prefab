@@ -405,6 +405,7 @@ GameObject:
   - component: {fileID: -7964199508935505587}
   - component: {fileID: 8462416670710693349}
   - component: {fileID: 6267084907877005911}
+  - component: {fileID: 4962075320786506414}
   m_Layer: 7
   m_Name: Human
   m_TagString: Player
@@ -753,6 +754,7 @@ MonoBehaviour:
   - {fileID: -4813339243730235624}
   - {fileID: 8462416670710693349}
   - {fileID: 6267084907877005911}
+  - {fileID: 4962075320786506414}
   - {fileID: 2729830217243597031}
   - {fileID: 5824957876360393704}
   ForceRemoteRenderTimeframe: 0
@@ -938,6 +940,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   chatBubble: {fileID: 1014243629712679320}
+--- !u!114 &4962075320786506414
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1109986072035710}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bc7b16810cf38ec4da5ef66567ca0085, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _Level: 0
+  _Exp: 0
+  _ExpToNextLevel: 0
 --- !u!1 &1148429461579488
 GameObject:
   m_ObjectHideFlags: 0

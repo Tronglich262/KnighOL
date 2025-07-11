@@ -170,7 +170,7 @@ namespace Assets.HeroEditor.Common.ExampleScripts
                 var enemy = hit.GetComponent<EnemyDamageHandler>();
                 if (enemy != null)
                 {
-                    enemy.RPC_TakeDamage(damage);
+                    enemy.RPC_TakeDamage(damage, Runner.LocalPlayer);
                 }
             }
         }

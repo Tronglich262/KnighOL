@@ -41,7 +41,7 @@ namespace Assets.HeroEditor.Common.ExampleScripts
                 var enemy = other.GetComponent<EnemyDamageHandler>();
                 if (enemy != null)
                 {
-                    enemy.RPC_TakeDamage(Damage); // Gọi sát thương từ biến Damage đã truyền vào
+                    enemy.RPC_TakeDamage(Damage, Runner.LocalPlayer);
                 }
                 _hasBanged = true;
                 RPC_Bang();

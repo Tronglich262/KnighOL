@@ -3295,7 +3295,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4305108561794920, guid: 5e2a7217bfd2a084188d531d74f94cc4, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.6
+      value: 31
       objectReference: {fileID: 0}
     - target: {fileID: 4305108561794920, guid: 5e2a7217bfd2a084188d531d74f94cc4, type: 3}
       propertyPath: m_LocalPosition.z
@@ -18751,7 +18751,7 @@ Camera:
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 2559
+    m_Bits: 4294967295
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -31933,7 +31933,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4305108561794920, guid: 78725afd407f95b49b571df0f1acd89d, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.6
+      value: 31
       objectReference: {fileID: 0}
     - target: {fileID: 4305108561794920, guid: 78725afd407f95b49b571df0f1acd89d, type: 3}
       propertyPath: m_LocalPosition.z

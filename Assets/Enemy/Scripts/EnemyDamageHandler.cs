@@ -40,6 +40,7 @@ public class EnemyDamageHandler : NetworkBehaviour
         {
             CurrentHealth = 0;
             Die();
+
         }
         else
         {
@@ -52,6 +53,7 @@ public class EnemyDamageHandler : NetworkBehaviour
         Debug.Log("[EnemyDamageHandler] Enemy died.");
         RPC_PlayDeathAnim();
         Invoke(nameof(DisableEnemy), 1.0f); // Đợi animation xong rồi xoá
+
     }
 
     private void DisableEnemy()
@@ -77,9 +79,47 @@ public class EnemyDamageHandler : NetworkBehaviour
 
     // Nhận sát thương qua RPC
     [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
-    public void RPC_TakeDamage(int amount, RpcInfo info = default)
+    public void RPC_TakeDamage(int amount, PlayerRef attacker, RpcInfo info = default)
     {
-        TakeDamage(amount);
+        TakeDamage(amount, attacker);
+    }
+
+    public void TakeDamage(int amount, PlayerRef attacker)
+    {
+        if (!HasStateAuthority || CurrentHealth <= 0) return;
+
+        CurrentHealth -= amount;
+
+        // Lấy PlayerLevelManager theo PlayerRef
+        var attackerObj = FindPlayerByRef(attacker); // Viết thêm hàm này!
+
+        if (attackerObj != null)
+        {
+            var levelManager = attackerObj.GetComponent<PlayerLevelManager>();
+            if (levelManager != null)
+            {
+                levelManager.AddExp(amount);
+            }
+        }
+
+        if (CurrentHealth <= 0)
+        {
+            CurrentHealth = 0;
+            Die();
+        }
+        else
+        {
+            RPC_PlayHitEffect();
+        }
+    }
+    private GameObject FindPlayerByRef(PlayerRef playerRef)
+    {
+        foreach (var playerObj in FindObjectsOfType<NetworkObject>())
+        {
+            if (playerObj.HasInputAuthority && playerObj.InputAuthority == playerRef)
+                return playerObj.gameObject;
+        }
+        return null;
     }
 
     // Hàm này sẽ tự động gọi mỗi khi CurrentHealth thay đổi (cho tất cả client)

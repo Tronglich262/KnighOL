@@ -1,47 +1,83 @@
-﻿using Fusion;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class PlayerLevelManager : NetworkBehaviour
+public class PlayerLevelManager : MonoBehaviour
 {
-    [Networked] public int Level { get; set; }
-    [Networked] public int Exp { get; set; }
-    [Networked] public int ExpToNextLevel { get; set; }
+    public int exp;
+    public int level;
 
-    // Tùy bạn: có thể thêm các event khi lên level
-    public System.Action<int> OnLevelUp;
-
-    public override void Spawned()
+    void Start()
     {
-        if (HasStateAuthority)
+        // Lấy giá trị từ PlayerState đã load từ server (PlayerDataHolder1.CurrentPlayerState)
+        var state = PlayerDataHolder1.CurrentPlayerState;
+        if (state != null)
         {
-            Level = 1;
-            Exp = 0;
-            ExpToNextLevel = GetExpForLevel(Level);
+            exp = state.exp;
+            level = state.level;
         }
+
     }
 
     public void AddExp(int amount)
     {
-        if (!HasStateAuthority) return;
-
-        Exp += amount;
-
-        while (Exp >= ExpToNextLevel)
+        // Lấy lại state mới nhất từ backend đã lưu ở PlayerDataHolder1
+        var state = PlayerDataHolder1.CurrentPlayerState;
+        if (state != null)
         {
-            Exp -= ExpToNextLevel;
-            Level++;
-            ExpToNextLevel = GetExpForLevel(Level);
-
-            Debug.Log($"LEVEL UP! New Level: {Level}");
-            OnLevelUp?.Invoke(Level); // Gọi event nếu có
-            // Tăng chỉ số, hiệu ứng, mở skill mới ... tại đây nếu muốn
+            exp = state.exp;
+            level = state.level;
         }
+        else
+        {
+            exp = 0;
+            level = 1;
+        }
+
+        exp += amount;
+        Debug.Log($"[PlayerLevelManager] Nhận EXP: {amount} => Tổng: {exp}");
+
+        bool levelUp = false;
+        int expMax = PlayerLevelUI.Instante.ExpToNextLevel(level);
+
+        while (exp >= expMax)
+        {
+            exp -= expMax;
+            this.level++;
+            levelUp = true;
+            Debug.Log($"[PlayerLevelManager] Lên Level! {level}");
+            expMax = PlayerLevelUI.Instante.ExpToNextLevel(level);
+        }
+
+        // Cập nhật lại PlayerState local
+        PlayerDataHolder1.CurrentPlayerState.exp = exp;
+        PlayerDataHolder1.CurrentPlayerState.level = level;
+
+        // Đẩy lên server mỗi lần thay đổi
+        SyncToServer();
     }
 
-    public int GetExpForLevel(int lv)
+
+    private void SyncToServer()
     {
-        // Tùy bạn muốn tăng EXP thế nào, đây là ví dụ dễ chỉnh sửa
-        return 100 + (lv - 1) * 50; // Level 1 cần 100 exp, lên 2 cần 150 exp, v.v.
-        // return Mathf.RoundToInt(100 * Mathf.Pow(1.15f, lv-1)); // Hoặc hàm tăng lũy tiến
+        var state = PlayerDataHolder1.CurrentPlayerState;
+        var dto = new UpdatePlayerStateDto
+        {
+            AccountId = PlayerDataHolder1.AccountId,
+            Level = state.level,
+            Exp = state.exp,
+            Gold = state.gold,
+            Diamond = state.diamond
+        };
+        Debug.Log($"UpdatePlayerState: AccountId={dto.AccountId}, Level={dto.Level}, Exp={dto.Exp}, Gold={dto.Gold}, Diamond={dto.Diamond}");
+
+        AuthManager.Instance.StartCoroutine(
+            AuthManager.Instance.UpdatePlayerState(dto, (success) =>
+            {
+                if (success)
+                    Debug.Log("[PlayerLevelManager] Sync exp/level/gold/diamond lên server OK");
+                else
+                    Debug.LogError("[PlayerLevelManager] Sync exp/level/gold/diamond lên server FAIL");
+            })
+        );
     }
+
 }

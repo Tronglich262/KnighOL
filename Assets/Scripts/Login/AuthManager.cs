@@ -407,7 +407,62 @@ public class AuthManager : MonoBehaviour
         if (loginPasswordEyeIcon != null)
             loginPasswordEyeIcon.sprite = isLoginPasswordShown ? eyeOpen : eyeClosed;
     }
-    //load item vào inventory
+    //lấy dữ liệu playstas
+    public IEnumerator GetPlayerState(System.Action<PlayerState> onDone)
+    {
+        int accountId = UserSession.AccountId;
+        if (accountId == 0)
+        {
+            Debug.LogError("Chưa có AccountId!");
+            onDone?.Invoke(null);
+            yield break;
+        }
+
+        string url = apiUrl + $"/playerstate/{accountId}";
+        UnityWebRequest req = UnityWebRequest.Get(url);
+        req.SetRequestHeader("Authorization", "Bearer " + UserSession.Token);
+
+        yield return req.SendWebRequest();
+
+        if (req.result == UnityWebRequest.Result.Success)
+        {
+            PlayerState state = JsonUtility.FromJson<PlayerState>(req.downloadHandler.text);
+            onDone?.Invoke(state);
+        }
+        else
+        {
+            Debug.LogError("Lỗi GetPlayerState: " + req.downloadHandler.text);
+            onDone?.Invoke(null);
+        }
+    }
+    //update playstas
+    public IEnumerator UpdatePlayerState(UpdatePlayerStateDto dto, System.Action<bool> onDone)
+    {
+        string url = apiUrl + "/playerstate/update";
+        string json = JsonUtility.ToJson(dto);
+
+        UnityWebRequest req = new UnityWebRequest(url, "POST");
+        byte[] bodyRaw = Encoding.UTF8.GetBytes(json);
+        req.uploadHandler = new UploadHandlerRaw(bodyRaw);
+        req.downloadHandler = new DownloadHandlerBuffer();
+        req.SetRequestHeader("Content-Type", "application/json");
+        req.SetRequestHeader("Authorization", "Bearer " + UserSession.Token);
+
+        yield return req.SendWebRequest();
+        Debug.Log("UpdatePlayerState JSON: " + json);
+
+        if (req.result == UnityWebRequest.Result.Success)
+        {
+            Debug.Log("Update PlayerState thành công!");
+            onDone?.Invoke(true);
+        }
+        else
+        {
+            Debug.LogError("Update PlayerState thất bại: " + req.downloadHandler.text);
+            onDone?.Invoke(false);
+        }
+    }
+
 
 }
 //tắt api thì out game

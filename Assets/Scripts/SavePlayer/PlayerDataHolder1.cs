@@ -8,6 +8,9 @@ public static class PlayerDataHolder1
     public static string PlayerName;
 
     private static string _characterJson;
+
+    public static PlayerState CurrentPlayerState; // <-- Dùng cho lưu state hiện tại
+
     public static string CharacterJson
     {
         get => _characterJson;

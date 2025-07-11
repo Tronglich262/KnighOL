@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 using Fusion;
 using UnityEngine.UI;
 
@@ -9,75 +10,28 @@ public class EnemyDamageHandler : NetworkBehaviour
 
     public int MaxHealth = 1000;
     private Animator animator;
-
-    // Tham chiếu tới HealthBar (Slider) trên đầu quái
     public Slider healthBarSlider;
+
+    // Lưu các attacker đã gây dame
+    private List<PlayerRef> attackers = new List<PlayerRef>();
 
     public override void Spawned()
     {
         animator = GetComponent<Animator>();
-
         if (healthBarSlider == null)
         {
-            // Tự tìm Slider trong con (nếu chưa gán trong Inspector)
             healthBarSlider = GetComponentInChildren<Slider>();
         }
 
         if (HasStateAuthority)
         {
             CurrentHealth = MaxHealth;
+            attackers.Clear();
         }
-        OnHealthChanged(); // Cập nhật ngay lúc spawn
+        OnHealthChanged();
     }
 
-    public void TakeDamage(int amount)
-    {
-        if (!HasStateAuthority || CurrentHealth <= 0) return;
-
-        CurrentHealth -= amount;
-
-        if (CurrentHealth <= 0)
-        {
-            CurrentHealth = 0;
-            Die();
-
-        }
-        else
-        {
-            RPC_PlayHitEffect();
-        }
-    }
-
-    private void Die()
-    {
-        Debug.Log("[EnemyDamageHandler] Enemy died.");
-        RPC_PlayDeathAnim();
-        Invoke(nameof(DisableEnemy), 1.0f); // Đợi animation xong rồi xoá
-
-    }
-
-    private void DisableEnemy()
-    {
-        if (Object != null && Object.IsValid && HasStateAuthority)
-        {
-            Runner.Despawn(Object); // Sẽ xóa enemy trên toàn bộ client
-        }
-    }
-
-    [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
-    private void RPC_PlayHitEffect()
-    {
-        // Optional: chơi animation bị đánh
-    }
-
-    [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
-    private void RPC_PlayDeathAnim()
-    {
-        if (animator != null)
-            animator.SetTrigger("Die");
-    }
-
-    // Nhận sát thương qua RPC
+    // Nhận dame từ client -> gửi về server authority
     [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
     public void RPC_TakeDamage(int amount, PlayerRef attacker, RpcInfo info = default)
     {
@@ -90,17 +44,9 @@ public class EnemyDamageHandler : NetworkBehaviour
 
         CurrentHealth -= amount;
 
-        // Lấy PlayerLevelManager theo PlayerRef
-        var attackerObj = FindPlayerByRef(attacker); // Viết thêm hàm này!
-
-        if (attackerObj != null)
-        {
-            var levelManager = attackerObj.GetComponent<PlayerLevelManager>();
-            if (levelManager != null)
-            {
-                levelManager.AddExp(amount);
-            }
-        }
+        // Lưu attacker nếu chưa có
+        if (!attackers.Contains(attacker))
+            attackers.Add(attacker);
 
         if (CurrentHealth <= 0)
         {
@@ -112,17 +58,58 @@ public class EnemyDamageHandler : NetworkBehaviour
             RPC_PlayHitEffect();
         }
     }
-    private GameObject FindPlayerByRef(PlayerRef playerRef)
+
+    private void Die()
     {
-        foreach (var playerObj in FindObjectsOfType<NetworkObject>())
+        Debug.Log("[EnemyDamageHandler] Enemy died.");
+
+        // Chia EXP cho tất cả attacker
+        foreach (var attacker in attackers)
         {
-            if (playerObj.HasInputAuthority && playerObj.InputAuthority == playerRef)
-                return playerObj.gameObject;
+            // Gửi RPC cộng EXP về đúng client
+            RPC_GiveExp(attacker, 50); // 50 là EXP, bạn thay theo ý muốn
         }
-        return null;
+
+        RPC_PlayDeathAnim();
+        Invoke(nameof(DisableEnemy), 1.0f);
+    }
+    private void DisableEnemy()
+    {
+        if (Object != null && Object.IsValid && HasStateAuthority)
+        {
+            Runner.Despawn(Object); // Xoá enemy trên toàn bộ client
+        }
     }
 
-    // Hàm này sẽ tự động gọi mỗi khi CurrentHealth thay đổi (cho tất cả client)
+
+    [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+    private void RPC_PlayHitEffect()
+    {
+        // animation khi bị đánh (nếu cần)
+    }
+
+    [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+    private void RPC_PlayDeathAnim()
+    {
+        if (animator != null)
+            animator.SetTrigger("Die");
+    }
+
+    // RPC gửi exp về đúng player
+    [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+    private void RPC_GiveExp(PlayerRef who, int exp)
+    {
+        if (Runner.LocalPlayer == who)
+        {
+            // Chỉ client đúng PlayerRef mới cộng EXP
+            var levelManager = FindObjectOfType<PlayerLevelManager>();
+            if (levelManager != null)
+            {
+                levelManager.AddExp(exp);
+            }
+        }
+    }
+
     private void OnHealthChanged()
     {
         if (healthBarSlider != null)

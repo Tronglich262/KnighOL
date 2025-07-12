@@ -53,6 +53,8 @@ public class ShopPKUIManager : MonoBehaviour
         if (obj == null) { Debug.LogError("shopItemPrefab NULL hoặc chưa gán!"); return; }
         var slotUI = obj.GetComponent<EquipmentSlotUI>();
         slotUI.SetItem(stats.itemId, stats.Icon, item.type, item.price);
+        slotUI.npcShopItemData = item; // <-- THÊM DÒNG NÀY!!!
+
         slotUI.shopPanelType = EquipmentSlotUI.ShopPanelType.ShopPK;
 
 

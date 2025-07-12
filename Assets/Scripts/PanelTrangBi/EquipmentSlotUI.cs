@@ -14,7 +14,8 @@ public class EquipmentSlotUI : MonoBehaviour, IPointerClickHandler
     public string itemType;
     public int itemPrice;
     public NpcShopItem npcShopItemData; // <-- Thêm biến này vào slot (gán khi tạo slot)
-
+    public static EquipmentSlotUI Instante; 
+   
     [Header("Check nếu là slot của Character UI")]
     public bool isCharacterSlot; // Gán đúng ở Inspector!
 
@@ -22,7 +23,10 @@ public class EquipmentSlotUI : MonoBehaviour, IPointerClickHandler
     [Header("Phân biệt panel shop (nếu dùng chung prefab slot)")]
 
     public ShopPanelType shopPanelType = ShopPanelType.None;
-
+    public void Awake()
+    {
+        Instante = this;
+    }
     public void SetItem(string id, Sprite icon, string type = null, int price = 0)
     {
         itemId = id;
@@ -118,6 +122,7 @@ public class EquipmentSlotUI : MonoBehaviour, IPointerClickHandler
         if (itemDetailsUI != null)
         {
             itemDetailsUI.SetCurrentItemId(id, icon, type);
+            itemDetailsUI.SetCurrentShopItem(npcShopItemData);
         }
     }
 
@@ -142,6 +147,10 @@ public class EquipmentSlotUI : MonoBehaviour, IPointerClickHandler
         if (itemDetailsUI != null)
         {
             itemDetailsUI.SetCurrentItemId(id, icon, type);
+            itemDetailsUI.SetCurrentShopItem(npcShopItemData); // <-- truyền sang
+            Debug.Log("Gán currentShopItem: " + (npcShopItemData != null ? npcShopItemData.itemId.ToString() : "null"));    
+
+
         }
     }
     private void ToggleShopPKPanel(shoppk shopPanel, string id, Sprite icon, string type)
@@ -164,6 +173,7 @@ public class EquipmentSlotUI : MonoBehaviour, IPointerClickHandler
         if (itemDetailsUI != null)
         {
             itemDetailsUI.SetCurrentItemId(id, icon, type);
+            itemDetailsUI.SetCurrentShopItem(npcShopItemData);
         }
     }
     private void ToggleDailyPanel(GameObject dailyPanel, string id, Sprite icon, string type)
@@ -178,6 +188,7 @@ public class EquipmentSlotUI : MonoBehaviour, IPointerClickHandler
         if (itemDetailsUI != null)
         {
             itemDetailsUI.SetCurrentItemId(id, icon, type);
+            itemDetailsUI.SetCurrentShopItem(npcShopItemData);
         }
     }
 }

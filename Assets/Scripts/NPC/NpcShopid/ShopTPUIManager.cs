@@ -54,6 +54,7 @@ public class ShopTPUIManager : MonoBehaviour
         var slotUI = obj.GetComponent<EquipmentSlotUI>();
 
         slotUI.SetItem(stats.itemId, stats.Icon, item.type, item.price);
+        slotUI.npcShopItemData = item; // <-- THÊM DÒNG NÀY!!!
         slotUI.shopPanelType = EquipmentSlotUI.ShopPanelType.ShopTP;
 
 

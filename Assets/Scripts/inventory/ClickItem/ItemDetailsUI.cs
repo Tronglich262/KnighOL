@@ -706,6 +706,8 @@ public class ItemDetailsUI : MonoBehaviour
         Debug.LogError("currentShopItem NULL! Bạn chưa chọn item shop?");
         return;
     }
+        Debug.Log($"[OnClickBuy] currentShopItem: {currentShopItem?.itemId}, price: {currentShopItem?.price}, name: {currentShopItem?.name}");
+        Debug.Log($"[OnClickBuy] currentItem: {currentItem}, currentItem.stats: {currentItem?.stats}");
         int itemId = currentItem.stats.Item_ID;
         int currentGold = PlayerDataHolder1.CurrentPlayerState.gold;
         int accountId = AuthManager.Instance.UserSession.AccountId;
@@ -722,6 +724,31 @@ public class ItemDetailsUI : MonoBehaviour
 
         StartCoroutine(CoBuyItemFromShop(accountId, itemId, token));
     }
+    public void SetCurrentShopItem(NpcShopItem shopItem)
+    {
+        currentShopItem = shopItem;
+        if (shopItem != null)
+        {
+            // Lấy thông tin ItemStats theo itemId
+            var statsList = Resources.LoadAll<ItemStats>("ItemStats");
+            var stats = statsList.FirstOrDefault(x => x.Item_ID == shopItem.itemId);
+            // Fake 1 InventoryItem1 để dùng cho UI/hàm mua
+            currentItem = new InventoryItem1
+            {
+                itemId = shopItem.itemId.ToString(),
+                quantity = 1,
+                stats = stats
+            };
+        }
+        else
+        {
+            currentItem = null;
+        }
+    }
+
+
+
+
 
     IEnumerator CoBuyItemFromShop(int accountId, int itemId, string token)
     {
@@ -750,6 +777,18 @@ public class ItemDetailsUI : MonoBehaviour
             ShowEquipMessage("Mua thành công!");
 
             InventoryManager.Instance.LoadInventory(null);
+            switch (EquipmentSlotUI.Instante.shopPanelType)
+            {
+                case EquipmentSlotUI.ShopPanelType.ShopTP:
+                     ShopTP.Instance.panelshopTP.SetActive(false); // Ẩn panel shop sau khi mua 
+                    break;
+                case EquipmentSlotUI.ShopPanelType.ShopVK:
+                    shopvk.Instance.panelshopvk.SetActive(false); // Ẩn panel shop sau khi mua
+                    break;
+                case EquipmentSlotUI.ShopPanelType.ShopPK:
+                     shoppk.Instance.panelshoppk.SetActive(false); // Ẩn panel shop sau khi mua
+                    break;
+            }
         }
         else
         {

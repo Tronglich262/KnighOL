@@ -4,10 +4,10 @@ using UnityEngine;
 using UnityEngine.Networking;
 
 /// <summary>
-/// Script này quản lý việc mở Shop.
+/// Script này quản lý việc mở Shop VK.
 /// Chỉ khi người chơi đứng trong vùng Trigger mới click được shop.
 /// </summary>
-public class ShopTriggerTP : MonoBehaviour
+public class ShopTriggerVK : MonoBehaviour
 {
     [Header("Thiết lập Shop")]
     [Tooltip("Gán bảng UI Shop từ Canvas vào đây")]
@@ -17,7 +17,7 @@ public class ShopTriggerTP : MonoBehaviour
     private bool isPlayerInZone = false;
     private Transform playerTransform;
 
-    public static ShopTriggerTP Instance;
+    public static ShopTriggerVK Instance;
 
     private void Awake()
     {
@@ -68,13 +68,13 @@ public class ShopTriggerTP : MonoBehaviour
             return;
         if (CharacterUIManager.Instance.Kynang != null && CharacterUIManager.Instance.Kynang.gameObject.activeSelf)
             return;
-        if (ShopTriggerPK.Instance.shopPanel != null && ShopTriggerPK.Instance.shopPanel.activeSelf)
-            return;
         if (ShopTriggerTA.Instance.shopPanel != null && ShopTriggerTA.Instance.shopPanel.activeSelf)
             return;
-        if (ShopTriggerVK.Instance.shopPanel != null && ShopTriggerVK.Instance.shopPanel.activeSelf)
+        if (ShopTriggerPK.Instance.shopPanel != null && ShopTriggerPK.Instance.shopPanel.activeSelf)
             return;
-        if (CanvasShop.Instante.canvasShop != null && CanvasShop.Instante.canvasShop.activeSelf)
+        if (ShopTriggerTP.Instance.shopPanel != null && ShopTriggerTP.Instance.shopPanel.activeSelf)
+            return;
+        if (CanvasShop.Instante.canvasShopvk != null && CanvasShop.Instante.canvasShopvk.activeSelf)
             return;
 
         // --- Chỉ cho phép xử lý click nếu đang trong vùng trigger ---
@@ -87,8 +87,7 @@ public class ShopTriggerTP : MonoBehaviour
             {
                 if (shopPanel != null)
                 {
-                    StartCoroutine(LoadShopTP());
-
+                    StartCoroutine(LoadShopVK());
                     bool checktoggle = MovementExample.Instante.checktoggle = true;
                     bool nextState = !shopPanel.activeSelf;
                     shopPanel.SetActive(nextState);
@@ -116,7 +115,7 @@ public class ShopTriggerTP : MonoBehaviour
             }
         }
     }
-    IEnumerator LoadShopTP()
+    IEnumerator LoadShopVK()
     {
         int npcId = 3; // ví dụ Shop PK là id 1
         string url = $"https://localhost:7124/api/account/npc-shop/{npcId}";
@@ -128,7 +127,7 @@ public class ShopTriggerTP : MonoBehaviour
                 string json = "{\"items\":" + www.downloadHandler.text + "}";
                 var list = JsonUtility.FromJson<NpcShopItemList>(json);
                 // Gọi hàm show UI và truyền list.items vào (shopPanel)
-                ShopTPUIManager.Instance.ShowShop(list.items);
+                ShopVKUIManager.Instance.ShowShop(list.items);
             }
             else
             {
@@ -136,25 +135,25 @@ public class ShopTriggerTP : MonoBehaviour
             }
         }
     }
-    public void OnClickVestTab()
+    public void OnClickMeleeWeapon1HTab()
     {
-        ShopTPUIManager.Instance.FilterShopByType("Vest");
+        ShopVKUIManager.Instance.FilterShopByType("MeleeWeapon1H");
     }
-    public void OnClickPauldronsTab()
+    public void OnClickMeleeWeapon2HTab()
     {
-        ShopTPUIManager.Instance.FilterShopByType("Pauldrons");
+        ShopVKUIManager.Instance.FilterShopByType("MeleeWeapon2h");
     }
-    public void OnClickGlovesTab()
+    public void OnClickBowTab()
     {
-        ShopTPUIManager.Instance.FilterShopByType("Gloves");
+        ShopVKUIManager.Instance.FilterShopByType("Bow");
     }
-    public void OnClickBeltTab()
+    public void OnClickShieldTab()
     {
-        ShopTPUIManager.Instance.FilterShopByType("Belt");
+        ShopVKUIManager.Instance.FilterShopByType("Shield");
     }
-    public void OnClickBootsTab()
+    public void OnClickHelmetTab()
     {
-        ShopTPUIManager.Instance.FilterShopByType("Boots");
+        ShopVKUIManager.Instance.FilterShopByType("Helmet");
     }
 
 }

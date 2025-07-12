@@ -1,5 +1,6 @@
 ﻿
 //new gỡ trang bị swap
+using NUnit.Framework.Interfaces;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,14 +12,16 @@ public class shoppk : MonoBehaviour
 {
     public static shoppk Instance;
 
+
     public GameObject panelshoppk;
     public Image icon;
     public TMP_Text description;
     public TMP_Text Type;
     public TMP_Text Name;
+    public TMP_Text Price;
+
     private string currentItemId;
     private string currentType;
-
 
     //text
     public GameObject shopNotifyPanel;      // Toàn bộ panel (cả nền và text)
@@ -32,7 +35,7 @@ public class shoppk : MonoBehaviour
         panelshoppk.SetActive(false);
     }
 
-    public void Show(string id, Sprite iconSprite, string type = null)
+    public void Show(string id, Sprite iconSprite, string type = null, int price = 0)
     {
         panelshoppk.SetActive(true);
         icon.sprite = iconSprite;
@@ -47,6 +50,8 @@ public class shoppk : MonoBehaviour
         Type.text = $"Loại: {displayType}";
 
         Name.text = $"Tên: {name}";
+        Price.text = $"Giá: {price}";
+
     }
 
 
@@ -143,4 +148,6 @@ public class shoppk : MonoBehaviour
         }
         shopNotifyPanel.SetActive(false);
     }
+
+
 }

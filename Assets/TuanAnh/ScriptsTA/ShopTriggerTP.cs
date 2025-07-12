@@ -1,5 +1,7 @@
 ﻿using Assets.HeroEditor.Common.ExampleScripts;
+using System.Collections;
 using UnityEngine;
+using UnityEngine.Networking;
 
 /// <summary>
 /// Script này quản lý việc mở Shop.
@@ -112,4 +114,45 @@ public class ShopTriggerTP : MonoBehaviour
             }
         }
     }
+    IEnumerator LoadShopPK()
+    {
+        int npcId = 1; // ví dụ Shop PK là id 1
+        string url = $"https://localhost:7124/api/account/npc-shop/{npcId}";
+        using (UnityWebRequest www = UnityWebRequest.Get(url))
+        {
+            yield return www.SendWebRequest();
+            if (www.result == UnityWebRequest.Result.Success)
+            {
+                string json = "{\"items\":" + www.downloadHandler.text + "}";
+                var list = JsonUtility.FromJson<NpcShopItemList>(json);
+                // Gọi hàm show UI và truyền list.items vào (shopPanel)
+                ShopPKUIManager.Instance.ShowShop(list.items);
+            }
+            else
+            {
+                Debug.LogError("Không lấy được shop: " + www.error);
+            }
+        }
+    }
+    public void OnClickVestTab()
+    {
+        ShopPKUIManager.Instance.FilterShopByType("Vest");
+    }
+    public void OnClickPauldronsTab()
+    {
+        ShopPKUIManager.Instance.FilterShopByType("Pauldrons");
+    }
+    public void OnClickGlovesTab()
+    {
+        ShopPKUIManager.Instance.FilterShopByType("Gloves");
+    }
+    public void OnClickBeltTab()
+    {
+        ShopPKUIManager.Instance.FilterShopByType("Belt");
+    }
+    public void OnClickBootsTab()
+    {
+        ShopPKUIManager.Instance.FilterShopByType("Boots");
+    }
+
 }

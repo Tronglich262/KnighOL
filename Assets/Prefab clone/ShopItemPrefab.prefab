@@ -182,7 +182,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemId: 
-  iconImage: {fileID: 0}
+  iconImage: {fileID: 1261969160821380142}
   itemType: 
   isCharacterSlot: 0
   shopPanelType: 3

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6eea8a67d52cafd4189c50561eac9854, type: 3}
   m_Name: NewItemStats 14
   m_EditorClassIdentifier: 
-  Item_ID: 29
+  Item_ID: 21
   itemId: Extensions.MoonStyle [NoPaint].Hair.Wavy
   Icon: {fileID: 21300000, guid: 056864d5abd99c54ebcdfb15b8ac9a2b, type: 3}
   Name: Toc.Wavy

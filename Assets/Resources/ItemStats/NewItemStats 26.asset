@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6eea8a67d52cafd4189c50561eac9854, type: 3}
   m_Name: NewItemStats 26
   m_EditorClassIdentifier: 
-  Item_ID: 41
+  Item_ID: 34
   itemId: Extensions.AbandonedWorkshop.MeleeWeapon2H.BlackSteelMace
   Icon: {fileID: 21300000, guid: 5fc7f5b044858f74e946251ffb41db4f, type: 3}
   Name: Kiem1.BlackSteelMace

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6eea8a67d52cafd4189c50561eac9854, type: 3}
   m_Name: NewItemStats 30
   m_EditorClassIdentifier: 
-  Item_ID: 45
+  Item_ID: 39
   itemId: Extensions.Epic.Shield.ShieldOfRagingCrux
   Icon: {fileID: 21300000, guid: 0b628698ebe8abd4db4f29a2f0750e0c, type: 3}
   Name: Shield.Epic.Shield.ShieldOfRagingCrux

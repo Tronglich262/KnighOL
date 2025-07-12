@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6eea8a67d52cafd4189c50561eac9854, type: 3}
   m_Name: NewItemStats 29
   m_EditorClassIdentifier: 
-  Item_ID: 44
+  Item_ID: 37
   itemId: Extensions.Legendary.Bow.LakeDragonBow2
   Icon: {fileID: 21300000, guid: 02b6937e04439f74e9b64bf909d07bfd, type: 3}
   Name: Cung.LakeDragonBow2

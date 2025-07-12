@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6eea8a67d52cafd4189c50561eac9854, type: 3}
   m_Name: NewItemStats 28
   m_EditorClassIdentifier: 
-  Item_ID: 43
+  Item_ID: 36
   itemId: Extensions.Legendary.Bow.BowOfCompassion
   Icon: {fileID: 21300000, guid: abb181116de75af4daff3d4bdff7ef4f, type: 3}
   Name: Cung.BowOfCompassion

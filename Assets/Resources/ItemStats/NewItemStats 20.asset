@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6eea8a67d52cafd4189c50561eac9854, type: 3}
   m_Name: NewItemStats 20
   m_EditorClassIdentifier: 
-  Item_ID: 35
+  Item_ID: 28
   itemId: Extensions.AbandonedWorkshop.Armor.ArcaneRobe
   Icon: {fileID: 21300000, guid: 82dfe24bd12d51e498774a8a74d282f1, type: 3}
   Name: Giap.ArcaneRobe

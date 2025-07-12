@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6eea8a67d52cafd4189c50561eac9854, type: 3}
   m_Name: NewItemStats 6
   m_EditorClassIdentifier: 
-  Item_ID: 21
+  Item_ID: 42
   itemId: Extensions.AbandonedWorkshop.Boots.EnchantedScarletArmor
   Icon: {fileID: 21300000, guid: ecc8763656631a94ea56e040b180f442, type: 3}
   Name: Giay.EnchantedScarletArmor

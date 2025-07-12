@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6eea8a67d52cafd4189c50561eac9854, type: 3}
   m_Name: NewItemStats 23
   m_EditorClassIdentifier: 
-  Item_ID: 38
+  Item_ID: 31
   itemId: Extensions.AbandonedWorkshop.MeleeWeapon1H.RaiderSword
   Icon: {fileID: 21300000, guid: 9e89bd5f9b1ee434fa81871b803ee1a4, type: 3}
   Name: Kiem2.RaiderSword

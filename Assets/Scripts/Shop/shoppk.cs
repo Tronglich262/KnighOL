@@ -1,5 +1,6 @@
 ﻿
 //new gỡ trang bị swap
+using NUnit.Framework.Interfaces;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +12,7 @@ public class shoppk : MonoBehaviour
 {
     public static shoppk Instance;
 
+
     public GameObject panelshoppk;
     public Image icon;
     public TMP_Text description;
@@ -18,7 +20,7 @@ public class shoppk : MonoBehaviour
     public TMP_Text Name;
     private string currentItemId;
     private string currentType;
-
+     public Button button;
 
     //text
     public GameObject shopNotifyPanel;      // Toàn bộ panel (cả nền và text)
@@ -143,4 +145,6 @@ public class shoppk : MonoBehaviour
         }
         shopNotifyPanel.SetActive(false);
     }
+
+   
 }

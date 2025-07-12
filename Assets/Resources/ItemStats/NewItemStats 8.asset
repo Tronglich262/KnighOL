@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6eea8a67d52cafd4189c50561eac9854, type: 3}
   m_Name: NewItemStats 8
   m_EditorClassIdentifier: 
-  Item_ID: 23
+  Item_ID: 44
   itemId: Extensions.AbandonedWorkshop.Pauldrons.AsteraArmor
   Icon: {fileID: 21300000, guid: 7697bae8eed098942886c8401e2c5568, type: 3}
   Name: Giapvai.AsteraArmor

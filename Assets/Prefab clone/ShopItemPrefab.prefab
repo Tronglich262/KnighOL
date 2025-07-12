@@ -224,5 +224,6 @@ MonoBehaviour:
   itemId: 
   iconImage: {fileID: 4993699558164535280}
   itemType: 
+  itemPrice: 0
   isCharacterSlot: 0
-  shopPanelType: 0
+  shopPanelType: 1

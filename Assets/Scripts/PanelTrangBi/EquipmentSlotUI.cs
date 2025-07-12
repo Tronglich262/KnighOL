@@ -73,7 +73,7 @@ public class EquipmentSlotUI : MonoBehaviour, IPointerClickHandler
 
     private void HideAllShopPanels()
     {
-        if (shopitem.Instance != null) shopitem.Instance.Hide();
+        if (ShopTP.Instance != null) ShopTP.Instance.Hide();
         if (shopvk.Instance != null) shopvk.Instance.Hide();
         if (shoppk.Instance != null) shoppk.Instance.Hide();
         if (CanvasShop.Instante.canvasDaily != null) CanvasShop.Instante.canvasDaily.SetActive(false);
@@ -88,10 +88,10 @@ public class EquipmentSlotUI : MonoBehaviour, IPointerClickHandler
                 ShopTP.Instance.Show(itemId, iconImage.sprite, itemType, itemPrice);
                 break;
               case ShopPanelType.ShopVK:
-                shoppk.Instance.Show(itemId, iconImage.sprite, itemType, itemPrice);
+                shopvk.Instance.Show(itemId, iconImage.sprite, itemType, itemPrice);
                 break;
               case ShopPanelType.ShopPK:
-                shopvk.Instance.Show(itemId, iconImage.sprite, itemType, itemPrice);
+                shoppk.Instance.Show(itemId, iconImage.sprite, itemType, itemPrice);
                 break;
         }
         Debug.Log($"Slot clicked: {itemId}, Type: {itemType}");
@@ -107,11 +107,11 @@ public class EquipmentSlotUI : MonoBehaviour, IPointerClickHandler
 
         // LUÔN show, không toggle hide nữa!
         shopPanel.Show(id, icon, type, itemPrice);
-        var buyButton = FindFirstObjectByType<BuyButton>();
-        if (buyButton != null)
-        {
-            buyButton.SetSelectedSlot(this);
-        }
+        //var buyButton = FindFirstObjectByType<BuyButton>();
+        //if (buyButton != null)
+        //{
+        //    buyButton.SetSelectedSlot(this);
+        //}
         var itemDetailsUI = ItemDetailsUI.Instance;
         if (itemDetailsUI != null)
         {
@@ -122,50 +122,46 @@ public class EquipmentSlotUI : MonoBehaviour, IPointerClickHandler
 
     private void ToggleShopVKPanel(shopvk shopPanel, string id, Sprite icon, string type)
     {
-        if (shopPanel == null) return;
+        if (shopPanel == null)
+        {
+            Debug.LogError("ShopTP panel is null");
+            return;
+        }
         if (ItemDetailsPanel.Instance != null) ItemDetailsPanel.Instance.Hide();
 
-        if (shopPanel.IsVisible1() && shopPanel.IsShowingItem(id))
+        // LUÔN show, không toggle hide nữa!
+        shopPanel.Show(id, icon, type, itemPrice);
+        //var buyButton = FindFirstObjectByType<BuyButton>();
+        //if (buyButton != null)
+        //{
+        //    buyButton.SetSelectedSlot(this);
+        //}
+        var itemDetailsUI = ItemDetailsUI.Instance;
+        if (itemDetailsUI != null)
         {
-            shopPanel.Hide();
-        }
-        else
-        {
-            shopPanel.Show(id, icon, type, itemPrice);
-            var buyButton = FindFirstObjectByType<BuyButton>();
-            if (buyButton != null)
-            {
-                buyButton.SetSelectedSlot(this);
-            }
-            var itemDetailsUI = ItemDetailsUI.Instance;
-            if (itemDetailsUI != null)
-            {
-                itemDetailsUI.SetCurrentItemId(id, icon, type);
-            }
+            itemDetailsUI.SetCurrentItemId(id, icon, type);
         }
     }
     private void ToggleShopPKPanel(shoppk shopPanel, string id, Sprite icon, string type)
     {
-        if (shopPanel == null) return;
+        if (shopPanel == null)
+        {
+            Debug.LogError("ShopTP panel is null");
+            return;
+        }
         if (ItemDetailsPanel.Instance != null) ItemDetailsPanel.Instance.Hide();
 
-        if (shopPanel.IsVisible2() && shopPanel.IsShowingItem(id))
+        // LUÔN show, không toggle hide nữa!
+        shopPanel.Show(id, icon, type, itemPrice);
+        //var buyButton = FindFirstObjectByType<BuyButton>();
+        //if (buyButton != null)
+        //{
+        //    buyButton.SetSelectedSlot(this);
+        //}
+        var itemDetailsUI = ItemDetailsUI.Instance;
+        if (itemDetailsUI != null)
         {
-            shopPanel.Hide();
-        }
-        else
-        {
-            shopPanel.Show(id, icon, type, itemPrice);
-            var buyButton = FindFirstObjectByType<BuyButton>();
-            if (buyButton != null)
-            {
-                buyButton.SetSelectedSlot(this);
-            }
-            var itemDetailsUI = ItemDetailsUI.Instance;
-            if (itemDetailsUI != null)
-            {
-                itemDetailsUI.SetCurrentItemId(id, icon, type);
-            }
+            itemDetailsUI.SetCurrentItemId(id, icon, type);
         }
     }
     private void ToggleDailyPanel(GameObject dailyPanel, string id, Sprite icon, string type)

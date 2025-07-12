@@ -33,9 +33,19 @@ public class ItemStatDatabase : MonoBehaviour
     // Lookup theo mã string cũ, để kiểm tra đặc biệt
     public ItemStats GetStats(string id)
     {
+        if (string.IsNullOrEmpty(id))
+        {
+            Debug.LogError("[ItemStatDatabase] GetStats bị truyền NULL hoặc EMPTY id!");
+            return null;
+        }
         dict.TryGetValue(id, out var stats);
+        if (stats == null)
+        {
+            Debug.LogWarning($"[ItemStatDatabase] Không tìm thấy ItemStats với id: {id}");
+        }
         return stats;
     }
+
     //code cua tuấn anh
     public List<ItemStats> GetAll()
     {

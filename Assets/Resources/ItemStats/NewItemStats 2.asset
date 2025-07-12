@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6eea8a67d52cafd4189c50561eac9854, type: 3}
   m_Name: NewItemStats 2
   m_EditorClassIdentifier: 
-  Item_ID: 17
+  Item_ID: 27
   itemId: UndeadHeroes.Undead.MeleeWeapon1H.OldThrowingAxe
   Icon: {fileID: 21300000, guid: 4d0172584532460b8d0d640901bd3b5b, type: 3}
   Name: Riu.OldThrowingAxe

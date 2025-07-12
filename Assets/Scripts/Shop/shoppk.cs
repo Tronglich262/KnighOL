@@ -18,9 +18,10 @@ public class shoppk : MonoBehaviour
     public TMP_Text description;
     public TMP_Text Type;
     public TMP_Text Name;
+    public TMP_Text Price;
+
     private string currentItemId;
     private string currentType;
-     public Button button;
 
     //text
     public GameObject shopNotifyPanel;      // Toàn bộ panel (cả nền và text)
@@ -34,7 +35,7 @@ public class shoppk : MonoBehaviour
         panelshoppk.SetActive(false);
     }
 
-    public void Show(string id, Sprite iconSprite, string type = null)
+    public void Show(string id, Sprite iconSprite, string type = null, int price = 0)
     {
         panelshoppk.SetActive(true);
         icon.sprite = iconSprite;
@@ -49,6 +50,8 @@ public class shoppk : MonoBehaviour
         Type.text = $"Loại: {displayType}";
 
         Name.text = $"Tên: {name}";
+        Price.text = $"Giá: {price}";
+
     }
 
 

@@ -706,10 +706,10 @@ public class ItemDetailsUI : MonoBehaviour
         InventoryManager.Instance.AddItem(currentItemId, 1);
         Debug.Log($" Đã mua item: {currentItemId}");
         // Trong class ItemDetailsUI hoặc bất cứ class nào
-        if (shopitem.Instance != null && shopitem.Instance.panelshop != null)
+        if (ShopTP.Instance != null && ShopTP.Instance.panelshopTP != null)
         {
-            shopitem.Instance.panelshop.SetActive(false);
-            shopitem.Instance.ShowShopNotify($"Mua {currentItemType} thành công!");
+            ShopTP.Instance.panelshopTP.SetActive(false);
+            ShopTP.Instance.ShowShopNotify($"Mua {currentItemType} thành công!");
         }
         if (shoppk.Instance != null && shoppk.Instance.panelshoppk != null)
         {

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6eea8a67d52cafd4189c50561eac9854, type: 3}
   m_Name: NewItemStats 18
   m_EditorClassIdentifier: 
-  Item_ID: 33
+  Item_ID: 25
   itemId: Extensions.Legendary.Cape.AizenBack
   Icon: {fileID: 21300000, guid: 83b79d09cad16914c9820451b04029f1, type: 3}
   Name: Aochoang.AizenBack

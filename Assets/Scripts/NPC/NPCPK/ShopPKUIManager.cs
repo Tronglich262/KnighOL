@@ -21,7 +21,7 @@ public class ShopPKUIManager : MonoBehaviour
     {
         Debug.Log("ShowShop nhận " + (items != null ? items.Count : 0) + " items");
         foreach (var i in items)
-            Debug.Log($"Item: {i.itemId}, Name: {i.name}, Type: {i.type}");
+            Debug.Log($"Item: {i.itemId}, Name: {i.name}, Type: {i.type}, Price: {i.price}");
         allShopItems = items;
         FilterShopByType("Cape");
     }
@@ -51,6 +51,11 @@ public class ShopPKUIManager : MonoBehaviour
 
         var obj = Instantiate(shopItemPrefab, contentParent);
         if (obj == null) { Debug.LogError("shopItemPrefab NULL hoặc chưa gán!"); return; }
+        var slotUI = obj.GetComponent<EquipmentSlotUI>();
+        slotUI.SetItem(stats.itemId, stats.Icon, item.type, item.price);
+        slotUI.shopPanelType = EquipmentSlotUI.ShopPanelType.ShopPK;
+
+
 
         var iconTrans = obj.transform.Find("Icon");
         if (iconTrans == null) { Debug.LogError("Prefab không có child 'Icon'!"); return; }

@@ -7,7 +7,7 @@ public class ChatInputUI : MonoBehaviour
     public TMP_InputField inputField;
     public Button sendButton; // <-- Thêm trường button
     private PlayerChat playerChat;
-    public  ChatInputUI Instate;
+    private  ChatInputUI Instate;
     public void Awake()
     {
         Instate = this;

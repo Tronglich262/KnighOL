@@ -34,7 +34,9 @@ public class shopitem : MonoBehaviour
 
     public void Show(string id, Sprite iconSprite, string type = null)
     {
+
         panelshop.SetActive(true);
+
         icon.sprite = iconSprite;
 
         currentItemId = id;
@@ -70,7 +72,6 @@ public class shopitem : MonoBehaviour
     //gỡ ttrang bị 
 
 
-    // ✅ THÊM TỪ CODE B  tuấn anh
     public bool IsVisible()
     {
         return panelshop != null && panelshop.activeSelf;

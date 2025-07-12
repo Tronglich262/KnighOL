@@ -7,36 +7,35 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 // hiển thị bảng panel thông tin trang bị nhân vật
-public class shopvk : MonoBehaviour
+public class ShopTP : MonoBehaviour
 {
-    public static shopvk Instance;
+    public static ShopTP Instance;
 
-    public GameObject panelshopvk;
+    public GameObject panelshopTP;
     public Image icon;
     public TMP_Text description;
     public TMP_Text Type;
     public TMP_Text Name;
-    public TMP_Text Price;
-
     private string currentItemId;
     private string currentType;
-
+    public TMP_Text Price;
     //text
     public GameObject shopNotifyPanel;      // Toàn bộ panel (cả nền và text)
     public Image shopNotifyBg;              // Image nền
     public TextMeshProUGUI shopNotifyText;  // Text để hiện thông báo
-
     private Coroutine notifyCoroutine;
-
     private void Awake()
     {
         Instance = this;
-        panelshopvk.SetActive(false);
+        panelshopTP.SetActive(false);
     }
+
 
     public void Show(string id, Sprite iconSprite, string type = null, int price = 0)
     {
-        panelshopvk.SetActive(true);
+
+        panelshopTP.SetActive(true);
+
         icon.sprite = iconSprite;
 
         currentItemId = id;
@@ -50,13 +49,12 @@ public class shopvk : MonoBehaviour
 
         Name.text = $"Tên: {name}";
         Price.text = $"Giá: {price}";
-
     }
 
 
     public void Hide()
     {
-        panelshopvk.SetActive(false);
+        panelshopTP.SetActive(false);
     }
     private string GetStatsFromId(string id)
     {
@@ -74,12 +72,10 @@ public class shopvk : MonoBehaviour
     //gỡ ttrang bị 
 
 
-    // ✅ THÊM TỪ CODE B  tuấn anh
-    public bool IsVisible1()
+    public bool IsVisible3()
     {
-        return panelshopvk != null && panelshopvk.activeSelf;
+        return panelshopTP != null && panelshopTP.activeSelf;
     }
-
 
     public bool IsShowingItem(string id)
     {
@@ -88,8 +84,9 @@ public class shopvk : MonoBehaviour
 
     public void TogglePanel()
     {
-        panelshopvk.SetActive(false);
+        panelshopTP.SetActive(false);
     }
+    //text
     public void ShowShopNotify(string message, float typeSpeed = 0.03f, float stayTime = 1.3f, float fadeTime = 0.28f)
     {
         Debug.Log($"ShowShopNotify: {message}, panel={shopNotifyPanel}, bg={shopNotifyBg}, text={shopNotifyText}");
@@ -148,4 +145,6 @@ public class shopvk : MonoBehaviour
         }
         shopNotifyPanel.SetActive(false);
     }
+
+
 }

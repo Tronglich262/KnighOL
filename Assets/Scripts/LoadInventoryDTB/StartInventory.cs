@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class StartInventory : MonoBehaviour
 {  
-    public StartInventory Instance;
+    private StartInventory Instance;
     public void Awake()
     {
             Instance = this;

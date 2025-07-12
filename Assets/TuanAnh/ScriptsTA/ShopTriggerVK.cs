@@ -1,11 +1,13 @@
 ﻿using Assets.HeroEditor.Common.ExampleScripts;
+using System.Collections;
 using UnityEngine;
+using UnityEngine.Networking;
 
 /// <summary>
-/// Script này quản lý việc mở Shop VK.
+/// Script này quản lý việc mở Shop.
 /// Chỉ khi người chơi đứng trong vùng Trigger mới click được shop.
 /// </summary>
-public class ShopTriggerVK : MonoBehaviour
+public class ShopTriggerTP : MonoBehaviour
 {
     [Header("Thiết lập Shop")]
     [Tooltip("Gán bảng UI Shop từ Canvas vào đây")]
@@ -15,7 +17,7 @@ public class ShopTriggerVK : MonoBehaviour
     private bool isPlayerInZone = false;
     private Transform playerTransform;
 
-    public static ShopTriggerVK Instance;
+    public static ShopTriggerTP Instance;
 
     private void Awake()
     {
@@ -66,13 +68,13 @@ public class ShopTriggerVK : MonoBehaviour
             return;
         if (CharacterUIManager.Instance.Kynang != null && CharacterUIManager.Instance.Kynang.gameObject.activeSelf)
             return;
-        if (ShopTriggerTA.Instance.shopPanel != null && ShopTriggerTA.Instance.shopPanel.activeSelf)
-            return;
         if (ShopTriggerPK.Instance.shopPanel != null && ShopTriggerPK.Instance.shopPanel.activeSelf)
             return;
-        if (ShopTriggerTP.Instance.shopPanel != null && ShopTriggerTP.Instance.shopPanel.activeSelf)
+        if (ShopTriggerTA.Instance.shopPanel != null && ShopTriggerTA.Instance.shopPanel.activeSelf)
             return;
-        if (CanvasShop.Instante.canvasShopvk != null && CanvasShop.Instante.canvasShopvk.activeSelf)
+        if (ShopTriggerVK.Instance.shopPanel != null && ShopTriggerVK.Instance.shopPanel.activeSelf)
+            return;
+        if (CanvasShop.Instante.canvasShop != null && CanvasShop.Instante.canvasShop.activeSelf)
             return;
 
         // --- Chỉ cho phép xử lý click nếu đang trong vùng trigger ---
@@ -85,6 +87,8 @@ public class ShopTriggerVK : MonoBehaviour
             {
                 if (shopPanel != null)
                 {
+                    StartCoroutine(LoadShopTP());
+
                     bool checktoggle = MovementExample.Instante.checktoggle = true;
                     bool nextState = !shopPanel.activeSelf;
                     shopPanel.SetActive(nextState);
@@ -112,4 +116,45 @@ public class ShopTriggerVK : MonoBehaviour
             }
         }
     }
+    IEnumerator LoadShopTP()
+    {
+        int npcId = 3; // ví dụ Shop PK là id 1
+        string url = $"https://localhost:7124/api/account/npc-shop/{npcId}";
+        using (UnityWebRequest www = UnityWebRequest.Get(url))
+        {
+            yield return www.SendWebRequest();
+            if (www.result == UnityWebRequest.Result.Success)
+            {
+                string json = "{\"items\":" + www.downloadHandler.text + "}";
+                var list = JsonUtility.FromJson<NpcShopItemList>(json);
+                // Gọi hàm show UI và truyền list.items vào (shopPanel)
+                ShopTPUIManager.Instance.ShowShop(list.items);
+            }
+            else
+            {
+                Debug.LogError("Không lấy được shop: " + www.error);
+            }
+        }
+    }
+    public void OnClickVestTab()
+    {
+        ShopTPUIManager.Instance.FilterShopByType("Vest");
+    }
+    public void OnClickPauldronsTab()
+    {
+        ShopTPUIManager.Instance.FilterShopByType("Pauldrons");
+    }
+    public void OnClickGlovesTab()
+    {
+        ShopTPUIManager.Instance.FilterShopByType("Gloves");
+    }
+    public void OnClickBeltTab()
+    {
+        ShopTPUIManager.Instance.FilterShopByType("Belt");
+    }
+    public void OnClickBootsTab()
+    {
+        ShopTPUIManager.Instance.FilterShopByType("Boots");
+    }
+
 }

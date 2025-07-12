@@ -39,6 +39,9 @@ public class CharacterUIManager1 : MonoBehaviour
     private List<ItemStats> equippedItems = new List<ItemStats>();
     public static CharacterUIManager1 Instance;
     public Character character; // ← nhân vật trong UI
+
+    public TextMeshProUGUI gold;
+    public TextMeshProUGUI diamond;
     private void Awake()
     {
         Instance = this;
@@ -52,6 +55,15 @@ public class CharacterUIManager1 : MonoBehaviour
             Debug.Log(" Character UI đã load lại từ JSON khi vào lại game.");
         }
         LoadCharacterToUI();
+    }
+    private void Update()
+    {
+        var state = PlayerDataHolder1.CurrentPlayerState;
+        if (state == null) return;
+        gold.text = $"{state.gold}";
+        diamond.text = $"{state.diamond}";
+
+
     }
 
     public  void LoadCharacterToUI()

@@ -26,10 +26,14 @@ public class SkillButtonManager : MonoBehaviour
 
     private WeaponType lastWeaponType;
     private bool isReady = false;
-    public static SkillButtonManager Instance; 
-    
-    // KHÔNG dùng static Singleton nữa!
+    public static SkillButtonManager Instance;
+    public GameObject Skillbutton;
 
+    // KHÔNG dùng static Singleton nữa!
+    public void Awake()
+    {
+            Instance = this;
+    }
     void Start()
     {
         StartCoroutine(DelayFindLocalPlayer());

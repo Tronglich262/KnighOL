@@ -50,7 +50,6 @@ public class CharacterUIManager : MonoBehaviour
             codecharacterui1.SetActive(false);
             Vien.SetActive(false);
 
-
         }
         else
         {
@@ -84,6 +83,7 @@ public class CharacterUIManager : MonoBehaviour
                 CharacterButton.SetActive(false); // Ẩn nút CharacterButton khi mở panel
                 WorldChatUIManager.Instance.ToggleTatCharbarAndChatPrivateList();
                 bool checktoggle = MovementExample.Instante.checktoggle = true;
+                SkillButtonManager.Instance.Skillbutton.SetActive(false);
 
             }
         }
@@ -164,6 +164,7 @@ public class CharacterUIManager : MonoBehaviour
         Vien.SetActive(false);
         WorldChatUIManager.Instance.ToggleBatCharbarAndChatPrivateList();
         bool checktoggle = MovementExample.Instante.checktoggle = false;
+        SkillButtonManager.Instance.Skillbutton.SetActive(true);
 
     }
     //hàm tắt bật characterButton gọi qua các srcip ( cấm động )

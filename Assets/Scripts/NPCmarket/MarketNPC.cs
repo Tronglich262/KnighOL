@@ -31,12 +31,14 @@ public class MarketNPC : MonoBehaviour
     public void ToggleTat()
     {
         shopUIPanel.SetActive(false);
+        SkillButtonManager.Instance.Skillbutton.SetActive(true);
     }
     void Update()
     {
         if (playerInRange && Input.GetKeyDown(KeyCode.E))
         {
             if (shopUIPanel != null) shopUIPanel.SetActive(true);
+            SkillButtonManager.Instance.Skillbutton.SetActive(false);
         }
     }
 }

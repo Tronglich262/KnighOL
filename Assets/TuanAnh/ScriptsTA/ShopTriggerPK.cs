@@ -1,5 +1,7 @@
 ﻿using Assets.HeroEditor.Common.ExampleScripts;
+using System.Collections;
 using UnityEngine;
+using UnityEngine.Networking;
 
 /// <summary>
 /// Script này quản lý việc mở Shop PK.
@@ -85,7 +87,8 @@ public class ShopTriggerPK : MonoBehaviour
             {
                 if (shopPanel != null)
                 {
-                    bool checkToggle = MovementExample.Instante.checktoggle  =  true;
+                    StartCoroutine(LoadShopPK());
+                    bool checkToggle = MovementExample.Instante.checktoggle = true;
                     bool nextState = !shopPanel.activeSelf;
                     shopPanel.SetActive(nextState);
                     SkillButtonManager.Instance.Skillbutton.SetActive(false);
@@ -110,5 +113,49 @@ public class ShopTriggerPK : MonoBehaviour
                 }
             }
         }
+
     }
+    IEnumerator LoadShopPK()
+    {
+        int npcId = 1; // ví dụ Shop PK là id 1
+        string url = $"https://localhost:7124/api/account/npc-shop/{npcId}";
+        using (UnityWebRequest www = UnityWebRequest.Get(url))
+        {
+            yield return www.SendWebRequest();
+            if (www.result == UnityWebRequest.Result.Success)
+            {
+                string json = "{\"items\":" + www.downloadHandler.text + "}";
+                var list = JsonUtility.FromJson<NpcShopItemList>(json);
+                // Gọi hàm show UI và truyền list.items vào (shopPanel)
+                ShopPKUIManager.Instance.ShowShop(list.items);
+            }
+            else
+            {
+                Debug.LogError("Không lấy được shop: " + www.error);
+            }
+        }
+    }
+    public void OnClickCapeTab()
+    {
+        ShopPKUIManager.Instance.FilterShopByType("Cape");
+        Debug.Log("Cape tab clicked");
+    }
+    public void OnClickMaskTab()
+    {
+        ShopPKUIManager.Instance.FilterShopByType("Mask");
+    }
+    public void OnClickGlassesTab()
+    {
+        ShopPKUIManager.Instance.FilterShopByType("Glasses");
+    }
+    public void OnClickHairTab()
+    {
+        ShopPKUIManager.Instance.FilterShopByType("Hair");
+    }
+    public void OnClickBackTab()
+    {
+        ShopPKUIManager.Instance.FilterShopByType("Back");
+    }
+
+
 }

@@ -1,5 +1,7 @@
 ﻿using Assets.HeroEditor.Common.ExampleScripts;
+using System.Collections;
 using UnityEngine;
+using UnityEngine.Networking;
 
 /// <summary>
 /// Script này quản lý việc mở Shop.
@@ -85,10 +87,12 @@ public class ShopTriggerTP : MonoBehaviour
             {
                 if (shopPanel != null)
                 {
+                    StartCoroutine(LoadShopTP());
+
                     bool checktoggle = MovementExample.Instante.checktoggle = true;
                     bool nextState = !shopPanel.activeSelf;
                     shopPanel.SetActive(nextState);
-                   SkillButtonManager.Instance.Skillbutton.SetActive(false);
+                    SkillButtonManager.Instance.Skillbutton.SetActive(false);
 
                     if (CanvasShop.Instante.canvasShop != null)
                         CanvasShop.Instante.canvasShop.SetActive(false);
@@ -112,4 +116,45 @@ public class ShopTriggerTP : MonoBehaviour
             }
         }
     }
+    IEnumerator LoadShopTP()
+    {
+        int npcId = 2; // ví dụ Shop PK là id 1
+        string url = $"https://localhost:7124/api/account/npc-shop/{npcId}";
+        using (UnityWebRequest www = UnityWebRequest.Get(url))
+        {
+            yield return www.SendWebRequest();
+            if (www.result == UnityWebRequest.Result.Success)
+            {
+                string json = "{\"items\":" + www.downloadHandler.text + "}";
+                var list = JsonUtility.FromJson<NpcShopItemList>(json);
+                // Gọi hàm show UI và truyền list.items vào (shopPanel)
+                ShopTPUIManager.Instance.ShowShop(list.items);
+            }
+            else
+            {
+                Debug.LogError("Không lấy được shop: " + www.error);
+            }
+        }
+    }
+    public void OnClickVestTab()
+    {
+        ShopTPUIManager.Instance.FilterShopByType("Vest");
+    }
+    public void OnClickPauldronsTab()
+    {
+        ShopTPUIManager.Instance.FilterShopByType("Pauldrons");
+    }
+    public void OnClickGlovesTab()
+    {
+        ShopTPUIManager.Instance.FilterShopByType("Gloves");
+    }
+    public void OnClickBeltTab()
+    {
+        ShopTPUIManager.Instance.FilterShopByType("Belt");
+    }
+    public void OnClickBootsTab()
+    {
+        ShopTPUIManager.Instance.FilterShopByType("Boots");
+    }
+
 }

@@ -53,6 +53,10 @@ public class ItemDetailsUI : MonoBehaviour
     //ky gửi
     public TMP_InputField inputQuantity;
     public TMP_InputField inputPrice;
+
+    //itembuy 
+    private NpcShopItem currentShopItem;
+
     private void Start()
     {
 
@@ -695,35 +699,71 @@ public class ItemDetailsUI : MonoBehaviour
         Debug.Log($"[ItemDetailsUI] Đã chọn item: {id}");
         Itemdaily();
     }
-    public void OnClickBuy() // Tuấn Anh
+    public void OnClickBuy()
     {
-        if (string.IsNullOrEmpty(currentItemId))
+          if (currentShopItem == null)
+    {
+        Debug.LogError("currentShopItem NULL! Bạn chưa chọn item shop?");
+        return;
+    }
+        int itemId = currentItem.stats.Item_ID;
+        int currentGold = PlayerDataHolder1.CurrentPlayerState.gold;
+        int accountId = AuthManager.Instance.UserSession.AccountId;
+        string token = AuthManager.Instance.UserSession.Token;
+
+        // Bước này chỉ để check nhanh UI, không đảm bảo hoàn toàn (chủ yếu UX).
+        // Server sẽ kiểm tra lại!
+        int expectedPrice = currentShopItem.price; // ✅
+        if (currentGold < expectedPrice)
         {
-            Debug.LogError(" currentItemId is null. Bạn chưa click vào item?");
+            ShowEquipMessage("Không đủ vàng!");
             return;
         }
 
-        InventoryManager.Instance.AddItem(currentItemId, 1);
-        Debug.Log($" Đã mua item: {currentItemId}");
-        // Trong class ItemDetailsUI hoặc bất cứ class nào
-        if (ShopTP.Instance != null && ShopTP.Instance.panelshopTP != null)
-        {
-            ShopTP.Instance.panelshopTP.SetActive(false);
-            ShopTP.Instance.ShowShopNotify($"Mua {currentItemType} thành công!");
-        }
-        if (shoppk.Instance != null && shoppk.Instance.panelshoppk != null)
-        {
-            shoppk.Instance.panelshoppk.SetActive(false);
+        StartCoroutine(CoBuyItemFromShop(accountId, itemId, token));
+    }
 
-            shoppk.Instance.ShowShopNotify($"Mua {currentItemType} thành công!");
-        }
-        if (shopvk.Instance != null && shopvk.Instance.panelshopvk != null)
+    IEnumerator CoBuyItemFromShop(int accountId, int itemId, string token)
+    {
+        var buyData = new
         {
-            shopvk.Instance.panelshopvk.SetActive(false);
+            AccountId = accountId,
+            ItemId = itemId
+            // KHÔNG truyền Price!
+        };
+        string json = Newtonsoft.Json.JsonConvert.SerializeObject(buyData);
 
-            shopvk.Instance.ShowShopNotify($"Mua {currentItemType} thành công!");
+        UnityWebRequest req = new UnityWebRequest("https://localhost:7124/api/account/shop/buy", "POST");
+        byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(json);
+        req.uploadHandler = new UploadHandlerRaw(bodyRaw);
+        req.downloadHandler = new DownloadHandlerBuffer();
+        req.SetRequestHeader("Content-Type", "application/json");
+        req.SetRequestHeader("Authorization", "Bearer " + token);
+
+        yield return req.SendWebRequest();
+
+        if (req.result == UnityWebRequest.Result.Success)
+        {
+            var resp = JsonConvert.DeserializeObject<ShopBuyResponse>(req.downloadHandler.text);
+            PlayerDataHolder1.CurrentPlayerState.gold = resp.newGold;
+            CharacterUIManager1.Instance.gold.text = resp.newGold.ToString();
+            ShowEquipMessage("Mua thành công!");
+
+            InventoryManager.Instance.LoadInventory(null);
+        }
+        else
+        {
+            ShowEquipMessage("Lỗi khi mua: " + req.downloadHandler.text);
         }
     }
+  
+
+    public class ShopBuyResponse
+    {
+        public string message { get; set; }
+        public int newGold { get; set; }
+    }
+
     public void Itemdaily() //chung
     {
         if (PanelDaily != null && PanelDaily.activeSelf)

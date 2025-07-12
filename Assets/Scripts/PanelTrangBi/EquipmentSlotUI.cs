@@ -13,6 +13,7 @@ public class EquipmentSlotUI : MonoBehaviour, IPointerClickHandler
     public Image iconImage;
     public string itemType;
     public int itemPrice;
+    public NpcShopItem npcShopItemData; // <-- Thêm biến này vào slot (gán khi tạo slot)
 
     [Header("Check nếu là slot của Character UI")]
     public bool isCharacterSlot; // Gán đúng ở Inspector!
@@ -33,6 +34,7 @@ public class EquipmentSlotUI : MonoBehaviour, IPointerClickHandler
             iconImage.color = Color.white;
         }
     }
+
 
     public void OnPointerClick(PointerEventData eventData)
     {

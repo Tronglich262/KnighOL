@@ -52,6 +52,7 @@ public class ShopTPUIManager : MonoBehaviour
         var obj = Instantiate(shopItemPrefab, contentParent);
         if (obj == null) { Debug.LogError("shopItemPrefab NULL hoặc chưa gán!"); return; }
         var slotUI = obj.GetComponent<EquipmentSlotUI>();
+
         slotUI.SetItem(stats.itemId, stats.Icon, item.type, item.price);
         slotUI.shopPanelType = EquipmentSlotUI.ShopPanelType.ShopTP;
 

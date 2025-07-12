@@ -55,6 +55,7 @@ public class shoppk : MonoBehaviour
     }
 
 
+
     public void Hide()
     {
         panelshoppk.SetActive(false);

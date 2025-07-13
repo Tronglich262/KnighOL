@@ -15,6 +15,7 @@ public class shoppk : MonoBehaviour
 
     public GameObject panelshoppk;
     public Image icon;
+    public TMP_Text Level;
     public TMP_Text description;
     public TMP_Text Type;
     public TMP_Text Name;
@@ -37,7 +38,7 @@ public class shoppk : MonoBehaviour
 
     public void Show(string id, Sprite iconSprite, string type = null, int price = 0)
     {
-        panelshoppk.SetActive(true);
+            panelshoppk.SetActive(true);
         icon.sprite = iconSprite;
 
         currentItemId = id;
@@ -46,11 +47,14 @@ public class shoppk : MonoBehaviour
         string name = id.Split('.').Length > 0 ? id.Split('.').Last() : id;
         string displayType = type ?? "Không rõ loại";
 
+        var stats = ItemStatDatabase.Instance.GetStats(id);
         description.text = $"{displayType}\n\n{GetStatsFromId(id)}";
         Type.text = $"Loại: {displayType}";
 
         Name.text = $"Tên: {name}";
         Price.text = $"Giá: {price}";
+        Level.text = $"Cấp yêu cầu: {stats?.LevelRequired ?? 0}";
+
 
     }
 

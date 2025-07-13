@@ -34,7 +34,8 @@ public class InventorySlotUI : MonoBehaviour
 
     public void OnClick()
     {
-        if (itemData != null && itemData.stats != null)
+       
+        if (itemData != null && itemData.stats != null )
         {
             ItemDetailsUI.Instance.Show(itemData);
         }

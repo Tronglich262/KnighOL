@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Item_ID: 17
   itemId: UndeadHeroes.Undead.MeleeWeapon1H.OldThrowingAxe
+  LevelRequired: 20
   Icon: {fileID: 21300000, guid: 4d0172584532460b8d0d640901bd3b5b, type: 3}
   Name: Riu.OldThrowingAxe
   Type: MeleeWeapon1H

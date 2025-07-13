@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Item_ID: 19
   itemId: 'FantasyHeroes.Basic.Belt.ArielDress [Paint]'
+  LevelRequired: 25
   Icon: {fileID: 21300000, guid: 791cd20655415b34d8393f68f017d4ab, type: 3}
   Name: Quan.OldThrowingAxe
   Type: Belt

@@ -65,6 +65,7 @@ public class CanvasShop : MonoBehaviour
         canvasShopPK.SetActive(false);
         panelshoptp.SetActive(false);
         SkillButtonManager.Instance.Skillbutton.SetActive(false);
+        CharacterUIManager.Instance.Tui.SetActive(true);
 
         Tat();
 
@@ -90,6 +91,7 @@ public class CanvasShop : MonoBehaviour
         canvasShopPK.SetActive(false);
         panelshopvk.SetActive(false);
         SkillButtonManager.Instance.Skillbutton.SetActive(false);
+        CharacterUIManager.Instance.Tui.SetActive(true);
 
         Tat();
     }
@@ -102,6 +104,8 @@ public class CanvasShop : MonoBehaviour
         canvasShopvk.SetActive(false);
         panelshoppk.SetActive(false);
         SkillButtonManager.Instance.Skillbutton.SetActive(false);
+        CharacterUIManager.Instance.Tui.SetActive(true);
+
         Tat();
     }
     public void ToogleTatTP()
@@ -146,8 +150,13 @@ public class CanvasShop : MonoBehaviour
         canvasShop.SetActive(false);
         panelshoptp.SetActive(false);
         SkillButtonManager.Instance.Skillbutton.SetActive(true);
-
+        CharacterUIManager.Instance.Tui.SetActive(true);
         Bat();
+        CharacterUIManager.Instance.Tui.SetActive(false);
+        if(ShopTP.Instance.panelshopTP != null)
+        {
+            ShopTP.Instance.panelshopTP.SetActive(false);
+        }
         bool checktoggle = MovementExample.Instante.checktoggle = false;
 
     }
@@ -156,7 +165,11 @@ public class CanvasShop : MonoBehaviour
         canvasShopPK.SetActive(false);
         panelshoppk.SetActive(false);
         SkillButtonManager.Instance.Skillbutton.SetActive(true);
-
+        CharacterUIManager.Instance.Tui.SetActive(false);
+        if (shoppk.Instance.panelshoppk != null)
+        {
+            shoppk.Instance.panelshoppk.SetActive(false);
+        }
         Bat();
         bool checktoggle = MovementExample.Instante.checktoggle = false;
 
@@ -167,7 +180,11 @@ public class CanvasShop : MonoBehaviour
         canvasShopvk.SetActive(false);
         panelshopvk.SetActive(false);
         SkillButtonManager.Instance.Skillbutton.SetActive(true);
-
+        CharacterUIManager.Instance.Tui.SetActive(false);
+        if (shopvk.Instance.panelshopvk != null)
+        {
+            shopvk.Instance.panelshopvk.SetActive(false);
+        }
         Bat();
         bool checktoggle = MovementExample.Instante.checktoggle = false;
 

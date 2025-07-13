@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Item_ID: 10
   itemId: Extensions.Legendary.Gloves.AizenHeavyArmor
+  LevelRequired: 15
   Icon: {fileID: 21300000, guid: e3e5b87a219fbf947b55570dbead9474, type: 3}
   Name: Gang.AizenHeavyArmor
   Type: Gloves

@@ -14,6 +14,7 @@ public class ItemDetailsPanel : MonoBehaviour
     public GameObject panel;
     public Image icon;
     public TMP_Text description;
+    public TMP_Text level;
     public TMP_Text Type;
     public TMP_Text Name;
     public Button unequipButton; // Gán trong Inspector
@@ -40,13 +41,15 @@ public class ItemDetailsPanel : MonoBehaviour
         currentItemId = id;
         currentType = type;
 
+
+        var stats = ItemStatDatabase.Instance.GetStats(id);
         string name = id.Split('.').Length > 0 ? id.Split('.').Last() : id;
         string displayType = type ?? "Không rõ loại";
 
         description.text = $"{displayType}\n\n{GetStatsFromId(id)}";
         Type.text = $"Loại: {displayType}";
-
         Name.text = $"Tên: {name}";
+        level.text = $"Cấp yêu cầu: {stats?.LevelRequired ?? 0}";
     }
 
 

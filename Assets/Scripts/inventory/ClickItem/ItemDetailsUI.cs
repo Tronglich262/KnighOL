@@ -88,6 +88,7 @@ public class ItemDetailsUI : MonoBehaviour
         {
             descText.text = $"<b>{item.stats.Description}</b>\n" +
                             //$"<b>Số lượng:</b> {item.quantity}\n\n" +
+                            $"<b>Yêu cầu cấp:</b> {item.stats.LevelRequired}\n" +
                             $"<b>Chỉ số:</b>\n" +
                             $"• Sức mạnh: {item.stats.Strength}\n" +
                             $"• Phòng thủ: {item.stats.Defense}\n" +
@@ -99,12 +100,22 @@ public class ItemDetailsUI : MonoBehaviour
         {
             descText.text = $"ID: {item.itemId}\nSố lượng: {item.quantity}\n(stats null)";
         }
-
-        panel.SetActive(true);
+            panel.SetActive(true);
     }
 
     public void UseItem()
     {
+        // 1. Kiểm tra level yêu cầu
+        int playerLevel = PlayerDataHolder1.CurrentPlayerState.level;
+        int levelRequired = currentItem.stats.LevelRequired;
+
+        if (playerLevel < levelRequired)
+        {
+            ShowEquipMessage($"Cần cấp {levelRequired} mới mặc được!");
+            return;
+        }
+
+        // 2. Kiểm tra số lượng item
         string type = currentItem.stats.Type;
         string newWeaponId = currentItem.itemId;
         var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(PlayerDataHolder1.CharacterJson);

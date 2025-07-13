@@ -275,7 +275,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 836403258, guid: 80a9e032ac955e4478069ac5d33defd1, type: 3}
+  m_Sprite: {fileID: 836403258, guid: 560a42bee62600c4f8b0d191714dcb9c, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -301,6 +301,14 @@ MonoBehaviour:
   iconImage: {fileID: 4623638852076556520}
   itemType: 
   itemPrice: 0
+  npcShopItemData:
+    shopItemId: 0
+    itemId: 0
+    price: 0
+    name: 
+    type: 
+    description: 
+    rarity: 
   isCharacterSlot: 1
   shopPanelType: 0
 --- !u!1 &60327063881281145
@@ -678,7 +686,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 836403258, guid: 80a9e032ac955e4478069ac5d33defd1, type: 3}
+  m_Sprite: {fileID: 836403258, guid: 560a42bee62600c4f8b0d191714dcb9c, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -704,6 +712,14 @@ MonoBehaviour:
   iconImage: {fileID: 5558681114975251515}
   itemType: 
   itemPrice: 0
+  npcShopItemData:
+    shopItemId: 0
+    itemId: 0
+    price: 0
+    name: 
+    type: 
+    description: 
+    rarity: 
   isCharacterSlot: 1
   shopPanelType: 0
 --- !u!1 &289892659140553495
@@ -773,7 +789,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 836403258, guid: 80a9e032ac955e4478069ac5d33defd1, type: 3}
+  m_Sprite: {fileID: 836403258, guid: 560a42bee62600c4f8b0d191714dcb9c, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -799,6 +815,14 @@ MonoBehaviour:
   iconImage: {fileID: 27321581147418972}
   itemType: 
   itemPrice: 0
+  npcShopItemData:
+    shopItemId: 0
+    itemId: 0
+    price: 0
+    name: 
+    type: 
+    description: 
+    rarity: 
   isCharacterSlot: 1
   shopPanelType: 0
 --- !u!1 &293321821467875883
@@ -868,7 +892,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 836403258, guid: 80a9e032ac955e4478069ac5d33defd1, type: 3}
+  m_Sprite: {fileID: 836403258, guid: 560a42bee62600c4f8b0d191714dcb9c, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -894,6 +918,14 @@ MonoBehaviour:
   iconImage: {fileID: 4460713125573506712}
   itemType: 
   itemPrice: 0
+  npcShopItemData:
+    shopItemId: 0
+    itemId: 0
+    price: 0
+    name: 
+    type: 
+    description: 
+    rarity: 
   isCharacterSlot: 1
   shopPanelType: 0
 --- !u!1 &483919457829330709
@@ -1251,7 +1283,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 836403258, guid: 80a9e032ac955e4478069ac5d33defd1, type: 3}
+  m_Sprite: {fileID: 836403258, guid: 560a42bee62600c4f8b0d191714dcb9c, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1277,6 +1309,14 @@ MonoBehaviour:
   iconImage: {fileID: 8595653743450259538}
   itemType: 
   itemPrice: 0
+  npcShopItemData:
+    shopItemId: 0
+    itemId: 0
+    price: 0
+    name: 
+    type: 
+    description: 
+    rarity: 
   isCharacterSlot: 1
   shopPanelType: 0
 --- !u!1 &837436038185309126
@@ -2785,7 +2825,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 836403258, guid: 80a9e032ac955e4478069ac5d33defd1, type: 3}
+  m_Sprite: {fileID: 836403258, guid: 560a42bee62600c4f8b0d191714dcb9c, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -2811,6 +2851,14 @@ MonoBehaviour:
   iconImage: {fileID: 2357647173636394267}
   itemType: 
   itemPrice: 0
+  npcShopItemData:
+    shopItemId: 0
+    itemId: 0
+    price: 0
+    name: 
+    type: 
+    description: 
+    rarity: 
   isCharacterSlot: 1
   shopPanelType: 0
 --- !u!1 &1798958794502819976
@@ -3168,7 +3216,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 836403258, guid: 80a9e032ac955e4478069ac5d33defd1, type: 3}
+  m_Sprite: {fileID: 836403258, guid: 560a42bee62600c4f8b0d191714dcb9c, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -3194,6 +3242,14 @@ MonoBehaviour:
   iconImage: {fileID: 6277473866827668864}
   itemType: 
   itemPrice: 0
+  npcShopItemData:
+    shopItemId: 0
+    itemId: 0
+    price: 0
+    name: 
+    type: 
+    description: 
+    rarity: 
   isCharacterSlot: 1
   shopPanelType: 0
 --- !u!1 &2061184421233373621
@@ -3722,7 +3778,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 836403258, guid: 80a9e032ac955e4478069ac5d33defd1, type: 3}
+  m_Sprite: {fileID: 836403258, guid: 560a42bee62600c4f8b0d191714dcb9c, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -3748,6 +3804,14 @@ MonoBehaviour:
   iconImage: {fileID: 9096913166381173920}
   itemType: 
   itemPrice: 0
+  npcShopItemData:
+    shopItemId: 0
+    itemId: 0
+    price: 0
+    name: 
+    type: 
+    description: 
+    rarity: 
   isCharacterSlot: 1
   shopPanelType: 0
 --- !u!1 &2620080721209191458
@@ -3817,7 +3881,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 836403258, guid: 80a9e032ac955e4478069ac5d33defd1, type: 3}
+  m_Sprite: {fileID: 836403258, guid: 560a42bee62600c4f8b0d191714dcb9c, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -3843,6 +3907,14 @@ MonoBehaviour:
   iconImage: {fileID: 1069425155090666226}
   itemType: 
   itemPrice: 0
+  npcShopItemData:
+    shopItemId: 0
+    itemId: 0
+    price: 0
+    name: 
+    type: 
+    description: 
+    rarity: 
   isCharacterSlot: 1
   shopPanelType: 0
 --- !u!1 &2672323545147460858
@@ -4469,7 +4541,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 836403258, guid: 80a9e032ac955e4478069ac5d33defd1, type: 3}
+  m_Sprite: {fileID: 836403258, guid: 560a42bee62600c4f8b0d191714dcb9c, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -4495,6 +4567,14 @@ MonoBehaviour:
   iconImage: {fileID: 1509905436477658486}
   itemType: 
   itemPrice: 0
+  npcShopItemData:
+    shopItemId: 0
+    itemId: 0
+    price: 0
+    name: 
+    type: 
+    description: 
+    rarity: 
   isCharacterSlot: 1
   shopPanelType: 0
 --- !u!1 &2920814365094628937
@@ -4564,7 +4644,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 836403258, guid: 80a9e032ac955e4478069ac5d33defd1, type: 3}
+  m_Sprite: {fileID: 836403258, guid: 560a42bee62600c4f8b0d191714dcb9c, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -4590,6 +4670,14 @@ MonoBehaviour:
   iconImage: {fileID: 3134466509310319584}
   itemType: 
   itemPrice: 0
+  npcShopItemData:
+    shopItemId: 0
+    itemId: 0
+    price: 0
+    name: 
+    type: 
+    description: 
+    rarity: 
   isCharacterSlot: 1
   shopPanelType: 0
 --- !u!1 &2926171386862658717
@@ -4976,7 +5064,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 298, y: -50}
+  m_AnchoredPosition: {x: 312, y: -50}
   m_SizeDelta: {x: 300, y: 70}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4959226467906600522
@@ -5718,7 +5806,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 836403258, guid: 80a9e032ac955e4478069ac5d33defd1, type: 3}
+  m_Sprite: {fileID: 836403258, guid: 560a42bee62600c4f8b0d191714dcb9c, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -5744,6 +5832,14 @@ MonoBehaviour:
   iconImage: {fileID: 5901962497653257758}
   itemType: 
   itemPrice: 0
+  npcShopItemData:
+    shopItemId: 0
+    itemId: 0
+    price: 0
+    name: 
+    type: 
+    description: 
+    rarity: 
   isCharacterSlot: 1
   shopPanelType: 0
 --- !u!1 &3358819134085588849
@@ -5923,7 +6019,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0.0008544922, y: -0.00018310547}
+  m_AnchoredPosition: {x: 0.0008544922, y: -0.000061035156}
   m_SizeDelta: {x: -82.3955, y: -278.8778}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &3437655434169667493
@@ -5993,7 +6089,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 836403258, guid: 80a9e032ac955e4478069ac5d33defd1, type: 3}
+  m_Sprite: {fileID: 836403258, guid: 560a42bee62600c4f8b0d191714dcb9c, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -6019,6 +6115,14 @@ MonoBehaviour:
   iconImage: {fileID: 5413541002622292425}
   itemType: 
   itemPrice: 0
+  npcShopItemData:
+    shopItemId: 0
+    itemId: 0
+    price: 0
+    name: 
+    type: 
+    description: 
+    rarity: 
   isCharacterSlot: 1
   shopPanelType: 0
 --- !u!1 &3458463501779692549
@@ -6559,7 +6663,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 836403258, guid: 80a9e032ac955e4478069ac5d33defd1, type: 3}
+  m_Sprite: {fileID: 836403258, guid: 560a42bee62600c4f8b0d191714dcb9c, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -6585,6 +6689,14 @@ MonoBehaviour:
   iconImage: {fileID: 8335727499480951738}
   itemType: 
   itemPrice: 0
+  npcShopItemData:
+    shopItemId: 0
+    itemId: 0
+    price: 0
+    name: 
+    type: 
+    description: 
+    rarity: 
   isCharacterSlot: 1
   shopPanelType: 0
 --- !u!1 &3863650224305766648
@@ -7378,7 +7490,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 836403258, guid: 80a9e032ac955e4478069ac5d33defd1, type: 3}
+  m_Sprite: {fileID: 836403258, guid: 560a42bee62600c4f8b0d191714dcb9c, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -7404,6 +7516,14 @@ MonoBehaviour:
   iconImage: {fileID: 6749232589223630846}
   itemType: 
   itemPrice: 0
+  npcShopItemData:
+    shopItemId: 0
+    itemId: 0
+    price: 0
+    name: 
+    type: 
+    description: 
+    rarity: 
   isCharacterSlot: 1
   shopPanelType: 0
 --- !u!1 &4130142020856554659
@@ -7972,7 +8092,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 836403258, guid: 80a9e032ac955e4478069ac5d33defd1, type: 3}
+  m_Sprite: {fileID: 836403258, guid: 560a42bee62600c4f8b0d191714dcb9c, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -7998,6 +8118,14 @@ MonoBehaviour:
   iconImage: {fileID: 5957403767646941895}
   itemType: 
   itemPrice: 0
+  npcShopItemData:
+    shopItemId: 0
+    itemId: 0
+    price: 0
+    name: 
+    type: 
+    description: 
+    rarity: 
   isCharacterSlot: 1
   shopPanelType: 0
 --- !u!1 &4568843970188604555
@@ -8143,7 +8271,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 836403258, guid: 80a9e032ac955e4478069ac5d33defd1, type: 3}
+  m_Sprite: {fileID: 836403258, guid: 560a42bee62600c4f8b0d191714dcb9c, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -8169,6 +8297,14 @@ MonoBehaviour:
   iconImage: {fileID: 7499848096207763925}
   itemType: 
   itemPrice: 0
+  npcShopItemData:
+    shopItemId: 0
+    itemId: 0
+    price: 0
+    name: 
+    type: 
+    description: 
+    rarity: 
   isCharacterSlot: 1
   shopPanelType: 0
 --- !u!1 &4646556059949143810
@@ -8238,7 +8374,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 836403258, guid: 80a9e032ac955e4478069ac5d33defd1, type: 3}
+  m_Sprite: {fileID: 836403258, guid: 560a42bee62600c4f8b0d191714dcb9c, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -8264,6 +8400,14 @@ MonoBehaviour:
   iconImage: {fileID: 923127956208937596}
   itemType: 
   itemPrice: 0
+  npcShopItemData:
+    shopItemId: 0
+    itemId: 0
+    price: 0
+    name: 
+    type: 
+    description: 
+    rarity: 
   isCharacterSlot: 1
   shopPanelType: 0
 --- !u!1 &4652740518115658761
@@ -9562,7 +9706,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 836403258, guid: 80a9e032ac955e4478069ac5d33defd1, type: 3}
+  m_Sprite: {fileID: 836403258, guid: 560a42bee62600c4f8b0d191714dcb9c, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -9588,6 +9732,14 @@ MonoBehaviour:
   iconImage: {fileID: 5126643848926190853}
   itemType: 
   itemPrice: 0
+  npcShopItemData:
+    shopItemId: 0
+    itemId: 0
+    price: 0
+    name: 
+    type: 
+    description: 
+    rarity: 
   isCharacterSlot: 1
   shopPanelType: 0
 --- !u!1 &5515287241876753623
@@ -11067,7 +11219,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 455, y: 65}
+  m_AnchoredPosition: {x: 349, y: 65}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &6337740586951563196
@@ -11182,7 +11334,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: -183, y: -50}
+  m_AnchoredPosition: {x: -204, y: -50}
   m_SizeDelta: {x: 300, y: 70}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &238776963392845653
@@ -12030,7 +12182,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 836403258, guid: 80a9e032ac955e4478069ac5d33defd1, type: 3}
+  m_Sprite: {fileID: 836403258, guid: 560a42bee62600c4f8b0d191714dcb9c, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -12056,6 +12208,14 @@ MonoBehaviour:
   iconImage: {fileID: 4353087293387658622}
   itemType: 
   itemPrice: 0
+  npcShopItemData:
+    shopItemId: 0
+    itemId: 0
+    price: 0
+    name: 
+    type: 
+    description: 
+    rarity: 
   isCharacterSlot: 1
   shopPanelType: 0
 --- !u!1 &6674500992801314133
@@ -12769,7 +12929,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 836403258, guid: 80a9e032ac955e4478069ac5d33defd1, type: 3}
+  m_Sprite: {fileID: 836403258, guid: 560a42bee62600c4f8b0d191714dcb9c, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -12795,6 +12955,14 @@ MonoBehaviour:
   iconImage: {fileID: 5697934807007317780}
   itemType: 
   itemPrice: 0
+  npcShopItemData:
+    shopItemId: 0
+    itemId: 0
+    price: 0
+    name: 
+    type: 
+    description: 
+    rarity: 
   isCharacterSlot: 1
   shopPanelType: 0
 --- !u!1 &6869871693266070842
@@ -12939,7 +13107,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 836403258, guid: 80a9e032ac955e4478069ac5d33defd1, type: 3}
+  m_Sprite: {fileID: 836403258, guid: 560a42bee62600c4f8b0d191714dcb9c, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -12965,6 +13133,14 @@ MonoBehaviour:
   iconImage: {fileID: 652943117855186761}
   itemType: 
   itemPrice: 0
+  npcShopItemData:
+    shopItemId: 0
+    itemId: 0
+    price: 0
+    name: 
+    type: 
+    description: 
+    rarity: 
   isCharacterSlot: 1
   shopPanelType: 0
 --- !u!1 &7066140115671700495
@@ -13322,7 +13498,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 836403258, guid: 80a9e032ac955e4478069ac5d33defd1, type: 3}
+  m_Sprite: {fileID: 836403258, guid: 560a42bee62600c4f8b0d191714dcb9c, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -13348,6 +13524,14 @@ MonoBehaviour:
   iconImage: {fileID: 3164712132112118564}
   itemType: 
   itemPrice: 0
+  npcShopItemData:
+    shopItemId: 0
+    itemId: 0
+    price: 0
+    name: 
+    type: 
+    description: 
+    rarity: 
   isCharacterSlot: 1
   shopPanelType: 0
 --- !u!1 &7386864397362561640
@@ -13957,7 +14141,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 836403258, guid: 80a9e032ac955e4478069ac5d33defd1, type: 3}
+  m_Sprite: {fileID: 836403258, guid: 560a42bee62600c4f8b0d191714dcb9c, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -13983,6 +14167,14 @@ MonoBehaviour:
   iconImage: {fileID: 1938667768187135344}
   itemType: 
   itemPrice: 0
+  npcShopItemData:
+    shopItemId: 0
+    itemId: 0
+    price: 0
+    name: 
+    type: 
+    description: 
+    rarity: 
   isCharacterSlot: 1
   shopPanelType: 0
 --- !u!1 &7555301229362895595
@@ -15135,7 +15327,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 836403258, guid: 80a9e032ac955e4478069ac5d33defd1, type: 3}
+  m_Sprite: {fileID: 836403258, guid: 560a42bee62600c4f8b0d191714dcb9c, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -15161,6 +15353,14 @@ MonoBehaviour:
   iconImage: {fileID: 4758248056529123241}
   itemType: 
   itemPrice: 0
+  npcShopItemData:
+    shopItemId: 0
+    itemId: 0
+    price: 0
+    name: 
+    type: 
+    description: 
+    rarity: 
   isCharacterSlot: 1
   shopPanelType: 0
 --- !u!1 &8138870715314041600
@@ -15413,7 +15613,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 836403258, guid: 80a9e032ac955e4478069ac5d33defd1, type: 3}
+  m_Sprite: {fileID: 836403258, guid: 560a42bee62600c4f8b0d191714dcb9c, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -15439,6 +15639,14 @@ MonoBehaviour:
   iconImage: {fileID: 2173405550488687316}
   itemType: 
   itemPrice: 0
+  npcShopItemData:
+    shopItemId: 0
+    itemId: 0
+    price: 0
+    name: 
+    type: 
+    description: 
+    rarity: 
   isCharacterSlot: 1
   shopPanelType: 0
 --- !u!1 &8271156696851307865
@@ -15964,7 +16172,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 836403258, guid: 80a9e032ac955e4478069ac5d33defd1, type: 3}
+  m_Sprite: {fileID: 836403258, guid: 560a42bee62600c4f8b0d191714dcb9c, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -15990,6 +16198,14 @@ MonoBehaviour:
   iconImage: {fileID: 4075094160807921044}
   itemType: 
   itemPrice: 0
+  npcShopItemData:
+    shopItemId: 0
+    itemId: 0
+    price: 0
+    name: 
+    type: 
+    description: 
+    rarity: 
   isCharacterSlot: 1
   shopPanelType: 0
 --- !u!1 &8667092299305233301
@@ -16331,7 +16547,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 836403258, guid: 80a9e032ac955e4478069ac5d33defd1, type: 3}
+  m_Sprite: {fileID: 836403258, guid: 560a42bee62600c4f8b0d191714dcb9c, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -16357,6 +16573,14 @@ MonoBehaviour:
   iconImage: {fileID: 9210930336232104188}
   itemType: 
   itemPrice: 0
+  npcShopItemData:
+    shopItemId: 0
+    itemId: 0
+    price: 0
+    name: 
+    type: 
+    description: 
+    rarity: 
   isCharacterSlot: 1
   shopPanelType: 0
 --- !u!1 &8912140150238855258
@@ -16426,7 +16650,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 836403258, guid: 80a9e032ac955e4478069ac5d33defd1, type: 3}
+  m_Sprite: {fileID: 836403258, guid: 560a42bee62600c4f8b0d191714dcb9c, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -16452,6 +16676,14 @@ MonoBehaviour:
   iconImage: {fileID: 1516162112835364676}
   itemType: 
   itemPrice: 0
+  npcShopItemData:
+    shopItemId: 0
+    itemId: 0
+    price: 0
+    name: 
+    type: 
+    description: 
+    rarity: 
   isCharacterSlot: 1
   shopPanelType: 0
 --- !u!1 &9074534068309474722
@@ -16749,7 +16981,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 836403258, guid: 80a9e032ac955e4478069ac5d33defd1, type: 3}
+  m_Sprite: {fileID: 836403258, guid: 560a42bee62600c4f8b0d191714dcb9c, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -16775,6 +17007,14 @@ MonoBehaviour:
   iconImage: {fileID: 1062708353972035675}
   itemType: 
   itemPrice: 0
+  npcShopItemData:
+    shopItemId: 0
+    itemId: 0
+    price: 0
+    name: 
+    type: 
+    description: 
+    rarity: 
   isCharacterSlot: 1
   shopPanelType: 0
 --- !u!1 &9213225925405458072

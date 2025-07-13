@@ -7,6 +7,7 @@ public class ItemStats : ScriptableObject
 {
     public int Item_ID;
     public string itemId;
+    public int LevelRequired; 
     public Sprite Icon;
     public string Name;
     public string Type;

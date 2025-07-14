@@ -1330,7 +1330,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d93896aea978f9047bce0b044317d7bf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  panelToHide: {fileID: 1938806626}
+  panelToHide: {fileID: 715841792}
 --- !u!114 &42203667
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -69838,7 +69838,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d93896aea978f9047bce0b044317d7bf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  panelToHide: {fileID: 2122714391}
+  panelToHide: {fileID: 1157973331}
 --- !u!114 &1521502383
 MonoBehaviour:
   m_ObjectHideFlags: 0

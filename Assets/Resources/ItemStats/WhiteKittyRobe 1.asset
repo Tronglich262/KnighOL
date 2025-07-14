@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6eea8a67d52cafd4189c50561eac9854, type: 3}
+  m_Name: WhiteKittyRobe 1
+  m_EditorClassIdentifier: 
+  Item_ID: 0
+  itemId: 'Extensions.AbandonedWorkshop.Belt.WhiteKittyRobe '
+  LevelRequired: 30
+  Icon: {fileID: 21300000, guid: b00d5cf31674b10428df34f1007f4fe7, type: 3}
+  Name: Belt.WhiteKittyRobe
+  Type: Belt
+  Description: "t\u0103ng ch\u1EC9 s\u1ED1"
+  Rarity: 0
+  Value: 0
+  Strength: 30
+  Defense: 30
+  Agility: 30
+  Intelligence: 30
+  Vitality: 45

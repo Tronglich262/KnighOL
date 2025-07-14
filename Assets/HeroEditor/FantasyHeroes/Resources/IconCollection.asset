@@ -15650,4 +15650,4 @@ MonoBehaviour:
       [Paint].png
     Sprite: {fileID: 21300000, guid: af1ab293b56645c99b019d3fb2781b0b, type: 3}
     Type: MeleeWeapon2H
-  DefaultItemIcon: {fileID: 21300000, guid: ae011a2b76094d3d988dc7d5ab9b778d, type: 3}
+  DefaultItemIcon: {fileID: 836403258, guid: 560a42bee62600c4f8b0d191714dcb9c, type: 3}

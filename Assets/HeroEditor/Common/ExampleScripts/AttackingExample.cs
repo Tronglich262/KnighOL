@@ -19,10 +19,13 @@ namespace Assets.HeroEditor.Common.ExampleScripts
         public KeyCode ReloadButton;
         [Header("Check to disable arm auto rotation.")]
         public bool FixedArm;
+        private bool _isSpawned = false;
+
         [Networked] public Vector2 AimDirection { get; set; }
 
         public override void Spawned()
         {
+            _isSpawned = true;
             if ((Character.WeaponType == WeaponType.Firearms1H || Character.WeaponType == WeaponType.Firearms2H) && Firearm.Params.Type == FirearmType.Unknown)
             {
                 throw new Exception("Firearm params not set.");
@@ -76,7 +79,7 @@ namespace Assets.HeroEditor.Common.ExampleScripts
         public void LateUpdate()
         {
             if (Character.GetState() == CharacterState.DeathB || Character.GetState() == CharacterState.DeathF) return;
-
+            if (!_isSpawned) return;
             Transform arm, weapon;
 
             switch (Character.WeaponType)

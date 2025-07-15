@@ -141,7 +141,7 @@ public class ShopTriggerVK : MonoBehaviour
     }
     public void OnClickMeleeWeapon2HTab()
     {
-        ShopVKUIManager.Instance.FilterShopByType("MeleeWeapon2h");
+        ShopVKUIManager.Instance.FilterShopByType("MeleeWeapon2H");
     }
     public void OnClickBowTab()
     {

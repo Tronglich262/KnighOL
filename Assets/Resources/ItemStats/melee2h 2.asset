@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6eea8a67d52cafd4189c50561eac9854, type: 3}
+  m_Name: melee2h 2
+  m_EditorClassIdentifier: 
+  Item_ID: 0
+  itemId: FantasyHeroes.Samurai.MeleeWeapon2H.SunriseSword
+  LevelRequired: 90
+  Icon: {fileID: 21300000, guid: 46c0f79390024475b9ecd247d06aaebe, type: 3}
+  Name: MeleeWeapon2H.SunriseSword
+  Type: MeleeWeapon2H
+  Description: "t\u0103ng ch\u1EC9 s\u1ED1"
+  Rarity: 0
+  Value: 0
+  Strength: 120
+  Defense: 55
+  Agility: 75
+  Intelligence: 30
+  Vitality: 60

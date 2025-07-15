@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6eea8a67d52cafd4189c50561eac9854, type: 3}
   m_Name: melee2h 1
   m_EditorClassIdentifier: 
-  Item_ID: 0
+  Item_ID: 347
   itemId: FantasyHeroes.Samurai.MeleeWeapon2H.ShadowSword
   LevelRequired: 90
   Icon: {fileID: 21300000, guid: 71a3bf45154f4eaca89a6032329eecb3, type: 3}

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6eea8a67d52cafd4189c50561eac9854, type: 3}
   m_Name: melee2h 6
   m_EditorClassIdentifier: 
-  Item_ID: 0
+  Item_ID: 352
   itemId: Extensions.Legendary.MeleeWeapon2H.SteampunkSword
   LevelRequired: 110
   Icon: {fileID: 21300000, guid: d12896e93daca3744a24db2b29d30224, type: 3}

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6eea8a67d52cafd4189c50561eac9854, type: 3}
   m_Name: melee2h
   m_EditorClassIdentifier: 
-  Item_ID: 0
+  Item_ID: 346
   itemId: 'FantasyHeroes.Samurai.MeleeWeapon2H.SamuraiSword3 [Paint]'
   LevelRequired: 90
   Icon: {fileID: 21300000, guid: fecec50cb2b74f959e9634179928911f, type: 3}

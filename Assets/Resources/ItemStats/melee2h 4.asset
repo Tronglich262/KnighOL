@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6eea8a67d52cafd4189c50561eac9854, type: 3}
   m_Name: melee2h 4
   m_EditorClassIdentifier: 
-  Item_ID: 0
+  Item_ID: 350
   itemId: Extensions.Legendary.MeleeWeapon2H.FrozenDragonAxe
   LevelRequired: 100
   Icon: {fileID: 21300000, guid: af38c398544b92b47b18c829a6ef92dc, type: 3}

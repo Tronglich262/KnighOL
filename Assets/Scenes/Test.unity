@@ -156,7 +156,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 740.82, y: 482.67}
+  m_SizeDelta: {x: 740.82, y: 611.6113}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &82305
 MonoBehaviour:
@@ -2807,7 +2807,7 @@ MonoBehaviour:
   description: {fileID: 1867446033}
   Type: {fileID: 1107591678}
   Name: {fileID: 1460465975}
-  Price: {fileID: 1460465975}
+  Price: {fileID: 1184637914}
   shopNotifyPanel: {fileID: 2051747359}
   shopNotifyBg: {fileID: 503218269}
   shopNotifyText: {fileID: 1765595291}
@@ -5724,7 +5724,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Content: {fileID: 364520779}
-  m_Horizontal: 1
+  m_Horizontal: 0
   m_Vertical: 1
   m_MovementType: 1
   m_Elasticity: 0.1
@@ -25771,7 +25771,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Content: {fileID: 1581148808}
-  m_Horizontal: 1
+  m_Horizontal: 0
   m_Vertical: 1
   m_MovementType: 1
   m_Elasticity: 0.1
@@ -31689,7 +31689,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Content: {fileID: 359323181}
-  m_Horizontal: 1
+  m_Horizontal: 0
   m_Vertical: 1
   m_MovementType: 1
   m_Elasticity: 0.1
@@ -35879,7 +35879,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 740.82, y: 482.67}
+  m_SizeDelta: {x: 740.82, y: 611.6113}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1116261746
 MonoBehaviour:
@@ -39905,7 +39905,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Content: {fileID: 534543112}
-  m_Horizontal: 1
+  m_Horizontal: 0
   m_Vertical: 1
   m_MovementType: 1
   m_Elasticity: 0.1
@@ -71294,7 +71294,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 740.82, y: 482.67}
+  m_SizeDelta: {x: 740.82, y: 611.6113}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1570058784
 MonoBehaviour:

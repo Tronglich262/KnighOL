@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Shield 17
   m_EditorClassIdentifier: 
   Item_ID: 139
-  itemId: 'Extensions.Legendary.Shield.DivineDragoonGrimoireTypeB '
+  itemId: Extensions.Legendary.Shield.DivineDragoonGrimoireTypeB
   LevelRequired: 100
   Icon: {fileID: 21300000, guid: b6f9c7f283632674b94fedd0d12b686f, type: 3}
   Name: Shield.DivineDragoonGrimoireTypeB

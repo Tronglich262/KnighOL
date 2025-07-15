@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: ArrowQuiver 4
   m_EditorClassIdentifier: 
   Item_ID: 37
-  itemId: 'FantasyHeroes.Basic.Back.ArrowQuiverBig '
+  itemId: FantasyHeroes.Basic.Back.ArrowQuiverBig
   LevelRequired: 45
   Icon: {fileID: 21300000, guid: 72561924cbbe41e08704dd4956c56d11, type: 3}
   Name: Back.ArrowQuiverBig

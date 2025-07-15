@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Shield 30
   m_EditorClassIdentifier: 
   Item_ID: 154
-  itemId: 'FantasyHeroes.Basic.Shield.ManticoreShield '
+  itemId: FantasyHeroes.Basic.Shield.ManticoreShield
   LevelRequired: 45
   Icon: {fileID: 21300000, guid: 58cce7db553d4e4eb33687309ef3ba0a, type: 3}
   Name: 'Shield.ManticoreShield '

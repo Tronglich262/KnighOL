@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Glasses 10
   m_EditorClassIdentifier: 
   Item_ID: 96
-  itemId: 'Extensions.AbandonedWorkshop.Glasses.GlassesTypeM '
+  itemId: Extensions.AbandonedWorkshop.Glasses.GlassesTypeM
   LevelRequired: 45
   Icon: {fileID: 21300000, guid: bfaed241cbfd9494a9749573eaa82ebc, type: 3}
   Name: Glasses.GlassesTypeM

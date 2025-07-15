@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: BlazewingArmor
   m_EditorClassIdentifier: 
   Item_ID: 39
-  itemId: 'Extensions.Epic.Vest.BlazewingArmor '
+  itemId: Extensions.Epic.Vest.BlazewingArmor
   LevelRequired: 80
   Icon: {fileID: 21300000, guid: 69d7c8bc96dba804abd9ac406160f536, type: 3}
   Name: Vest.BlazewingArmor

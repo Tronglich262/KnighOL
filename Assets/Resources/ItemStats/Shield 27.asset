@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Shield 27
   m_EditorClassIdentifier: 
   Item_ID: 150
-  itemId: 'Extensions.AbandonedWorkshop.Shield.HexWoodenShield '
+  itemId: Extensions.AbandonedWorkshop.Shield.HexWoodenShield
   LevelRequired: 20
   Icon: {fileID: 21300000, guid: 5af40837dbfc77342b5391ee4b3aae51, type: 3}
   Name: Shield.HexWoodenShield

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: VikingFurArmor
   m_EditorClassIdentifier: 
   Item_ID: 184
-  itemId: 'FantasyHeroes.Vikings.Vest.VikingFurArmor '
+  itemId: FantasyHeroes.Vikings.Vest.VikingFurArmor
   LevelRequired: 20
   Icon: {fileID: 21300000, guid: e34b69ff5fecab24c8b281b7ea931759, type: 3}
   Name: Vest.VikingFurArmor

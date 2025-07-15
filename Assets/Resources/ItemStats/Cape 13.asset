@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Cape 13
   m_EditorClassIdentifier: 
   Item_ID: 56
-  itemId: 'Extensions.Legendary.Cape.UnderlordWings '
+  itemId: Extensions.Legendary.Cape.UnderlordWings
   LevelRequired: 65
   Icon: {fileID: 21300000, guid: d06cc1d9f23d1a84694de4ce0a3c5d48, type: 3}
   Name: Cape.UnderlordWings

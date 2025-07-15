@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Wanderer 3
   m_EditorClassIdentifier: 
   Item_ID: 227
-  itemId: 'FantasyHeroes.Basic.Boots.Wanderer '
+  itemId: FantasyHeroes.Basic.Boots.Wanderer
   LevelRequired: 50
   Icon: {fileID: 21300000, guid: f5a429b57e2b3624595657c341b43ccb, type: 3}
   Name: Boots.Wanderer

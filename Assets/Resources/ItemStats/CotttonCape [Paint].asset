@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: 'CotttonCape [Paint]'
   m_EditorClassIdentifier: 
   Item_ID: 74
-  itemId: 'FantasyHeroes.Basic.Cape.CotttonCape [Paint] '
+  itemId: 'FantasyHeroes.Basic.Cape.CotttonCape [Paint]'
   LevelRequired: 15
   Icon: {fileID: 21300000, guid: 76366e09114f44cab89522c7efcb8829, type: 3}
   Name: 'Cape.CotttonCape [Paint] '

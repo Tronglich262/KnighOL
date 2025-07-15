@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: WarlockArmor 1
   m_EditorClassIdentifier: 
   Item_ID: 230
-  itemId: 'FantasyHeroes.Basic.Belt.WarlockArmor '
+  itemId: FantasyHeroes.Basic.Belt.WarlockArmor
   LevelRequired: 50
   Icon: {fileID: 21300000, guid: df0d338c5eb67c64d8a06bd6684d2a41, type: 3}
   Name: Belt.WarlockArmor

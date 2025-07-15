@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Shield 7
   m_EditorClassIdentifier: 
   Item_ID: 171
-  itemId: 'FantasyHeroes.Basic.Shield.BottleBomb '
+  itemId: FantasyHeroes.Basic.Shield.BottleBomb
   LevelRequired: 25
   Icon: {fileID: 21300000, guid: 2407cf50288a49918562d3d88bec1a8f, type: 3}
   Name: Shield.BottleBomb

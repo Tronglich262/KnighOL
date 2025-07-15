@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: DarkKnight
   m_EditorClassIdentifier: 
   Item_ID: 81
-  itemId: 'FantasyHeroes.Basic.Vest.DarkKnight '
+  itemId: FantasyHeroes.Basic.Vest.DarkKnight
   LevelRequired: 70
   Icon: {fileID: 21300000, guid: 841355aa7badbcc4e831e0dfabb016e8, type: 3}
   Name: Vest.DarkKnight

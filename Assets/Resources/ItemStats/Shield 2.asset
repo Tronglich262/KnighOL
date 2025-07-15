@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Shield 2
   m_EditorClassIdentifier: 
   Item_ID: 142
-  itemId: 'FantasyHeroes.Basic.Shield.AdvancedKnightShield '
+  itemId: FantasyHeroes.Basic.Shield.AdvancedKnightShield
   LevelRequired: 5
   Icon: {fileID: 21300000, guid: f5e9ce0bd8794d86bf866e81d9e18123, type: 3}
   Name: Shield.AdvancedKnightShield

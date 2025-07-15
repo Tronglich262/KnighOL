@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: WitchHat [Paint] 1
   m_EditorClassIdentifier: 
   Item_ID: 244
-  itemId: 'FantasyHeroes.Basic.Vest.WitchArmor '
+  itemId: FantasyHeroes.Basic.Vest.WitchArmor
   LevelRequired: 20
   Icon: {fileID: 21300000, guid: 5175c084a9e198d4bb0615db95a27011, type: 3}
   Name: 'Vest.WitchArmor '

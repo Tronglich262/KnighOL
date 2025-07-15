@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Shield 3
   m_EditorClassIdentifier: 
   Item_ID: 153
-  itemId: 'Extensions.Legendary.Shield.AoiWingRelic '
+  itemId: Extensions.Legendary.Shield.AoiWingRelic
   LevelRequired: 40
   Icon: {fileID: 21300000, guid: 28850848fb44fd444b5a74f1e2b20f9f, type: 3}
   Name: Shield.AoiWingRelic

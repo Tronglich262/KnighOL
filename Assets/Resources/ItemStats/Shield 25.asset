@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Shield 25
   m_EditorClassIdentifier: 
   Item_ID: 148
-  itemId: 'Extensions.Legendary.Shield.GakuraHitenShield '
+  itemId: Extensions.Legendary.Shield.GakuraHitenShield
   LevelRequired: 140
   Icon: {fileID: 21300000, guid: c8a97260bde9a0b41a527d14461f60ce, type: 3}
   Name: 'Shield.GakuraHitenShield '

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Shield 21
   m_EditorClassIdentifier: 
   Item_ID: 144
-  itemId: 'Extensions.Legendary.Shield.ElementalShield '
+  itemId: Extensions.Legendary.Shield.ElementalShield
   LevelRequired: 140
   Icon: {fileID: 21300000, guid: 85b79a1f86988d444afb03a66c8ee7e6, type: 3}
   Name: 'Shield.ElementalShield '

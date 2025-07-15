@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: UranosMail 4
   m_EditorClassIdentifier: 
   Item_ID: 183
-  itemId: 'Extensions.Legendary.Pauldrons.UranosMail '
+  itemId: Extensions.Legendary.Pauldrons.UranosMail
   LevelRequired: 100
   Icon: {fileID: 21300000, guid: c68750c45cc48a641a55a2f242aadf9a, type: 3}
   Name: Pauldrons.UranosMail

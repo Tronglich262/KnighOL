@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: BlazewingArmor 3
   m_EditorClassIdentifier: 
   Item_ID: 42
-  itemId: 'Extensions.Epic.Boots.BlazewingArmor '
+  itemId: Extensions.Epic.Boots.BlazewingArmor
   LevelRequired: 80
   Icon: {fileID: 21300000, guid: 606c024ae58a795458205ad185408e80, type: 3}
   Name: Boots.BlazewingArmor

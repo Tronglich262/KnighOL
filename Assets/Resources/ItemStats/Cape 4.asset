@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Cape 4
   m_EditorClassIdentifier: 
   Item_ID: 60
-  itemId: 'FantasyHeroes.Basic.Cape.OldCape2 [Paint] '
+  itemId: 'FantasyHeroes.Basic.Cape.OldCape2 [Paint]'
   LevelRequired: 5
   Icon: {fileID: 21300000, guid: 44c9ed91eb814aa9b7a60f1a037a3738, type: 3}
   Name: 'Cape.OldCape2 [Paint] '

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Underpants9 2
   m_EditorClassIdentifier: 
   Item_ID: 176
-  itemId: 'Extensions.AbandonedWorkshop.Gloves.Underpants9 '
+  itemId: Extensions.AbandonedWorkshop.Gloves.Underpants9
   LevelRequired: 40
   Icon: {fileID: 21300000, guid: a2ae13947c218074d8a6b4882db55c37, type: 3}
   Name: 'Gloves.Underpants9 '

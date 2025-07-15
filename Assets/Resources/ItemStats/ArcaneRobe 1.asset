@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: ArcaneRobe 1
   m_EditorClassIdentifier: 
   Item_ID: 8
-  itemId: 'Extensions.AbandonedWorkshop.Belt.ArcaneRobe '
+  itemId: Extensions.AbandonedWorkshop.Belt.ArcaneRobe
   LevelRequired: 40
   Icon: {fileID: 21300000, guid: a59314f30ac22f0409a56953a6cae8a6, type: 3}
   Name: Belt.ArcaneRobe

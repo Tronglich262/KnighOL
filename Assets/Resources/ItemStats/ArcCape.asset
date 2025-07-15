@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: ArcCape
   m_EditorClassIdentifier: 
   Item_ID: 12
-  itemId: 'Extensions.Legendary.Cape.ArcCape '
+  itemId: Extensions.Legendary.Cape.ArcCape
   LevelRequired: 5
   Icon: {fileID: 21300000, guid: a45a6ad8b7a24a945a2e864f5f328c1c, type: 3}
   Name: Cape.ArcCape

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: WallKeeperHelm 3
   m_EditorClassIdentifier: 
   Item_ID: 221
-  itemId: 'Extensions.AbandonedWorkshop.Gloves.WallKeeperArmor '
+  itemId: Extensions.AbandonedWorkshop.Gloves.WallKeeperArmor
   LevelRequired: 20
   Icon: {fileID: 21300000, guid: d1e92574e89bdb643b11d127dae3eb31, type: 3}
   Name: Gloves.WallKeeperArmor

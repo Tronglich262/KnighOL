@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Shield 28
   m_EditorClassIdentifier: 
   Item_ID: 151
-  itemId: 'Extensions.AbandonedWorkshop.Shield.ImperialTemplarShield '
+  itemId: Extensions.AbandonedWorkshop.Shield.ImperialTemplarShield
   LevelRequired: 45
   Icon: {fileID: 21300000, guid: a67ed1743c4ea1b4ab282fade98bdd32, type: 3}
   Name: Shield.ImperialTemplarShield

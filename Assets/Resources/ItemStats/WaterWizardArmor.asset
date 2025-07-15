@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: WaterWizardArmor
   m_EditorClassIdentifier: 
   Item_ID: 234
-  itemId: 'FantasyHeroes.Basic.Vest.WaterWizardArmor '
+  itemId: FantasyHeroes.Basic.Vest.WaterWizardArmor
   LevelRequired: 40
   Icon: {fileID: 21300000, guid: 261f8231814e5ef4e90da7ef14075e95, type: 3}
   Name: Vest.WaterWizardArmor

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Cape 5
   m_EditorClassIdentifier: 
   Item_ID: 61
-  itemId: 'Extensions.Legendary.Cape.PlatinumUnicornCape '
+  itemId: Extensions.Legendary.Cape.PlatinumUnicornCape
   LevelRequired: 30
   Icon: {fileID: 21300000, guid: b4195d5a50ed0114b89b17827963a799, type: 3}
   Name: Cape.PlatinumUnicornCape

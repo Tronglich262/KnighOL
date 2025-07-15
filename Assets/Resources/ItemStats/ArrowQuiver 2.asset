@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: ArrowQuiver 2
   m_EditorClassIdentifier: 
   Item_ID: 35
-  itemId: 'FantasyHeroes.Basic.Back.ArrowQuiver2 '
+  itemId: FantasyHeroes.Basic.Back.ArrowQuiver2
   LevelRequired: 20
   Icon: {fileID: 21300000, guid: 8ad3925a2e5c475399e08461cfd3a22b, type: 3}
   Name: Back.ArrowQuiver2

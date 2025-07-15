@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: BlazewingCape
   m_EditorClassIdentifier: 
   Item_ID: 44
-  itemId: 'Extensions.Epic.Cape.BlazewingCape '
+  itemId: Extensions.Epic.Cape.BlazewingCape
   LevelRequired: 10
   Icon: {fileID: 21300000, guid: 08d523752e6c82d47aa71c64b43013cc, type: 3}
   Name: Cape.BlazewingCape

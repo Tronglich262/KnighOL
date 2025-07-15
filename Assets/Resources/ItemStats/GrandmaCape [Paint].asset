@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: 'GrandmaCape [Paint]'
   m_EditorClassIdentifier: 
   Item_ID: 108
-  itemId: 'FantasyHeroes.Basic.Cape.GrandmaCape [Paint] '
+  itemId: 'FantasyHeroes.Basic.Cape.GrandmaCape [Paint]'
   LevelRequired: 5
   Icon: {fileID: 21300000, guid: 43e86ae7c0a64edc9b00adc04340f261, type: 3}
   Name: 'Cape.GrandmaCape [Paint] '

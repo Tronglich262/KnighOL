@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: WaterWizardArmor 3
   m_EditorClassIdentifier: 
   Item_ID: 237
-  itemId: 'FantasyHeroes.Basic.Boots.WaterWizardArmor '
+  itemId: FantasyHeroes.Basic.Boots.WaterWizardArmor
   LevelRequired: 40
   Icon: {fileID: 21300000, guid: 9605e14f069ee9f4d9205b23a01e9b8b, type: 3}
   Name: Boots.WaterWizardArmor

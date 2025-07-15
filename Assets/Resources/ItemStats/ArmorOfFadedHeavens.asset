@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: ArmorOfFadedHeavens
   m_EditorClassIdentifier: 
   Item_ID: 18
-  itemId: 'Extensions.Epic.Vest.ArmorOfFadedHeavens '
+  itemId: Extensions.Epic.Vest.ArmorOfFadedHeavens
   LevelRequired: 60
   Icon: {fileID: 21300000, guid: 00f7cdee73644234e8192f4a3b5afcd3, type: 3}
   Name: Vest.ArmorOfFadedHeavens

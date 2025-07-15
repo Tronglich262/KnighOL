@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: KronosArmoredOutfit 2
   m_EditorClassIdentifier: 
   Item_ID: 112
-  itemId: 'Extensions.Legendary.Gloves.KronosArmoredOutfit '
+  itemId: Extensions.Legendary.Gloves.KronosArmoredOutfit
   LevelRequired: 40
   Icon: {fileID: 21300000, guid: 36fbb7101319af34b82883ca7b0f130c, type: 3}
   Name: Gloves.KronosArmoredOutfit

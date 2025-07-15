@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Shield 19
   m_EditorClassIdentifier: 
   Item_ID: 141
-  itemId: 'Extensions.Legendary.Shield.DragonTempestSteelCore '
+  itemId: Extensions.Legendary.Shield.DragonTempestSteelCore
   LevelRequired: 130
   Icon: {fileID: 21300000, guid: de8245a8e076f6f498f3c0287f41ee8a, type: 3}
   Name: 'Shield.DragonTempestSteelCore '

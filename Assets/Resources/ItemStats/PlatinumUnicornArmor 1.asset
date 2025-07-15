@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: PlatinumUnicornArmor 1
   m_EditorClassIdentifier: 
   Item_ID: 126
-  itemId: 'Extensions.Legendary.Belt.PlatinumUnicornArmor '
+  itemId: Extensions.Legendary.Belt.PlatinumUnicornArmor
   LevelRequired: 100
   Icon: {fileID: 21300000, guid: fef7380a6ccb9464b9a594411bd26b53, type: 3}
   Name: Belt.PlatinumUnicornArmor

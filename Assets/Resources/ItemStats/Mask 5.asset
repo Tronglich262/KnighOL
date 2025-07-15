@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Mask 5
   m_EditorClassIdentifier: 
   Item_ID: 120
-  itemId: 'UndeadHeroes.Piglet.Mask.FurryNose '
+  itemId: UndeadHeroes.Piglet.Mask.FurryNose
   LevelRequired: 25
   Icon: {fileID: 21300000, guid: fbee29bce4ec432aa384f84d271fb85c, type: 3}
   Name: Mask.FurryNose

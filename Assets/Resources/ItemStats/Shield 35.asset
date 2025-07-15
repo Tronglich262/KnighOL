@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Shield 35
   m_EditorClassIdentifier: 
   Item_ID: 159
-  itemId: 'Extensions.AbandonedWorkshop.Shield.OrkShield '
+  itemId: Extensions.AbandonedWorkshop.Shield.OrkShield
   LevelRequired: 60
   Icon: {fileID: 21300000, guid: 6e7f2aa7575129342ae413d85e5e449e, type: 3}
   Name: Shield.OrkShield

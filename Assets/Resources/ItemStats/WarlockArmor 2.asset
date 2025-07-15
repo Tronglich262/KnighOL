@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: WarlockArmor 2
   m_EditorClassIdentifier: 
   Item_ID: 231
-  itemId: 'FantasyHeroes.Basic.Gloves.WarlockArmor '
+  itemId: FantasyHeroes.Basic.Gloves.WarlockArmor
   LevelRequired: 50
   Icon: {fileID: 21300000, guid: 1685db7d95ed3254b9515f41c61f0f8b, type: 3}
   Name: Gloves.WarlockArmor

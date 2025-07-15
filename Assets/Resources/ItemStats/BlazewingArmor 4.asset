@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: BlazewingArmor 4
   m_EditorClassIdentifier: 
   Item_ID: 43
-  itemId: 'Extensions.Epic.Pauldrons.BlazewingArmor '
+  itemId: Extensions.Epic.Pauldrons.BlazewingArmor
   LevelRequired: 80
   Icon: {fileID: 21300000, guid: 95e411b4821e7d24299f5004e90e2bbb, type: 3}
   Name: Pauldrons.BlazewingArmor

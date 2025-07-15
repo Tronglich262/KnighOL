@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Glasses 12
   m_EditorClassIdentifier: 
   Item_ID: 98
-  itemId: 'FantasyHeroes.Basic.Glasses.LibrarianGlasses '
+  itemId: FantasyHeroes.Basic.Glasses.LibrarianGlasses
   LevelRequired: 20
   Icon: {fileID: 21300000, guid: dd7eea3e515f4d1dae1fe325a033f9d1, type: 3}
   Name: Glasses.LibrarianGlasses

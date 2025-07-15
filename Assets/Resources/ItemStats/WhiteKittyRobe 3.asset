@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: WhiteKittyRobe 3
   m_EditorClassIdentifier: 
   Item_ID: 242
-  itemId: 'Extensions.AbandonedWorkshop.Boots.WhiteKittyRobe '
+  itemId: Extensions.AbandonedWorkshop.Boots.WhiteKittyRobe
   LevelRequired: 30
   Icon: {fileID: 21300000, guid: f0dec766432f3274d9603bed336589cb, type: 3}
   Name: Boots.WhiteKittyRobe

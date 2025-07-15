@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: WitchHat [Paint] 4
   m_EditorClassIdentifier: 
   Item_ID: 247
-  itemId: 'FantasyHeroes.Basic.Pauldrons.WitchArmor '
+  itemId: FantasyHeroes.Basic.Pauldrons.WitchArmor
   LevelRequired: 20
   Icon: {fileID: 21300000, guid: c5f4503f8ed076647b3dd0a0297dfbee, type: 3}
   Name: Pauldrons.WitchArmor

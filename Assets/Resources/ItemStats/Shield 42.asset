@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Shield 42
   m_EditorClassIdentifier: 
   Item_ID: 167
-  itemId: 'Extensions.Legendary.Shield.TachyonRing '
+  itemId: Extensions.Legendary.Shield.TachyonRing
   LevelRequired: 100
   Icon: {fileID: 21300000, guid: 7753a697f013afa44b459e95d20793ac, type: 3}
   Name: Shield.TachyonRing

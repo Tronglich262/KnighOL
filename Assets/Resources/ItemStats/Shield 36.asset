@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Shield 36
   m_EditorClassIdentifier: 
   Item_ID: 160
-  itemId: 'Extensions.Legendary.Shield.RelicOfIncandescence '
+  itemId: Extensions.Legendary.Shield.RelicOfIncandescence
   LevelRequired: 130
   Icon: {fileID: 21300000, guid: fec67b71e988606479b9034e3b472b7f, type: 3}
   Name: 'Shield.RelicOfIncandescence '

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Shield 26
   m_EditorClassIdentifier: 
   Item_ID: 149
-  itemId: 'FantasyHeroes.Basic.Shield.HermitLamp '
+  itemId: FantasyHeroes.Basic.Shield.HermitLamp
   LevelRequired: 10
   Icon: {fileID: 21300000, guid: ba4eee9552544b488e0e517d1cf24c8c, type: 3}
   Name: Shield.HermitLamp

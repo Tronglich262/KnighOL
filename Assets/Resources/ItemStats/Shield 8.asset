@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Shield 8
   m_EditorClassIdentifier: 
   Item_ID: 172
-  itemId: 'FantasyHeroes.Basic.Shield.CardinalBook '
+  itemId: FantasyHeroes.Basic.Shield.CardinalBook
   LevelRequired: 20
   Icon: {fileID: 21300000, guid: 54c6ed8ca12e475b9aa2ed2459c8979f, type: 3}
   Name: Shield.CardinalBook

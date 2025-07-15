@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Mask 1
   m_EditorClassIdentifier: 
   Item_ID: 116
-  itemId: 'FantasyHeroes.Basic.Mask.Mask1 [Paint] '
+  itemId: 'FantasyHeroes.Basic.Mask.Mask1 [Paint]'
   LevelRequired: 5
   Icon: {fileID: 21300000, guid: 65fac0910b3046ca8058e14e4abd48b2, type: 3}
   Name: 'Mask.Mask1 [Paint]'

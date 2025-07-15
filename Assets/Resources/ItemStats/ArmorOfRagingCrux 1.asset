@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: ArmorOfRagingCrux 1
   m_EditorClassIdentifier: 
   Item_ID: 24
-  itemId: 'Extensions.Epic.Belt.ArmorOfRagingCrux '
+  itemId: Extensions.Epic.Belt.ArmorOfRagingCrux
   LevelRequired: 90
   Icon: {fileID: 21300000, guid: 9b77142990c9d8040bb917896e99120d, type: 3}
   Name: Belt.ArmorOfRagingCrux

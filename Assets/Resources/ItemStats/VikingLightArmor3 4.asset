@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: VikingLightArmor3 4
   m_EditorClassIdentifier: 
   Item_ID: 198
-  itemId: 'FantasyHeroes.Vikings.Pauldrons.VikingLightArmor3 '
+  itemId: FantasyHeroes.Vikings.Pauldrons.VikingLightArmor3
   LevelRequired: 5
   Icon: {fileID: 21300000, guid: 119cff23c2cd2c24dafad5120499fc01, type: 3}
   Name: Pauldrons.VikingLightArmor3

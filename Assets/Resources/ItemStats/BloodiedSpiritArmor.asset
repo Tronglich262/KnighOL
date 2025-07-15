@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: BloodiedSpiritArmor
   m_EditorClassIdentifier: 
   Item_ID: 45
-  itemId: 'Extensions.Epic.Vest.BloodiedSpiritArmor '
+  itemId: Extensions.Epic.Vest.BloodiedSpiritArmor
   LevelRequired: 80
   Icon: {fileID: 21300000, guid: f1b18d458c8597649b3fc3201b5e5bd0, type: 3}
   Name: Vest.BloodiedSpiritArmor

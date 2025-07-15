@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: DarkLordArmor 3
   m_EditorClassIdentifier: 
   Item_ID: 89
-  itemId: 'Extensions.Legendary.Boots.DarkLordArmor '
+  itemId: Extensions.Legendary.Boots.DarkLordArmor
   LevelRequired: 100
   Icon: {fileID: 21300000, guid: 4fcfb29631ee0db46a21a429639d54e0, type: 3}
   Name: Boots.DarkLordArmor

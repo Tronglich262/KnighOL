@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: DarkJusticeArmor 2
   m_EditorClassIdentifier: 
   Item_ID: 77
-  itemId: 'Extensions.Legendary.Gloves.DarkJusticeArmor '
+  itemId: Extensions.Legendary.Gloves.DarkJusticeArmor
   LevelRequired: 100
   Icon: {fileID: 21300000, guid: 305ef2d691a90054d8b8ab0ef1351972, type: 3}
   Name: Gloves.DarkJusticeArmor

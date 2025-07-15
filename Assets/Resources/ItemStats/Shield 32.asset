@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Shield 32
   m_EditorClassIdentifier: 
   Item_ID: 156
-  itemId: 'FantasyHeroes.Samurai.Shield.NinjaShield '
+  itemId: FantasyHeroes.Samurai.Shield.NinjaShield
   LevelRequired: 50
   Icon: {fileID: 21300000, guid: c6535bf550f24b61bd819c767185184b, type: 3}
   Name: Shield.NinjaShield

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: CapeOfRelentlessNightmares
   m_EditorClassIdentifier: 
   Item_ID: 69
-  itemId: 'Extensions.Epic.Cape.CapeOfRelentlessNightmares '
+  itemId: Extensions.Epic.Cape.CapeOfRelentlessNightmares
   LevelRequired: 20
   Icon: {fileID: 21300000, guid: efd36a7a825878543bdbacddd10fcd94, type: 3}
   Name: Cape.CapeOfRelentlessNightmares

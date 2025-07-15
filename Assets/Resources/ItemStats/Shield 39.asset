@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Shield 39
   m_EditorClassIdentifier: 
   Item_ID: 163
-  itemId: 'Extensions.Epic.Shield.ShieldOfEndingLight '
+  itemId: Extensions.Epic.Shield.ShieldOfEndingLight
   LevelRequired: 65
   Icon: {fileID: 21300000, guid: f7d0042584b04df45997e310da476933, type: 3}
   Name: Shield.ShieldOfEndingLight

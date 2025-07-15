@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: AizenHeavyArmor 4
   m_EditorClassIdentifier: 
   Item_ID: 6
-  itemId: 'Extensions.Legendary.Pauldrons.AizenHeavyArmor '
+  itemId: Extensions.Legendary.Pauldrons.AizenHeavyArmor
   LevelRequired: 40
   Icon: {fileID: 21300000, guid: 630ee815b1debd94d94f687f5047af63, type: 3}
   Name: Pauldrons.AizenHeavyArmor

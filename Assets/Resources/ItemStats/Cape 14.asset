@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Cape 14
   m_EditorClassIdentifier: 
   Item_ID: 57
-  itemId: 'Extensions.Legendary.Cape.WingsOfBrynhildr '
+  itemId: Extensions.Legendary.Cape.WingsOfBrynhildr
   LevelRequired: 140
   Icon: {fileID: 21300000, guid: f57289ddd74b6ea43bb18a88d9f3c830, type: 3}
   Name: 'Cape.WingsOfBrynhildr '

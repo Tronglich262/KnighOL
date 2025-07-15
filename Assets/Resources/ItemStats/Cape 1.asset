@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Cape 1
   m_EditorClassIdentifier: 
   Item_ID: 52
-  itemId: 'Extensions.Legendary.Cape.KronosCogs '
+  itemId: Extensions.Legendary.Cape.KronosCogs
   LevelRequired: 120
   Icon: {fileID: 21300000, guid: b62be846f0c27b648905a13fc1ed0468, type: 3}
   Name: Cape.KronosCogs

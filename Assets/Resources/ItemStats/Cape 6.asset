@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Cape 6
   m_EditorClassIdentifier: 
   Item_ID: 62
-  itemId: 'Extensions.AbandonedWorkshop.Cape.PotOfGold '
+  itemId: Extensions.AbandonedWorkshop.Cape.PotOfGold
   LevelRequired: 140
   Icon: {fileID: 21300000, guid: 6bc3b4ed5d91a094d91f085d49431c78, type: 3}
   Name: Cape.PotOfGold

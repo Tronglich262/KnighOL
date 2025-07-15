@@ -244,9 +244,11 @@ namespace Assets.HeroEditor.Common.CharacterScripts
                     sprite = byRendererName ? entries[0].Sprites.SingleOrDefault(i => i.name == renderer.name.Split('[')[0]) : entries[0].Sprite;
 					renderer.color = color;
 					break;
-				case 0:
-					throw new Exception($"Entry with id {id} not found in SpriteCollection.");
-				default:
+                case 0:
+                    Debug.LogError("[HeroEditor Debug] Missing id: " + id + " | All ids in collection: " +
+                        string.Join(", ", collection.Select(e => e.Id)));
+                    throw new Exception($"Entry with id {id} not found in SpriteCollection.");
+                default:
 					throw new Exception($"Multiple entries with id {id} found in SpriteCollection.");
 			}
 		}

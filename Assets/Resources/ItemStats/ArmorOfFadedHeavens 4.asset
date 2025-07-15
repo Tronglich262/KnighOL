@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: ArmorOfFadedHeavens 4
   m_EditorClassIdentifier: 
   Item_ID: 22
-  itemId: 'Extensions.Epic.Pauldrons.ArmorOfFadedHeavens '
+  itemId: Extensions.Epic.Pauldrons.ArmorOfFadedHeavens
   LevelRequired: 60
   Icon: {fileID: 21300000, guid: b8b9b4d12f1356d47ad5646669ca9f9a, type: 3}
   Name: 'Pauldrons.ArmorOfFadedHeavens '

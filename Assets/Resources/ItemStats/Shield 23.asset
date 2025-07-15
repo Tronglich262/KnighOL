@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Shield 23
   m_EditorClassIdentifier: 
   Item_ID: 146
-  itemId: 'FantasyHeroes.Basic.Shield.FireKnightShield '
+  itemId: FantasyHeroes.Basic.Shield.FireKnightShield
   LevelRequired: 5
   Icon: {fileID: 21300000, guid: 16de92f93ae64e20a1688157faecb6ef, type: 3}
   Name: Shield.FireKnightShield

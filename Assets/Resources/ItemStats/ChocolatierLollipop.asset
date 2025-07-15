@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: ChocolatierLollipop
   m_EditorClassIdentifier: 
   Item_ID: 73
-  itemId: 'Extensions.Legendary.Cape.ChocolatierLollipop '
+  itemId: Extensions.Legendary.Cape.ChocolatierLollipop
   LevelRequired: 25
   Icon: {fileID: 21300000, guid: ee3bc82b7e72aaa42b96c861743f3bfa, type: 3}
   Name: Cape.ChocolatierLollipop

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: VikingRoughArmor3 [Paint] 1
   m_EditorClassIdentifier: 
   Item_ID: 210
-  itemId: 'FantasyHeroes.Vikings.Belt.VikingRoughArmor3 [Paint] '
+  itemId: 'FantasyHeroes.Vikings.Belt.VikingRoughArmor3 [Paint]'
   LevelRequired: 30
   Icon: {fileID: 21300000, guid: b7c346c1d119c2f489bd07555f1678c0, type: 3}
   Name: 'Belt.VikingRoughArmor3 [Paint] '

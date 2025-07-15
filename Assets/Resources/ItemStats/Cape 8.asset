@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Cape 8
   m_EditorClassIdentifier: 
   Item_ID: 64
-  itemId: 'Extensions.Legendary.Cape.SeraphimBack '
+  itemId: Extensions.Legendary.Cape.SeraphimBack
   LevelRequired: 120
   Icon: {fileID: 21300000, guid: a325aab61c764c74ebc562c7213d5aea, type: 3}
   Name: Cape.SeraphimBack

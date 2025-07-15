@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: FrozenDragonBack
   m_EditorClassIdentifier: 
   Item_ID: 93
-  itemId: 'Extensions.Legendary.Cape.FrozenDragonBack '
+  itemId: Extensions.Legendary.Cape.FrozenDragonBack
   LevelRequired: 110
   Icon: {fileID: 21300000, guid: 1c9002433cf9bdc49a35c75e4d96339d, type: 3}
   Name: Cape.FrozenDragonBack

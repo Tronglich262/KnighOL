@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Shield 14
   m_EditorClassIdentifier: 
   Item_ID: 136
-  itemId: 'FantasyHeroes.Basic.Shield.DarkKnightShield '
+  itemId: FantasyHeroes.Basic.Shield.DarkKnightShield
   LevelRequired: 30
   Icon: {fileID: 21300000, guid: e0601474fae4450ea712dfbc9c430922, type: 3}
   Name: Shield.DarkKnightShield

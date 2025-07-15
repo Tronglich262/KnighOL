@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Cape 11
   m_EditorClassIdentifier: 
   Item_ID: 54
-  itemId: 'Extensions.Legendary.Cape.SupremeMikadoGarbCape '
+  itemId: Extensions.Legendary.Cape.SupremeMikadoGarbCape
   LevelRequired: 50
   Icon: {fileID: 21300000, guid: bbff23588601ec64785519c35d5a2166, type: 3}
   Name: 'Cape.SupremeMikadoGarbCape '

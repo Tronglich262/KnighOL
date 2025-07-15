@@ -293,6 +293,14 @@ public class ItemDetailsUI : MonoBehaviour
                     "Back"
                 );
             }
+            if (type == "Mask")
+            {
+                CharacterUIManager1.Instance.DisplayItem1(
+                    CharacterUIManager1.Instance.Maskslot, // Index 2 là Gloves
+                    itemId,
+                    "Mask"
+                );
+            }
             if (type == "Bow")
             {
                 CharacterUIManager1.Instance.DisplayItem1(
@@ -572,6 +580,9 @@ public class ItemDetailsUI : MonoBehaviour
                 break;
 
             case "Vest":
+                break;
+
+            case "Mask":
                 break;
 
             case "Belt":

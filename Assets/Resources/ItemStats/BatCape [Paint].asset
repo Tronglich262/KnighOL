@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: 'BatCape [Paint]'
   m_EditorClassIdentifier: 
   Item_ID: 38
-  itemId: 'FantasyHeroes.Basic.Cape.BatCape [Paint] '
+  itemId: 'FantasyHeroes.Basic.Cape.BatCape [Paint]'
   LevelRequired: 10
   Icon: {fileID: 21300000, guid: 10479db90f694ed8b45618ea65e5d8bb, type: 3}
   Name: 'Cape.BatCape [Paint] '

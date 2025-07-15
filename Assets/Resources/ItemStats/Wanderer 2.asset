@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Wanderer 2
   m_EditorClassIdentifier: 
   Item_ID: 226
-  itemId: 'FantasyHeroes.Basic.Gloves.Wanderer '
+  itemId: FantasyHeroes.Basic.Gloves.Wanderer
   LevelRequired: 50
   Icon: {fileID: 21300000, guid: 261def7836dfcf645bb77fb0eead5348, type: 3}
   Name: Gloves.Wanderer

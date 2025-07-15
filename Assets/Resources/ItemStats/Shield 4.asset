@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Shield 4
   m_EditorClassIdentifier: 
   Item_ID: 164
-  itemId: 'FantasyHeroes.Basic.Shield.BasicIronShield '
+  itemId: FantasyHeroes.Basic.Shield.BasicIronShield
   LevelRequired: 10
   Icon: {fileID: 21300000, guid: 4082d5629b0349a0acd7ef04001d84ab, type: 3}
   Name: Shield.BasicIronShield

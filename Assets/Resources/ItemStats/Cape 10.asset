@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Cape 10
   m_EditorClassIdentifier: 
   Item_ID: 53
-  itemId: 'Extensions.Epic.Cape.StormcallerCape '
+  itemId: Extensions.Epic.Cape.StormcallerCape
   LevelRequired: 45
   Icon: {fileID: 21300000, guid: d520c4edbf04a6e49b2f880a12125e91, type: 3}
   Name: Cape.StormcallerCape

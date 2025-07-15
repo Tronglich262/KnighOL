@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: WallKeeperHelm 5
   m_EditorClassIdentifier: 
   Item_ID: 223
-  itemId: 'Extensions.AbandonedWorkshop.Pauldrons.WallKeeperArmor '
+  itemId: Extensions.AbandonedWorkshop.Pauldrons.WallKeeperArmor
   LevelRequired: 20
   Icon: {fileID: 21300000, guid: aabc0f1cfac81d64daf4b7c1211edcee, type: 3}
   Name: Pauldrons.WallKeeperArmor

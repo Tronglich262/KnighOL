@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Shield 12
   m_EditorClassIdentifier: 
   Item_ID: 134
-  itemId: 'FantasyHeroes.Basic.Shield.CrusaderShield '
+  itemId: FantasyHeroes.Basic.Shield.CrusaderShield
   LevelRequired: 25
   Icon: {fileID: 21300000, guid: fa7c99c93e074e55b2c514b330803f4e, type: 3}
   Name: 'Shield.CrusaderShield '

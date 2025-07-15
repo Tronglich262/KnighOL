@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: WarlockArmor 4
   m_EditorClassIdentifier: 
   Item_ID: 233
-  itemId: 'FantasyHeroes.Basic.Pauldrons.WarlockArmor '
+  itemId: FantasyHeroes.Basic.Pauldrons.WarlockArmor
   LevelRequired: 50
   Icon: {fileID: 21300000, guid: 5dffb34f156a39d4aa2d09f3beb035e4, type: 3}
   Name: Pauldrons.WarlockArmor

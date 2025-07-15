@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: WallKeeperHelm 4
   m_EditorClassIdentifier: 
   Item_ID: 222
-  itemId: 'Extensions.AbandonedWorkshop.Boots.WallKeeperArmor '
+  itemId: Extensions.AbandonedWorkshop.Boots.WallKeeperArmor
   LevelRequired: 20
   Icon: {fileID: 21300000, guid: 4b4cec26685000943adb6fb850256d02, type: 3}
   Name: Boots.WallKeeperArmor

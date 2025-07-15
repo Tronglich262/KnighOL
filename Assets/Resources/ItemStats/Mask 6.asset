@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Mask 6
   m_EditorClassIdentifier: 
   Item_ID: 121
-  itemId: 'UndeadHeroes.Piglet.Mask.Piglet2 [Paint] '
+  itemId: 'UndeadHeroes.Piglet.Mask.Piglet2 [Paint]'
   LevelRequired: 30
   Icon: {fileID: 21300000, guid: 566f8d6697af48069a9a1402df6b1530, type: 3}
   Name: 'Mask.Piglet2 [Paint]'

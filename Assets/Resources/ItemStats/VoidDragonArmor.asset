@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: VoidDragonArmor
   m_EditorClassIdentifier: 
   Item_ID: 214
-  itemId: 'Extensions.Legendary.Vest.VoidDragonArmor '
+  itemId: Extensions.Legendary.Vest.VoidDragonArmor
   LevelRequired: 60
   Icon: {fileID: 21300000, guid: 54f802dff72d5ea4fa1fa3ac2c0eae12, type: 3}
   Name: Vest.VoidDragonArmor

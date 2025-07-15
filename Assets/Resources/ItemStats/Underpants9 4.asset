@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Underpants9 4
   m_EditorClassIdentifier: 
   Item_ID: 178
-  itemId: 'Extensions.AbandonedWorkshop.Pauldrons.Underpants9 '
+  itemId: Extensions.AbandonedWorkshop.Pauldrons.Underpants9
   LevelRequired: 40
   Icon: {fileID: 21300000, guid: 53073b717459e8940b68a34e6e1c3232, type: 3}
   Name: Pauldrons.Underpants9

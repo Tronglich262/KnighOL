@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: WaterWizardArmor 1
   m_EditorClassIdentifier: 
   Item_ID: 235
-  itemId: 'FantasyHeroes.Basic.Belt.WaterWizardArmor '
+  itemId: FantasyHeroes.Basic.Belt.WaterWizardArmor
   LevelRequired: 40
   Icon: {fileID: 21300000, guid: 80b59525fb8e1cf439ba96543e6f314d, type: 3}
   Name: Belt.WaterWizardArmor

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: ExorcismRing
   m_EditorClassIdentifier: 
   Item_ID: 92
-  itemId: 'Extensions.Legendary.Cape.ExorcismRing '
+  itemId: Extensions.Legendary.Cape.ExorcismRing
   LevelRequired: 110
   Icon: {fileID: 21300000, guid: e21a2622ee149c64d8da2a4bb61dc0a9, type: 3}
   Name: Cape.ExorcismRing

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: DarkKnight 1
   m_EditorClassIdentifier: 
   Item_ID: 82
-  itemId: 'FantasyHeroes.Basic.Belt.DarkKnight '
+  itemId: FantasyHeroes.Basic.Belt.DarkKnight
   LevelRequired: 70
   Icon: {fileID: 21300000, guid: e06ff1ba0b9498042896f235dd8e30a9, type: 3}
   Name: Belt.DarkKnight

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: ArmorOfEndingLight
   m_EditorClassIdentifier: 
   Item_ID: 13
-  itemId: 'Extensions.Epic.Vest.ArmorOfEndingLight '
+  itemId: Extensions.Epic.Vest.ArmorOfEndingLight
   LevelRequired: 70
   Icon: {fileID: 21300000, guid: 1d5cda9ed826ffb4d9a9c0a915e0fe9e, type: 3}
   Name: Vest.ArmorOfEndingLight

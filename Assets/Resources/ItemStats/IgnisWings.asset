@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: IgnisWings
   m_EditorClassIdentifier: 
   Item_ID: 109
-  itemId: 'Extensions.Legendary.Cape.IgnisWings '
+  itemId: Extensions.Legendary.Cape.IgnisWings
   LevelRequired: 80
   Icon: {fileID: 21300000, guid: 1c8907b6e893d864d8d64be5bd2288e1, type: 3}
   Name: Cape.IgnisWings

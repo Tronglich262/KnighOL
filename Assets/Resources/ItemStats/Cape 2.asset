@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Cape 2
   m_EditorClassIdentifier: 
   Item_ID: 58
-  itemId: 'Extensions.Legendary.Cape.NemeanCape '
+  itemId: Extensions.Legendary.Cape.NemeanCape
   LevelRequired: 60
   Icon: {fileID: 21300000, guid: 4515200a18a721f4cac747768efae3f4, type: 3}
   Name: Cape.NemeanCape

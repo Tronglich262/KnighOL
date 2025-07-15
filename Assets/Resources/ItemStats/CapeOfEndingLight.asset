@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: CapeOfEndingLight
   m_EditorClassIdentifier: 
   Item_ID: 66
-  itemId: 'Extensions.Epic.Cape.CapeOfEndingLight '
+  itemId: Extensions.Epic.Cape.CapeOfEndingLight
   LevelRequired: 15
   Icon: {fileID: 21300000, guid: a586a1cfa33eca84892c5341fa1902bc, type: 3}
   Name: Cape.CapeOfEndingLight

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: CapeOfEternalLight
   m_EditorClassIdentifier: 
   Item_ID: 67
-  itemId: 'Extensions.Legendary.Cape.CapeOfEternalLight '
+  itemId: Extensions.Legendary.Cape.CapeOfEternalLight
   LevelRequired: 15
   Icon: {fileID: 21300000, guid: d5e2ce95156ae2543a8a99deb2a53a00, type: 3}
   Name: Cape.CapeOfEternalLight

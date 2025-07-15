@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: BloodiedSpiritArmor 3
   m_EditorClassIdentifier: 
   Item_ID: 48
-  itemId: 'Extensions.Epic.Boots.BloodiedSpiritArmor '
+  itemId: Extensions.Epic.Boots.BloodiedSpiritArmor
   LevelRequired: 80
   Icon: {fileID: 21300000, guid: b6416e7f7167a7d4e9b9fce074296101, type: 3}
   Name: Boots.BloodiedSpiritArmor

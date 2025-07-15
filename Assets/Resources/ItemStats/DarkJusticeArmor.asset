@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: DarkJusticeArmor
   m_EditorClassIdentifier: 
   Item_ID: 75
-  itemId: 'Extensions.Legendary.Vest.DarkJusticeArmor '
+  itemId: Extensions.Legendary.Vest.DarkJusticeArmor
   LevelRequired: 100
   Icon: {fileID: 21300000, guid: b86e4d056fcc6b5479192d56e9aa2529, type: 3}
   Name: Vest.DarkJusticeArmor

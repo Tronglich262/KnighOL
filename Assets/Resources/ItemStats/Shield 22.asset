@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Shield 22
   m_EditorClassIdentifier: 
   Item_ID: 145
-  itemId: 'Extensions.AbandonedWorkshop.Shield.EliteGuardShield '
+  itemId: Extensions.AbandonedWorkshop.Shield.EliteGuardShield
   LevelRequired: 5
   Icon: {fileID: 21300000, guid: c687792d4e7b1eb448a6effddc1cef60, type: 3}
   Name: 'Shield.EliteGuardShield '

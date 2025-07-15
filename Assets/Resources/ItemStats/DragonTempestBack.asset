@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: DragonTempestBack
   m_EditorClassIdentifier: 
   Item_ID: 91
-  itemId: 'Extensions.Legendary.Cape.DragonTempestBack '
+  itemId: Extensions.Legendary.Cape.DragonTempestBack
   LevelRequired: 70
   Icon: {fileID: 21300000, guid: ec080ad4d664d314a80940976c5989cf, type: 3}
   Name: Cape.DragonTempestBack

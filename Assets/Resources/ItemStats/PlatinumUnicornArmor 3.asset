@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6eea8a67d52cafd4189c50561eac9854, type: 3}
   m_Name: PlatinumUnicornArmor 3
   m_EditorClassIdentifier: 
-  Item_ID: 0
+  Item_ID: 128
   itemId: 'Extensions.Legendary.Boots.PlatinumUnicornArmor '
   LevelRequired: 100
   Icon: {fileID: 21300000, guid: fc166b092c9b5e34ea5f72fd20b55b5a, type: 3}

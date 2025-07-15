@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6eea8a67d52cafd4189c50561eac9854, type: 3}
   m_Name: ArmorOfRagingCrux
   m_EditorClassIdentifier: 
-  Item_ID: 0
+  Item_ID: 23
   itemId: Extensions.Epic.Vest.ArmorOfRagingCrux
   LevelRequired: 90
   Icon: {fileID: 21300000, guid: 4c0edde74922ae94a827a2de7409e559, type: 3}

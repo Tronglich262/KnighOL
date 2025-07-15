@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6eea8a67d52cafd4189c50561eac9854, type: 3}
   m_Name: ArmorOfRelentlessNightmares 4
   m_EditorClassIdentifier: 
-  Item_ID: 0
+  Item_ID: 32
   itemId: 'Extensions.Epic.Pauldrons.ArmorOfRelentlessNightmares '
   LevelRequired: 95
   Icon: {fileID: 21300000, guid: 6f76be478e8654f4fb9e6d362fda0f8e, type: 3}

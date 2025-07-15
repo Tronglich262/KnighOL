@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6eea8a67d52cafd4189c50561eac9854, type: 3}
   m_Name: ArmorOfEndingLight 3
   m_EditorClassIdentifier: 
-  Item_ID: 0
+  Item_ID: 16
   itemId: 'Extensions.Epic.Boots.ArmorOfEndingLight '
   LevelRequired: 70
   Icon: {fileID: 21300000, guid: e650b7df371e50e4691006e3f8d51ae9, type: 3}

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6eea8a67d52cafd4189c50561eac9854, type: 3}
   m_Name: WarlockArmor
   m_EditorClassIdentifier: 
-  Item_ID: 0
+  Item_ID: 229
   itemId: FantasyHeroes.Basic.Vest.WarlockArmor
   LevelRequired: 50
   Icon: {fileID: 21300000, guid: a5eb6495f5b608841a6ad8e229a7692c, type: 3}

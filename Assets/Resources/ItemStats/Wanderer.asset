@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6eea8a67d52cafd4189c50561eac9854, type: 3}
   m_Name: Wanderer
   m_EditorClassIdentifier: 
-  Item_ID: 0
+  Item_ID: 224
   itemId: FantasyHeroes.Basic.Vest.Wanderer
   LevelRequired: 50
   Icon: {fileID: 21300000, guid: 68d95aa1ec9ae2741b0acad5dbaa8c82, type: 3}

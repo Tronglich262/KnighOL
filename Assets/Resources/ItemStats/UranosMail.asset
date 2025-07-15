@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6eea8a67d52cafd4189c50561eac9854, type: 3}
   m_Name: UranosMail
   m_EditorClassIdentifier: 
-  Item_ID: 0
+  Item_ID: 179
   itemId: 'Extensions.Legendary.Vest.UranosMail '
   LevelRequired: 100
   Icon: {fileID: 21300000, guid: 7d32024fcf3b8bd47bb4824c084f520c, type: 3}

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6eea8a67d52cafd4189c50561eac9854, type: 3}
   m_Name: WarlockArmor 3
   m_EditorClassIdentifier: 
-  Item_ID: 0
+  Item_ID: 232
   itemId: 'FantasyHeroes.Basic.Boots.WarlockArmor '
   LevelRequired: 50
   Icon: {fileID: 21300000, guid: 62e4b262528725344b606fe33e18ea02, type: 3}

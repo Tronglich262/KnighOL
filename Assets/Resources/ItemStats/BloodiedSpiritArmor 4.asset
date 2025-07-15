@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6eea8a67d52cafd4189c50561eac9854, type: 3}
   m_Name: BloodiedSpiritArmor 4
   m_EditorClassIdentifier: 
-  Item_ID: 0
+  Item_ID: 49
   itemId: 'Extensions.Epic.Pauldrons.BloodiedSpiritArmor '
   LevelRequired: 80
   Icon: {fileID: 21300000, guid: 26423f2fed4ed9b4e9c132a4fc8a4e5c, type: 3}

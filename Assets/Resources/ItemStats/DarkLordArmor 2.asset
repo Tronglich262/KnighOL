@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6eea8a67d52cafd4189c50561eac9854, type: 3}
   m_Name: DarkLordArmor 2
   m_EditorClassIdentifier: 
-  Item_ID: 0
+  Item_ID: 88
   itemId: 'Extensions.Legendary.Gloves.DarkLordArmor '
   LevelRequired: 100
   Icon: {fileID: 21300000, guid: 38b827964c394804480a80e4784ef323, type: 3}

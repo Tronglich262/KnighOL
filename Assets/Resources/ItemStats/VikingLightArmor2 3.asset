@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6eea8a67d52cafd4189c50561eac9854, type: 3}
   m_Name: VikingLightArmor2 3
   m_EditorClassIdentifier: 
-  Item_ID: 0
+  Item_ID: 192
   itemId: FantasyHeroes.Vikings.Boots.VikingLightArmor2
   LevelRequired: 5
   Icon: {fileID: 21300000, guid: 1e8cf045be4a13549b916ba4bf382948, type: 3}

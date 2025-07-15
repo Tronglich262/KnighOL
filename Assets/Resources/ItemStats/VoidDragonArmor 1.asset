@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6eea8a67d52cafd4189c50561eac9854, type: 3}
   m_Name: VoidDragonArmor 1
   m_EditorClassIdentifier: 
-  Item_ID: 0
+  Item_ID: 215
   itemId: 'Extensions.Legendary.Belt.VoidDragonArmor '
   LevelRequired: 60
   Icon: {fileID: 21300000, guid: d4c290e86da40e046b269c2406a48721, type: 3}

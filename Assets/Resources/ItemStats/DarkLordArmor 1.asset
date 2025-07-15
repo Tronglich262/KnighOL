@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6eea8a67d52cafd4189c50561eac9854, type: 3}
   m_Name: DarkLordArmor 1
   m_EditorClassIdentifier: 
-  Item_ID: 0
+  Item_ID: 87
   itemId: 'Extensions.Legendary.Belt.DarkLordArmor '
   LevelRequired: 100
   Icon: {fileID: 21300000, guid: df5c5330517a3db4b8d6ac06a82553be, type: 3}

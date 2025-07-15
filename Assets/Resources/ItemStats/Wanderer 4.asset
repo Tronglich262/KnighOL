@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6eea8a67d52cafd4189c50561eac9854, type: 3}
   m_Name: Wanderer 4
   m_EditorClassIdentifier: 
-  Item_ID: 0
+  Item_ID: 228
   itemId: 'FantasyHeroes.Basic.Pauldrons.Wanderer '
   LevelRequired: 50
   Icon: {fileID: 21300000, guid: e93ff46b4b39016448b1c88131945aca, type: 3}

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6eea8a67d52cafd4189c50561eac9854, type: 3}
   m_Name: DarkJusticeArmor 1
   m_EditorClassIdentifier: 
-  Item_ID: 0
+  Item_ID: 76
   itemId: 'Extensions.Legendary.Belt.DarkJusticeArmor '
   LevelRequired: 100
   Icon: {fileID: 21300000, guid: 558a37c05f978f94b86b3a36f198709f, type: 3}

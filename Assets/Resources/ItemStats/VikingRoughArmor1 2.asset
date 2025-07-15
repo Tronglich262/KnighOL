@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6eea8a67d52cafd4189c50561eac9854, type: 3}
   m_Name: VikingRoughArmor1 2
   m_EditorClassIdentifier: 
-  Item_ID: 0
+  Item_ID: 201
   itemId: 'FantasyHeroes.Vikings.Gloves.VikingRoughArmor1 '
   LevelRequired: 10
   Icon: {fileID: 21300000, guid: 26c73141e88c9d34198b8359a5597790, type: 3}

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6eea8a67d52cafd4189c50561eac9854, type: 3}
   m_Name: VikingFurArmor 4
   m_EditorClassIdentifier: 
-  Item_ID: 0
+  Item_ID: 188
   itemId: 'FantasyHeroes.Vikings.Pauldrons.VikingFurArmor '
   LevelRequired: 20
   Icon: {fileID: 21300000, guid: f68f31b194239274285bc72178d4e636, type: 3}

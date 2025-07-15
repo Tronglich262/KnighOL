@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6eea8a67d52cafd4189c50561eac9854, type: 3}
   m_Name: Underpants9 3
   m_EditorClassIdentifier: 
-  Item_ID: 0
+  Item_ID: 177
   itemId: 'Extensions.AbandonedWorkshop.Boots.Underpants9 '
   LevelRequired: 40
   Icon: {fileID: 21300000, guid: f5c95bd4236d3d34aa0c65c87d1cc125, type: 3}

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6eea8a67d52cafd4189c50561eac9854, type: 3}
   m_Name: WitchHunterHat [Paint] 2
   m_EditorClassIdentifier: 
-  Item_ID: 0
+  Item_ID: 250
   itemId: 'FantasyHeroes.Basic.Belt.WitchHunterArmor [Paint] '
   LevelRequired: 10
   Icon: {fileID: 21300000, guid: 31d4be3e2e40cd3498b86e9ef910cceb, type: 3}

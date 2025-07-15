@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6eea8a67d52cafd4189c50561eac9854, type: 3}
   m_Name: VikingRoughArmor2 1
   m_EditorClassIdentifier: 
-  Item_ID: 0
+  Item_ID: 205
   itemId: 'FantasyHeroes.Vikings.Belt.VikingRoughArmor2 '
   LevelRequired: 20
   Icon: {fileID: 21300000, guid: 5c218aaf8fb8add4cbfbcb352bfe893f, type: 3}

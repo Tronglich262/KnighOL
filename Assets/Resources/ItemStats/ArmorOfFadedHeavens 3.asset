@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6eea8a67d52cafd4189c50561eac9854, type: 3}
   m_Name: ArmorOfFadedHeavens 3
   m_EditorClassIdentifier: 
-  Item_ID: 0
+  Item_ID: 21
   itemId: 'Extensions.Epic.Boots.ArmorOfFadedHeavens '
   LevelRequired: 60
   Icon: {fileID: 21300000, guid: dd192e153fada9e48a8dca89a17ef109, type: 3}

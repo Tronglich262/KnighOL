@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6eea8a67d52cafd4189c50561eac9854, type: 3}
   m_Name: AizenHeavyArmor
   m_EditorClassIdentifier: 
-  Item_ID: 0
+  Item_ID: 2
   itemId: Extensions.Legendary.Vest.AizenHeavyArmor
   LevelRequired: 40
   Icon: {fileID: 21300000, guid: 9f82b25b09f753943b731fd01d4b6746, type: 3}

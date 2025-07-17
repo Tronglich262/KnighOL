@@ -1,4 +1,4 @@
-[System.Serializable]
+﻿[System.Serializable]
 public class QuestResponse
 {
     public int quest_ID;
@@ -11,4 +11,5 @@ public class QuestResponse
     public bool is_completed;
     public int reward_gold;
     public int reward_exp;
+
 }

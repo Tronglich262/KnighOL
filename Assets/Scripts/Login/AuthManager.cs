@@ -24,7 +24,7 @@ public class AuthManager : MonoBehaviour
     public TMP_InputField loginEmail;
     public TMP_InputField loginPassword;
 
-    private string apiUrl = "https://localhost:7124/api/Account";
+    public string apiUrl = "https://localhost:7124/api/Account";
     private Coroutine tokenCheckCoroutine;  // token
 
     [Header("Thông báo UI")]
@@ -511,10 +511,67 @@ public class AuthManager : MonoBehaviour
 
         if (req.result == UnityWebRequest.Result.Success)
         {
-            Debug.Log("Cập nhật tiến độ nhiệm vụ thành công!");
-            // Tìm và reload UI quest:
+            // Reload lại quest UI:
             var questDisplay = GameObject.FindObjectOfType<QuestDisplay>();
             if (questDisplay != null) questDisplay.ReloadQuests();
+
+            // Parse phần thưởng từ response:
+            var text = req.downloadHandler.text;
+            QuestProgressRewardResponse rewardResp = JsonUtility.FromJson<QuestProgressRewardResponse>(text);
+
+            // Cộng vàng
+            if (rewardResp != null && rewardResp.reward != null && rewardResp.reward.gold > 0)
+            {
+                if (PlayerDataHolder1.CurrentPlayerState != null)
+                {
+                    PlayerDataHolder1.CurrentPlayerState.gold += rewardResp.reward.gold;
+                    Debug.Log($"[REWARD] Nhận {rewardResp.reward.gold} vàng!");
+                }
+            }
+
+            // Cộng exp
+            if (rewardResp != null && rewardResp.reward != null && rewardResp.reward.exp > 0)
+            {
+                if (PlayerDataHolder1.CurrentPlayerState != null)
+                {
+                    PlayerDataHolder1.CurrentPlayerState.exp += rewardResp.reward.exp;
+                    Debug.Log($"[REWARD] Nhận {rewardResp.reward.exp} EXP!");
+                }
+            }
+
+            // Cộng item
+            if (rewardResp != null && rewardResp.reward != null && rewardResp.reward.items != null && rewardResp.reward.items.Length > 0)
+            {
+                foreach (var item in rewardResp.reward.items)
+                {
+                    InventoryManager.Instance.AddItem(item.itemId.ToString(), item.amount);
+                    Debug.Log($"[REWARD] Nhận {item.amount} x {item.itemId}!");
+                }
+            }
+
+            // Hiện popup/phản hồi UI nếu muốn
+            if (
+                 rewardResp != null && rewardResp.reward != null &&
+                (rewardResp.reward.gold > 0 || rewardResp.reward.exp > 0 ||
+                 (rewardResp.reward.items != null && rewardResp.reward.items.Length > 0))
+              )
+            {
+                string rewardMsg = "";
+                if (rewardResp.reward.gold > 0)
+                    rewardMsg += $"Nhận: {rewardResp.reward.gold} vàng";
+                if (rewardResp.reward.exp > 0)
+                    rewardMsg += (rewardMsg == "" ? "Nhận: " : ", ") + $"{rewardResp.reward.exp} exp";
+                if (rewardResp.reward.items != null && rewardResp.reward.items.Length > 0)
+                {
+                    foreach (var it in rewardResp.reward.items)
+                        rewardMsg += $", {it.amount} x {it.itemId}";
+                }
+                if (ItemDetailsPanel.Instance != null && !string.IsNullOrEmpty(rewardMsg))
+                    ItemDetailsPanel.Instance.ShowEquipMessage(rewardMsg, 2.5f);
+
+                // Debug log (nếu muốn)
+                Debug.Log("[QUEST REWARD] " + rewardMsg);
+            }
 
         }
         else
@@ -522,9 +579,32 @@ public class AuthManager : MonoBehaviour
             Debug.LogError("Update quest progress FAIL: " + req.downloadHandler.text);
         }
     }
-}
-//tắt api thì out game
 
+}
+    //tắt api thì out game
+
+
+    [System.Serializable]
+public class QuestProgressRewardResponse
+{
+    public string message;
+    public QuestReward reward;
+}
+
+[System.Serializable]
+public class QuestReward
+{
+    public int gold;
+    public int exp;
+    public ItemReward[] items;
+}
+
+[System.Serializable]
+public class ItemReward
+{
+    public int itemId; // Hoặc string nếu itemId là chuỗi
+    public int amount;
+}
 
 
 [System.Serializable]

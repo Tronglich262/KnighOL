@@ -462,8 +462,66 @@ public class AuthManager : MonoBehaviour
             onDone?.Invoke(false);
         }
     }
+    //lấy nhiệm vụ 
+    public IEnumerator GetUserQuests(System.Action<QuestResponse[]> onDone)
+    {
+        string url = apiUrl + "/quests";
+        UnityWebRequest req = UnityWebRequest.Get(url);
+        req.SetRequestHeader("Authorization", "Bearer " + UserSession.Token);
 
+        yield return req.SendWebRequest();
 
+        if (req.result == UnityWebRequest.Result.Success)
+        {
+            QuestResponse[] quests = JsonHelper.FromJson<QuestResponse>(req.downloadHandler.text);
+            onDone?.Invoke(quests);
+        }
+        else
+        {
+            Debug.LogError("Lỗi GetUserQuests: " + req.downloadHandler.text);
+            onDone?.Invoke(null);
+        }
+    }
+
+    //Update nhiệm vụ 
+    public void UpdateQuestProgress(string targetType, int targetId, int amount)
+    {
+        StartCoroutine(UpdateQuestProgressCoroutine(targetType, targetId, amount));
+    }
+
+    private IEnumerator UpdateQuestProgressCoroutine(string targetType, int targetId, int amount)
+    {
+        var dto = new QuestProgressDto
+        {
+            targetType = targetType,
+            targetId = targetId,
+            amount = amount
+        };
+        string json = JsonUtility.ToJson(dto);
+
+        string url = apiUrl + "/quests/progress";
+        UnityWebRequest req = new UnityWebRequest(url, "POST");
+        byte[] bodyRaw = Encoding.UTF8.GetBytes(json);
+        req.uploadHandler = new UploadHandlerRaw(bodyRaw);
+        req.downloadHandler = new DownloadHandlerBuffer();
+        req.SetRequestHeader("Content-Type", "application/json");
+        req.SetRequestHeader("Authorization", "Bearer " + UserSession.Token);
+
+        yield return req.SendWebRequest();
+
+        if (req.result == UnityWebRequest.Result.Success)
+        {
+            Debug.Log("Cập nhật tiến độ nhiệm vụ thành công!");
+            // Tìm và reload UI quest:
+            var questDisplay = GameObject.FindObjectOfType<QuestDisplay>();
+            if (questDisplay != null) questDisplay.ReloadQuests();
+
+        }
+        else
+        {
+            Debug.LogError("Update quest progress FAIL: " + req.downloadHandler.text);
+        }
+    }
 }
 //tắt api thì out game
 

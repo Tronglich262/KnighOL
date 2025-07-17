@@ -93,6 +93,8 @@ public class WorldChatUIManager : NetworkBehaviour
         privateChatPanel.SetActive(false);
         ToggleBatCharbarAndChatPrivateList();
         privateChatListPanel.SetActive(false);
+        SkillButtonManager.Instance.Skillbutton.SetActive(true);
+        QuestDisplay.Instance.questPanel.SetActive(true);
         currentPrivateTargetName = null;
         
     }
@@ -119,8 +121,10 @@ public class WorldChatUIManager : NetworkBehaviour
             || isCanvasShoptp || isCanvasShopvk || isCanvasShoppk || isCanvasShopdiemdanh || isCanvasShopnv)
             return;
         chatPanel.SetActive(true);
+        SkillButtonManager.Instance.Skillbutton.SetActive(false);
         privateChatPanel.SetActive(false);
         privateChatListPanel.SetActive(false);
+        QuestDisplay.Instance.questPanel.SetActive(false);
         ToggleTatCharbarAndChatPrivateList();
         foreach (Transform child in chatContent) Destroy(child.gameObject);
         foreach (var (sender, message) in chatHistory) AddMessageToPanel(sender, message);
@@ -172,7 +176,9 @@ public class WorldChatUIManager : NetworkBehaviour
         privateChatPanel.SetActive(false);
         Chat.SetActive(false);
         SettingPanel.Instance.Setting.SetActive(false);
-     //   SkillButtonManager.Instance.Skillbutton.SetActive(false);
+        SkillButtonManager.Instance.Skillbutton.SetActive(false);
+        WorldChatUIManager.Instance.Chat.SetActive(false);
+        QuestDisplay.Instance.questPanel.SetActive(false);
         privateChatListPanel.SetActive(true);
         currentPrivateTargetName = null;
     }
@@ -407,7 +413,9 @@ public class WorldChatUIManager : NetworkBehaviour
         chatBar.SetActive(true);
         Chat.SetActive(true);
         SettingPanel.Instance.Setting.SetActive(true);
-      //  SkillButtonManager.Instance.Skillbutton.SetActive(true);
+       SkillButtonManager.Instance.Skillbutton.SetActive(true);
+        WorldChatUIManager.Instance.Chat.SetActive(true);
+        QuestDisplay.Instance.questPanel.SetActive(true);
     }
 
     void UpdatePrivateMsgNotify()

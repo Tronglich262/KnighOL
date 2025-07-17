@@ -92,7 +92,9 @@ public class ShopTriggerTP : MonoBehaviour
                     bool checktoggle = MovementExample.Instante.checktoggle = true;
                     bool nextState = !shopPanel.activeSelf;
                     shopPanel.SetActive(nextState);
-                    SkillButtonManager.Instance.Skillbutton.SetActive(false);
+                    SkillButtonManager.Instance.Skillbutton.SetActive(false);  
+                    WorldChatUIManager.Instance.Chat.SetActive(false);
+                    QuestDisplay.Instance.questPanel.SetActive(false);
 
                     if (CanvasShop.Instante.canvasShop != null)
                         CanvasShop.Instante.canvasShop.SetActive(false);

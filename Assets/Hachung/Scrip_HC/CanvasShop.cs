@@ -113,7 +113,7 @@ public class CanvasShop : MonoBehaviour
         panelshoptp.SetActive(!panelshoptp.activeSelf);
         SkillButtonManager.Instance.Skillbutton.SetActive(true);
         bool checktoggle = MovementExample.Instante.checktoggle = false;
-
+        QuestDisplay.Instance.questPanel.SetActive(true);
 
         Bat();
 
@@ -123,6 +123,7 @@ public class CanvasShop : MonoBehaviour
         panelshoppk.SetActive(!panelshoppk.activeSelf);
         SkillButtonManager.Instance.Skillbutton.SetActive(true);
         bool checktoggle = MovementExample.Instante.checktoggle = false;
+        QuestDisplay.Instance.questPanel.SetActive(true);
 
         Bat();
     }
@@ -131,7 +132,7 @@ public class CanvasShop : MonoBehaviour
         panelshopvk.SetActive(!panelshopvk.activeSelf);
         SkillButtonManager.Instance.Skillbutton.SetActive(true);
         bool checktoggle = MovementExample.Instante.checktoggle = false;
-
+        QuestDisplay.Instance.questPanel.SetActive(true);
 
         Bat();
 
@@ -157,6 +158,9 @@ public class CanvasShop : MonoBehaviour
         {
             ShopTP.Instance.panelshopTP.SetActive(false);
         }
+        WorldChatUIManager.Instance.Chat.SetActive(true);
+        QuestDisplay.Instance.questPanel.SetActive(true);
+
         bool checktoggle = MovementExample.Instante.checktoggle = false;
 
     }
@@ -170,6 +174,9 @@ public class CanvasShop : MonoBehaviour
         {
             shoppk.Instance.panelshoppk.SetActive(false);
         }
+        WorldChatUIManager.Instance.Chat.SetActive(true);
+        QuestDisplay.Instance.questPanel.SetActive(true);
+
         Bat();
         bool checktoggle = MovementExample.Instante.checktoggle = false;
 
@@ -185,6 +192,9 @@ public class CanvasShop : MonoBehaviour
         {
             shopvk.Instance.panelshopvk.SetActive(false);
         }
+        WorldChatUIManager.Instance.Chat.SetActive(true);
+        QuestDisplay.Instance.questPanel.SetActive(true);
+
         Bat();
         bool checktoggle = MovementExample.Instante.checktoggle = false;
 

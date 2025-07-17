@@ -7,7 +7,7 @@ public class EnemyDamageHandler : NetworkBehaviour
 {
     [Networked, OnChangedRender(nameof(OnHealthChanged))]
     public int CurrentHealth { get; set; }
-
+    public int EnemyId;
     public int MaxHealth = 1000;
     private Animator animator;
     public Slider healthBarSlider;
@@ -67,7 +67,7 @@ public class EnemyDamageHandler : NetworkBehaviour
         foreach (var attacker in attackers)
         {
             // Gửi RPC cộng EXP về đúng client
-            RPC_GiveExp(attacker, 50); // 50 là EXP, bạn thay theo ý muốn
+            RPC_GiveExp(attacker, 50, EnemyId); // 50 là EXP, bạn thay theo ý muốn
         }
 
         RPC_PlayDeathAnim();
@@ -97,7 +97,7 @@ public class EnemyDamageHandler : NetworkBehaviour
 
     // RPC gửi exp về đúng player
     [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
-    private void RPC_GiveExp(PlayerRef who, int exp)
+    private void RPC_GiveExp(PlayerRef who, int exp, int enemyId)
     {
         if (Runner.LocalPlayer == who)
         {
@@ -107,8 +107,11 @@ public class EnemyDamageHandler : NetworkBehaviour
             {
                 levelManager.AddExp(exp);
             }
+            // Gọi cập nhật nhiệm vụ
+            AuthManager.Instance?.UpdateQuestProgress("KillEnemy", enemyId, 1); // Sử dụng enemyId truyền vào
         }
     }
+
 
     private void OnHealthChanged()
     {

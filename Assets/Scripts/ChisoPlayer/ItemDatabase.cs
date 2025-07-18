@@ -48,7 +48,7 @@ public class ItemDatabase : MonoBehaviour
             return statsList.FirstOrDefault();
         }
 
-      //  Debug.LogWarning($"[ItemDatabase] Không tìm thấy itemId: {id} Type:  {expectedType}");
+        //  Debug.LogWarning($"[ItemDatabase] Không tìm thấy itemId: {id} Type:  {expectedType}");
         return null;
     }
 }

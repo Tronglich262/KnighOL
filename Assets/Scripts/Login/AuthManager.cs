@@ -607,7 +607,7 @@ public class AuthManager : MonoBehaviour
             onDone?.Invoke(null);
         }
     }
-    public IEnumerator AllocateStats(int addHp, int addStrength, int addSpeed, int addAgility, int addSpirit, int addDefense, System.Action<bool> onDone)
+    public IEnumerator AllocateStats(int addHp, int addStrength, int addSpeed, int addAgility, int addSpirit,int addDefense, System.Action<bool> onDone)
     {
         string url = apiUrl + "/stats/allocate";
         AllocateStatsDto dto = new AllocateStatsDto

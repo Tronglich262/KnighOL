@@ -48,7 +48,7 @@ public class PlayerSpawner : SimulationBehaviour, INetworkRunnerCallbacks
 
            
 
-            // ✅ Tìm PlayerClone đã đặt sẵn trong scene
+            //  Tìm PlayerClone đã đặt sẵn trong scene
             GameObject clone = GameObject.Find("CloneUI");
             if (clone != null)
             {

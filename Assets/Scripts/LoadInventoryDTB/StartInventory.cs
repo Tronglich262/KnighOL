@@ -2,11 +2,11 @@
 using UnityEngine;
 
 public class StartInventory : MonoBehaviour
-{  
-    public StartInventory Instance;
+{
+    public static StartInventory Instance;
     public void Awake()
     {
-            Instance = this;
+        Instance = this;
     }
     IEnumerator Start()
     {
@@ -18,8 +18,6 @@ public class StartInventory : MonoBehaviour
 
         InventoryManager.Instance.LoadInventory(null);
         Debug.Log($"[StartInventory] Đang load inventory cho accountId: {InventoryManager.Instance.session.AccountId}, token: {InventoryManager.Instance.session.Token}");
-
-
 
         // --- Load PlayerState trước khi load inventory ---
         yield return StartCoroutine(AuthManager.Instance.GetPlayerState((state) =>
@@ -36,9 +34,41 @@ public class StartInventory : MonoBehaviour
             }
         }));
 
+        // ----> Tại đây: Load PlayerStats từ server, gán vào player!
+        yield return StartCoroutine(AuthManager.Instance.GetPlayerStats(stats =>
+        {
+            if (stats != null)
+            {
+                GameObject player = GameObject.FindWithTag("Player");
+                if (player != null)
+                {
+                    var cs = player.GetComponent<CharacterStats>();
+                    if (cs != null)
+                    {
+                        cs.InitFromPlayerStats(stats);  // <- Gán chỉ số gốc từ server vào player!
+                        Debug.Log("[StartInventory] Gán PlayerStats vào CharacterStats thành công.");
+                    }
+                    else
+                    {
+                        Debug.LogError("[StartInventory] Player không có component CharacterStats!");
+                    }
+                }
+                else
+                {
+                    Debug.LogError("[StartInventory] Không tìm thấy object Player để gán stats!");
+                }
+            }
+            else
+            {
+                Debug.LogError("[StartInventory] Không lấy được PlayerStats từ server!");
+            }
+        }));
+
         // Sau khi đã có PlayerState, load inventory như bình thường
         InventoryManager.Instance.LoadInventory(null);
         Debug.Log($"[StartInventory] Đang load inventory cho accountId: {InventoryManager.Instance.session.AccountId}, token: {InventoryManager.Instance.session.Token}");
+
+        // Tùy bạn: Gọi update UI sau khi xong mọi thứ
+        // ThongTin.instance?.UpdateStatsUI();
     }
 }
-

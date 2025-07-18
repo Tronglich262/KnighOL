@@ -43,6 +43,7 @@ public class QuestDisplay : MonoBehaviour
         int activeQuestCount = 0;
         foreach (var quest in quests)
         {
+            if (quest.is_completed) continue;
             string questText = $"- {quest.description}: {quest.progress}/{quest.targetAmount}";
             bool canClaim = quest.progress >= quest.targetAmount && !quest.is_completed;
             bool isDone = quest.is_completed;
@@ -125,6 +126,17 @@ public class QuestDisplay : MonoBehaviour
 
         if (req.result == UnityWebRequest.Result.Success)
         {
+
+            var res = JsonUtility.FromJson<QuestProgressRewardResponse>(req.downloadHandler.text);
+
+            int gold = 0, exp = 0;
+            if (res != null && res.reward != null)
+            {
+                gold = res.reward.gold;
+                exp = res.reward.exp;
+            }
+
+
             // Reload lại quest UI
             ReloadQuests();
 
@@ -132,7 +144,8 @@ public class QuestDisplay : MonoBehaviour
             StartCoroutine(AuthManager.Instance.GetPlayerState((state) => {
                 if (state != null)
                 {
-                    ItemDetailsUI.Instance.ShowEquipMessage($"+{state.gold}gold +{state.exp}exp");
+                    QuestResponse quest = new QuestResponse();
+                    ItemDetailsUI.Instance.ShowEquipMessage($"+{gold} gold +{exp} exp");
                     // Nếu có dùng PlayerDataHolder1 thì gán lại luôn:
                     PlayerDataHolder1.CurrentPlayerState = state;
                 }

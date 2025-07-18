@@ -77,7 +77,7 @@ public class ThongTin : MonoBehaviour
             Speed.text = "Tốc độ: " + stats1.speed;
             Spirit.text = "Tinh thần: " + stats1.spirit;
         }
-
+     
 
         // Hiển thị chỉ số trang bị (từ script CharacterStats gắn trên Player)
         if (stats != null)
@@ -100,7 +100,7 @@ public class ThongTin : MonoBehaviour
             Debug.LogWarning("Player không có CharacterStats.");
         }
     }
-    public void UpdateCharacterStatsFromServer(PlayerStats serverStats)
+    public  void UpdateCharacterStatsFromServer(PlayerStats serverStats)
     {
         GameObject player = GameObject.FindWithTag("Player");
         if (player != null)

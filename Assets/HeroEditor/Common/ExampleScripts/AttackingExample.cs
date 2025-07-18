@@ -158,7 +158,6 @@ namespace Assets.HeroEditor.Common.ExampleScripts
             Character.Slash(); // Animation tất cả client
 
             if (!HasStateAuthority) return;
-
             var stats = Character.GetComponent<CharacterStats>();
             int damage = stats.strength + stats.finalStrength;
 

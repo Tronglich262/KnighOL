@@ -46,16 +46,9 @@ public class PlayerSpawner : SimulationBehaviour, INetworkRunnerCallbacks
             var avatar = obj.GetComponent<PlayerAvatar>();
             var stats = obj.GetComponent<CharacterStats>();
 
-            // Gán chỉ số mặc định
-            if (stats != null)
-            {
-                stats.strength = 50;
-                stats.defense = 50;
-                stats.agility = 50;
-                stats.vitality = 200;
-            }
+           
 
-            // ✅ Tìm PlayerClone đã đặt sẵn trong scene
+            //  Tìm PlayerClone đã đặt sẵn trong scene
             GameObject clone = GameObject.Find("CloneUI");
             if (clone != null)
             {

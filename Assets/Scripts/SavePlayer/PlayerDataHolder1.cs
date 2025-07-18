@@ -47,5 +47,6 @@ public static class PlayerDataHolder1
     public static int AccountId;
     public static string Token;
     public static CharacterData Character;
+    public static PlayerStats CurrentStats;
 
 }

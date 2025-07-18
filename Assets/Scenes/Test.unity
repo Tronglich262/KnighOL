@@ -13919,14 +13919,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9688500760e354a4794575fa2d57d8e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  items:
-  - {fileID: 11400000, guid: fb2239aaba4238b48a07346307fc0871, type: 2}
-  - {fileID: 11400000, guid: d1c9f28a4e8d0264c9d0560c82efccc8, type: 2}
-  - {fileID: 11400000, guid: a6fb40e4edf096540882dc63324b96ac, type: 2}
-  - {fileID: 11400000, guid: 637291e0bcaecd642b1644a98e22c1f2, type: 2}
-  - {fileID: 11400000, guid: dacda373df2666c42a19820906cd8689, type: 2}
-  - {fileID: 11400000, guid: c9e9689b3e7928d43b28eadb9ee16c16, type: 2}
-  - {fileID: 11400000, guid: c57c1da07b0f7a743be25df467177303, type: 2}
+  items: []
 --- !u!4 &384635227
 Transform:
   m_ObjectHideFlags: 0
@@ -25694,7 +25687,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7de8b846dba599a4ca8432a73e1063ae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Instance: {fileID: 0}
 --- !u!4 &815564241
 Transform:
   m_ObjectHideFlags: 0
@@ -28512,6 +28504,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -7964199508935505587, guid: 78725afd407f95b49b571df0f1acd89d, type: 3}
+      propertyPath: agility
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -7964199508935505587, guid: 78725afd407f95b49b571df0f1acd89d, type: 3}
+      propertyPath: defense
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -7964199508935505587, guid: 78725afd407f95b49b571df0f1acd89d, type: 3}
+      propertyPath: strength
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1109986072035710, guid: 78725afd407f95b49b571df0f1acd89d, type: 3}
       propertyPath: m_Name
       value: ClonePreview

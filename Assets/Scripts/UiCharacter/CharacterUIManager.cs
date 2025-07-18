@@ -17,6 +17,7 @@ public class CharacterUIManager : MonoBehaviour
     public GameObject nhiemvu;
     public GameObject kynangCharacter;
     public static CharacterUIManager Instance;
+
     public Image Vien;
     void Awake()
     {
@@ -37,7 +38,7 @@ public class CharacterUIManager : MonoBehaviour
         nhiemvu.SetActive(false);
         kynangCharacter.SetActive(false);
     }
- 
+
     public void TogglePanel()
     {
         bool isActive = characterPanel.activeSelf;
@@ -119,6 +120,8 @@ public class CharacterUIManager : MonoBehaviour
         Vien.SetActive(true);
         nhiemvu.SetActive(false);
         kynangCharacter.SetActive(false);
+        TiemNang.GetComponent<PotentialStatsPanel>().Show();
+
 
     }
     public void ToggleKyNang()
@@ -159,6 +162,16 @@ public class CharacterUIManager : MonoBehaviour
         button.SetActive(true);
         Vien.SetActive(true);
         nhiemvu.SetActive(false);
+        if (ThongTin.instance != null && ThongTin.instance.gameObject.activeInHierarchy)
+        {
+            ThongTin.instance.StartCoroutine(
+                AuthManager.Instance.GetPlayerStats(result =>
+                {
+                    ThongTin.instance.stats1 = result;
+                    ThongTin.instance.UpdateStatsUI();
+                })
+            );
+        }
     }
     //====phần thêm thông tin account khác======
     public void ShowPanelOnlyThongTin()
@@ -168,13 +181,13 @@ public class CharacterUIManager : MonoBehaviour
     }
     public void ToggleTat()
     {
-        
+
         characterpreviewpanel.SetActive(false);
         CharacterPreviewPanel.Instance.ClearPreviewData();
     }
     public void ToggleTatall()
     {
-        CharacterButton.SetActive(true); 
+        CharacterButton.SetActive(true);
         characterPanel.SetActive(false);
         TiemNang.SetActive(false);
         Kynang.SetActive(false);

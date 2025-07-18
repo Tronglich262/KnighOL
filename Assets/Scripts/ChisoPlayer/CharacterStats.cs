@@ -1,31 +1,48 @@
-﻿using Assets.HeroEditor.FantasyInventory.Scripts.Interface.Elements;
-using System.Collections.Generic;
-using System.Windows.Forms;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class CharacterStats : MonoBehaviour
 {
-    //tại chỉ số của Player 
-    [Header("Base Stats")]
-    public int strength = 1000;
-    public int defense = 10;
-    public int agility = 10;
-    public int vitality = 100;
-    //chỉ số tổng của các trang bị 
+    // Chỉ số gốc từ server/database (khởi tạo khi login/load nhân vật)
+    public int hp;
+    public int strength;
+    public int defense;
+    public int agility;
+    public int speed;
+    public int spirit;
+
     [Header("Final Stats (có thể bị cộng thêm từ đồ)")]
     public int finalStrength;
     public int finalDefense;
     public int finalAgility;
     public int finalIntelligence;
     public int finalVitality;
-    // hàm tính tổng của trang bị hiển thị ra bảng
+
+    // Gán các chỉ số từ dữ liệu PlayerStats
+    public void InitFromPlayerStats(PlayerStats stats)
+    {
+        if (stats == null)
+        {
+            Debug.LogError("PlayerStats NULL khi InitFromPlayerStats!");
+            return;
+        }
+
+        hp = stats.hp;
+        strength = stats.strength;
+        defense = stats.defense;
+        agility = stats.agility;
+        speed = stats.speed;
+        spirit = stats.spirit;
+    }
+
+    // Tính lại chỉ số cộng thêm từ trang bị
     public void RecalculateStatsFromEquipment(List<ItemStats> equippedItems)
     {
-        finalStrength = 0;
-        finalDefense = 0;
-        finalAgility = 0;
+        finalStrength = strength;
+        finalDefense = defense;
+        finalAgility = agility;
         finalIntelligence = 0;
-        finalVitality = 0;
+        finalVitality = hp;
 
         foreach (var item in equippedItems)
         {
@@ -36,6 +53,4 @@ public class CharacterStats : MonoBehaviour
             finalVitality += item.Vitality;
         }
     }
-
-
 }

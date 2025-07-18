@@ -579,12 +579,73 @@ public class AuthManager : MonoBehaviour
             Debug.LogError("Update quest progress FAIL: " + req.downloadHandler.text);
         }
     }
+    //lấy dữ liệu chỉ số từ dtb của account về
+    public IEnumerator GetPlayerStats(System.Action<PlayerStats> onDone)
+    {
+        int accountId = UserSession.AccountId;
+        if (accountId == 0)
+        {
+            Debug.LogError("Chưa có AccountId!");
+            onDone?.Invoke(null);
+            yield break;
+        }
 
+        string url = apiUrl + $"/stats/{accountId}";
+        UnityWebRequest req = UnityWebRequest.Get(url);
+        req.SetRequestHeader("Authorization", "Bearer " + UserSession.Token);
+
+        yield return req.SendWebRequest();
+
+        if (req.result == UnityWebRequest.Result.Success)
+        {
+            PlayerStats stats = JsonUtility.FromJson<PlayerStats>(req.downloadHandler.text);
+            onDone?.Invoke(stats);
+        }
+        else
+        {
+            Debug.LogError("Lỗi GetPlayerStats: " + req.downloadHandler.text);
+            onDone?.Invoke(null);
+        }
+    }
+    public IEnumerator AllocateStats(int addHp, int addStrength, int addSpeed, int addAgility, int addSpirit, int addDefense, System.Action<bool> onDone)
+    {
+        string url = apiUrl + "/stats/allocate";
+        AllocateStatsDto dto = new AllocateStatsDto
+        {
+            HP = addHp,
+            Strength = addStrength,
+            Speed = addSpeed,
+            Agility = addAgility,
+            Spirit = addSpirit,
+            Defense = addDefense
+        };
+        string json = JsonUtility.ToJson(dto);
+
+        UnityWebRequest req = new UnityWebRequest(url, "POST");
+        byte[] bodyRaw = Encoding.UTF8.GetBytes(json);
+        req.uploadHandler = new UploadHandlerRaw(bodyRaw);
+        req.downloadHandler = new DownloadHandlerBuffer();
+        req.SetRequestHeader("Content-Type", "application/json");
+        req.SetRequestHeader("Authorization", "Bearer " + UserSession.Token);
+
+        yield return req.SendWebRequest();
+
+        if (req.result == UnityWebRequest.Result.Success)
+        {
+            Debug.Log("Cộng điểm thành công!");
+            onDone?.Invoke(true);
+        }
+        else
+        {
+            Debug.LogError("Lỗi AllocateStats: " + req.downloadHandler.text);
+            onDone?.Invoke(false);
+        }
+    }
 }
-    //tắt api thì out game
+//tắt api thì out game
 
 
-    [System.Serializable]
+[System.Serializable]
 public class QuestProgressRewardResponse
 {
     public string message;

@@ -902,10 +902,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 59d248b4d2ab704409590b271117df20, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  hp: 0
   strength: 1000
   defense: 500
   agility: 1000
-  vitality: 10
+  speed: 0
+  spirit: 0
   finalStrength: 0
   finalDefense: 0
   finalAgility: 0

@@ -2,19 +2,17 @@
 using System.Collections.Generic;
 using System.Linq;
 using System;
-
+//quản lý dữ liệu database item , check trang bị trong CharacterUi lấy chỉ số từ item 
 public class ItemDatabase : MonoBehaviour
 {
     public static ItemDatabase Instance;
-    public List<ItemStats> items = new List<ItemStats>();
+    public List<ItemStats> items;
 
     private Dictionary<string, List<ItemStats>> itemDict;
 
     private void Awake()
     {
         Instance = this;
-        LoadAllItemStats(); // <--- thêm dòng này
-
         itemDict = new Dictionary<string, List<ItemStats>>();
 
         foreach (var item in items)
@@ -38,13 +36,6 @@ public class ItemDatabase : MonoBehaviour
         }
     }
 
-    // Hàm này sẽ tự động load tất cả ItemStats ScriptableObject từ Resources/ItemStats
-    private void LoadAllItemStats()
-    {
-        items = Resources.LoadAll<ItemStats>("ItemStats").ToList();
-        Debug.Log($"[ItemDatabase] Đã load {items.Count} item từ Resources/ItemStats");
-    }
-
     public ItemStats GetItemStatsById(string id, string expectedType = null)
     {
         if (itemDict.TryGetValue(id, out var statsList))
@@ -57,7 +48,7 @@ public class ItemDatabase : MonoBehaviour
             return statsList.FirstOrDefault();
         }
 
-        // Debug.LogWarning($"[ItemDatabase] Không tìm thấy itemId: {id} Type:  {expectedType}");
+        //  Debug.LogWarning($"[ItemDatabase] Không tìm thấy itemId: {id} Type:  {expectedType}");
         return null;
     }
 }

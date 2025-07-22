@@ -13,6 +13,8 @@ public class ItemDatabase : MonoBehaviour
     private void Awake()
     {
         Instance = this;
+       // LoadAllItemStats(); // <--- thêm dòng này
+
         itemDict = new Dictionary<string, List<ItemStats>>();
 
         foreach (var item in items)
@@ -35,6 +37,12 @@ public class ItemDatabase : MonoBehaviour
             itemDict[shortId].Add(item);
         }
     }
+
+    //private void LoadAllItemStats()
+    //{
+    //    items = Resources.LoadAll<ItemStats>("ItemStats").ToList();
+    //    Debug.Log($"[ItemDatabase] Đã load {items.Count} item từ Resources/ItemStats");
+    //}
 
     public ItemStats GetItemStatsById(string id, string expectedType = null)
     {

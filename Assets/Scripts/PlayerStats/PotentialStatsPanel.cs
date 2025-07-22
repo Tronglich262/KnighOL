@@ -8,6 +8,7 @@ public class PotentialStatsPanel : MonoBehaviour
     [Header("UI Ref")]
     public TMP_Text hpText, strengthText, speedText, agilityText, spiritText, defensetext, potentialText;
     public Button addHpBtn, addStrengthBtn, addSpeedBtn, addAgilityBtn, addSpiritBtn,addDefensebtn, confirmBtn, cancelBtn;
+    public Button subHpBtn, subStrengthBtn, subSpeedBtn, subAgilityBtn, subSpiritBtn, subDefenseBtn;
 
     private PlayerStats stats;
     private int addHp, addStrength, addSpeed, addAgility, addSpirit , addDefense;
@@ -21,6 +22,16 @@ public class PotentialStatsPanel : MonoBehaviour
         addAgilityBtn.onClick.AddListener(() => AddStat(ref addAgility));
         addSpiritBtn.onClick.AddListener(() => AddStat(ref addSpirit));
         addDefensebtn.onClick.AddListener(() => AddStat(ref addDefense));
+
+        // Nút trừ mới:
+        if (subHpBtn != null) subHpBtn.onClick.AddListener(() => SubStat(ref addHp));
+        if (subStrengthBtn != null) subStrengthBtn.onClick.AddListener(() => SubStat(ref addStrength));
+        if (subSpeedBtn != null) subSpeedBtn.onClick.AddListener(() => SubStat(ref addSpeed));
+        if (subAgilityBtn != null) subAgilityBtn.onClick.AddListener(() => SubStat(ref addAgility));
+        if (subSpiritBtn != null) subSpiritBtn.onClick.AddListener(() => SubStat(ref addSpirit));
+        if (subDefenseBtn != null) subDefenseBtn.onClick.AddListener(() => SubStat(ref addDefense));
+
+
         confirmBtn.onClick.AddListener(OnConfirm);
         if (cancelBtn != null) cancelBtn.onClick.AddListener(OnCancel);
 
@@ -72,7 +83,7 @@ public class PotentialStatsPanel : MonoBehaviour
         spiritText.text = ($"Tinh Thần: {stats.spirit + addSpirit}").ToString();
         defensetext.text = ($"Phòng Thủ: {stats.defense + addDefense}").ToString();
         int used = addHp + addStrength + addSpeed + addAgility + addSpirit;
-        potentialText.text = (stats.potentialPoints - used).ToString();
+        potentialText.text = ($"Điểm Tiềm Năng: {stats.potentialPoints - used}").ToString();
     }
 
     void AddStat(ref int stat)
@@ -84,6 +95,15 @@ public class PotentialStatsPanel : MonoBehaviour
         {
             stat++;
 
+            UpdateUI();
+        }
+    }
+    // 3. Hàm trừ điểm chỉ số:
+    void SubStat(ref int stat)
+    {
+        if (stat > 0)
+        {
+            stat--;
             UpdateUI();
         }
     }

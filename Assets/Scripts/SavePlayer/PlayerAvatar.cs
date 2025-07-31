@@ -89,8 +89,6 @@ public class PlayerAvatar : NetworkBehaviour
             if (cam != null)
                 cam.enabled = false;
         }
-
-
     }
 
     private string _lastSyncedJson = "";

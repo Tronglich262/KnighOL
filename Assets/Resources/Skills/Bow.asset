@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Bow
   m_EditorClassIdentifier: 
   skillID: Bow
-  skillName: "B\u0103n Th\u01B0\u1EDDng"
-  description: 
+  skillName: "B\u1EAFn Th\u01B0\u1EDDng"
+  description: "Cung Th\u1EE7\n\u0110\xF2n \u0111\xE1nh th\u01B0\u1EDDng"
   icon: {fileID: 21300000, guid: 125bb49b217257347be09ede099b888d, type: 3}
   weaponType: 2

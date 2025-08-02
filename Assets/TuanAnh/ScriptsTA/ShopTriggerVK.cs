@@ -119,17 +119,28 @@ public class ShopTriggerVK : MonoBehaviour
     }
     IEnumerator LoadShopVK()
     {
-        int npcId = 3; // ví dụ Shop PK là id 1
+        int npcId = 3;
         string url = $"https://localhost:7124/api/account/npc-shop/{npcId}";
+
         using (UnityWebRequest www = UnityWebRequest.Get(url))
         {
             yield return www.SendWebRequest();
+
             if (www.result == UnityWebRequest.Result.Success)
             {
                 string json = "{\"items\":" + www.downloadHandler.text + "}";
                 var list = JsonUtility.FromJson<NpcShopItemList>(json);
-                // Gọi hàm show UI và truyền list.items vào (shopPanel)
-                ShopVKUIManager.Instance.ShowShop(list.items);
+
+                //  GỌI THEO ĐÚNG DẠNG IEnumerator
+                yield return StartCoroutine(ShopVKUIManager.Instance.ShowShop(list.items));
+
+                //  MỞ UI SAU KHI LOAD XONG
+                shopPanel.SetActive(true);
+                MovementExample.Instante.checktoggle = true;
+                SkillButtonManager.Instance.Skillbutton.SetActive(false);
+                WorldChatUIManager.Instance.Chat.SetActive(false);
+                QuestDisplay.Instance.questPanel.SetActive(false);
+            //    CanvasShop.Instante.HideAllCanvas();
             }
             else
             {
@@ -137,25 +148,26 @@ public class ShopTriggerVK : MonoBehaviour
             }
         }
     }
+
     public void OnClickMeleeWeapon1HTab()
     {
-        ShopVKUIManager.Instance.FilterShopByType("MeleeWeapon1H");
+        ShopVKUIManager.Instance.StartFilterShopByType("MeleeWeapon1H");
     }
     public void OnClickMeleeWeapon2HTab()
     {
-        ShopVKUIManager.Instance.FilterShopByType("MeleeWeapon2H");
+        ShopVKUIManager.Instance.StartFilterShopByType("MeleeWeapon2H");
     }
     public void OnClickBowTab()
     {
-        ShopVKUIManager.Instance.FilterShopByType("Bow");
+        ShopVKUIManager.Instance.StartFilterShopByType("Bow");
     }
     public void OnClickShieldTab()
     {
-        ShopVKUIManager.Instance.FilterShopByType("Shield");
+        ShopVKUIManager.Instance.StartFilterShopByType("Shield");
     }
     public void OnClickHelmetTab()
     {
-        ShopVKUIManager.Instance.FilterShopByType("Helmet");
+        ShopVKUIManager.Instance.StartFilterShopByType("Helmet");
     }
 
 }

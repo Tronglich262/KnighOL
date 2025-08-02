@@ -14,6 +14,8 @@ using System.Linq;
 
 public class PlayerAvatar : NetworkBehaviour
 {
+    [Networked] public NetworkString<_32> DisplayName { get; set; }
+
     public static PlayerAvatar Instance;
     public Character Character;
 
@@ -89,8 +91,9 @@ public class PlayerAvatar : NetworkBehaviour
             if (cam != null)
                 cam.enabled = false;
         }
+       
     }
-
+  
     private string _lastSyncedJson = "";
     private bool isSpawned = false;
 
@@ -272,4 +275,26 @@ public class PlayerAvatar : NetworkBehaviour
         public int AccountId;
         public string CharacterJson;
     }
+
+    public bool IsLocalPlayer()
+    {
+        return Object != null && Object.HasInputAuthority;
+    }
+    public void InitFromSpawnData(PlayerSpawnData data)
+    {
+        if (HasStateAuthority)
+        {
+            RPC_SetDisplayName(data.DisplayName.ToString());
+            Debug.Log($"[InitFromSpawnData] Gọi RPC_SetDisplayName: {data.DisplayName}");
+        }
+    }
+
+
+    [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+    public void RPC_SetDisplayName(string name)
+    {
+        DisplayName = name; // DisplayName là Networked<NetworkString<_32>>
+    }
+
+
 }

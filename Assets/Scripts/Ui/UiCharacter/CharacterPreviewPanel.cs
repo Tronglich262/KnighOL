@@ -78,7 +78,7 @@ public class CharacterPreviewPanel : MonoBehaviour
             characterPreview.Helmet = null;
             characterPreview.Glasses = null;
             characterPreview.Hair = null;
-            characterPreview.Back = null;
+            characterPreview.Back = null;   
             characterPreview.Cape = null;
             characterPreview.Shield = null;
             characterPreview.PrimaryMeleeWeapon = null;

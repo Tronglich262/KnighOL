@@ -230,4 +230,17 @@ public class CanvasShop : MonoBehaviour
         CharacterUIManager.Instance.ToggleBatCharacterButton();
         WorldChatUIManager.Instance.ToggleBatCharbarAndChatPrivateList();
     }
+    public void HideAllCanvas()
+    {
+        if (canvasShop != null) canvasShop.SetActive(false);
+        if (canvasDaily != null) canvasDaily.SetActive(false);
+        if (canvasShopPK != null) canvasShopPK.SetActive(false);
+        if (canvasShopvk != null) canvasShopvk.SetActive(false);
+        if (nv != null) nv.SetActive(false);
+        if (diemdanh != null) diemdanh.SetActive(false);
+        if (panelshopvk != null) panelshopvk.SetActive(false);
+        if (panelshoptp != null) panelshoptp.SetActive(false);
+        if (panelshoppk != null) panelshoppk.SetActive(false);
+    }
+
 }

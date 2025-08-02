@@ -24,13 +24,13 @@ public class CharacterQuickInfoPanel : MonoBehaviour
         _currentTarget = target;
         gameObject.SetActive(true);
 
-        if (!string.IsNullOrEmpty(name))
+        string displayName = !string.IsNullOrEmpty(name) ? name : target?.DisplayName.ToString();
+
+        Debug.Log($"[QuickInfoPanel] Click vào: {target?.Object.InputAuthority} - DisplayName: {displayName}");
+
+        if (!string.IsNullOrEmpty(displayName))
         {
-            playerNameText.text = name;
-        }
-        else if (!string.IsNullOrEmpty(target.DisplayName.ToString()))
-        {
-            playerNameText.text = target.DisplayName.ToString();
+            playerNameText.text = displayName;
         }
         else
         {
@@ -39,10 +39,14 @@ public class CharacterQuickInfoPanel : MonoBehaviour
         }
     }
 
+
+
+
     private IEnumerator WaitForDisplayName()
     {
-        float timeout = 5f; // Tăng timeout
-        while (_currentTarget != null && string.IsNullOrEmpty(_currentTarget.DisplayName.ToString()))
+        float timeout = 5f;
+
+        while (_currentTarget != null && string.IsNullOrWhiteSpace(_currentTarget.DisplayName.ToString()) && timeout > 0)
         {
             timeout -= Time.deltaTime;
             yield return null;
@@ -50,7 +54,7 @@ public class CharacterQuickInfoPanel : MonoBehaviour
 
         if (_currentTarget != null)
         {
-            if (!string.IsNullOrEmpty(_currentTarget.DisplayName.ToString()))
+            if (!string.IsNullOrWhiteSpace(_currentTarget.DisplayName.ToString()))
             {
                 playerNameText.text = _currentTarget.DisplayName.ToString();
             }
@@ -60,6 +64,7 @@ public class CharacterQuickInfoPanel : MonoBehaviour
             }
         }
     }
+
 
 
 
@@ -75,6 +80,7 @@ public class CharacterQuickInfoPanel : MonoBehaviour
         string json = _currentTarget.GetFullCharacterJson();
         CharacterPreviewPanel.Instance.ClearPreviewData();
         CharacterPreviewPanel.Instance.gameObject.SetActive(true);
+      
         CharacterPreviewPanel.Instance.LoadCharacterFromJson(json);
     }
 }

@@ -46,4 +46,15 @@ public class NameTagManager : NetworkBehaviour
             transform.localScale = myScale;
         }
     }
+    public void SetName(string newName)
+    {
+        if (nameText != null)
+        {
+            nameText.text = newName;
+        }
+        else
+        {
+            Debug.LogWarning("[NameTagManager] nameText is null.");
+        }
+    }
 }

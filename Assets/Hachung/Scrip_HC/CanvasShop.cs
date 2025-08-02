@@ -113,8 +113,7 @@ public class CanvasShop : MonoBehaviour
         panelshoptp.SetActive(!panelshoptp.activeSelf);
         SkillButtonManager.Instance.Skillbutton.SetActive(true);
         bool checktoggle = MovementExample.Instante.checktoggle = false;
-        QuestDisplay.Instance.questPanel.SetActive(true);
-
+        QuestDisplay.Instance.activeallQuestDisplay();
         Bat();
 
     }
@@ -123,7 +122,7 @@ public class CanvasShop : MonoBehaviour
         panelshoppk.SetActive(!panelshoppk.activeSelf);
         SkillButtonManager.Instance.Skillbutton.SetActive(true);
         bool checktoggle = MovementExample.Instante.checktoggle = false;
-        QuestDisplay.Instance.questPanel.SetActive(true);
+        QuestDisplay.Instance.activeallQuestDisplay();
 
         Bat();
     }
@@ -132,7 +131,7 @@ public class CanvasShop : MonoBehaviour
         panelshopvk.SetActive(!panelshopvk.activeSelf);
         SkillButtonManager.Instance.Skillbutton.SetActive(true);
         bool checktoggle = MovementExample.Instante.checktoggle = false;
-        QuestDisplay.Instance.questPanel.SetActive(true);
+        QuestDisplay.Instance.activeallQuestDisplay();
 
         Bat();
 
@@ -159,7 +158,7 @@ public class CanvasShop : MonoBehaviour
             ShopTP.Instance.panelshopTP.SetActive(false);
         }
         WorldChatUIManager.Instance.Chat.SetActive(true);
-        QuestDisplay.Instance.questPanel.SetActive(true);
+        CheckNhiemVu();
 
         bool checktoggle = MovementExample.Instante.checktoggle = false;
 
@@ -175,8 +174,7 @@ public class CanvasShop : MonoBehaviour
             shoppk.Instance.panelshoppk.SetActive(false);
         }
         WorldChatUIManager.Instance.Chat.SetActive(true);
-        QuestDisplay.Instance.questPanel.SetActive(true);
-
+        CheckNhiemVu();
         Bat();
         bool checktoggle = MovementExample.Instante.checktoggle = false;
 
@@ -193,7 +191,7 @@ public class CanvasShop : MonoBehaviour
             shopvk.Instance.panelshopvk.SetActive(false);
         }
         WorldChatUIManager.Instance.Chat.SetActive(true);
-        QuestDisplay.Instance.questPanel.SetActive(true);
+        CheckNhiemVu();
 
         Bat();
         bool checktoggle = MovementExample.Instante.checktoggle = false;
@@ -242,5 +240,17 @@ public class CanvasShop : MonoBehaviour
         if (panelshoptp != null) panelshoptp.SetActive(false);
         if (panelshoppk != null) panelshoppk.SetActive(false);
     }
+    //check click  nhiệm vụ tắt hiện khi mở shop
+    public void CheckNhiemVu()
+    {
+        if(!QuestDisplay.Instance.CheckCanvasShop)
+        {
+            QuestDisplay.Instance.questPanel.SetActive(true);
+        }
+        else
+        {
+            QuestDisplay.Instance.questPanel.SetActive(false);
 
+        }
+    }
 }

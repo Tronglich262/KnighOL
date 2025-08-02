@@ -15,6 +15,8 @@ using System.Linq;
 public class PlayerAvatar : NetworkBehaviour
 {
     [Networked] public NetworkString<_32> DisplayName { get; set; }
+    [Networked]
+    public NetworkString<_32> NickName { get; set; }
 
     public static PlayerAvatar Instance;
     public Character Character;
@@ -60,40 +62,38 @@ public class PlayerAvatar : NetworkBehaviour
     {
         isSpawned = true;
 
-        // 1. Tạo bản Character riêng biệt trước
-        if (Character == null)
-        {
-            Debug.LogError(" Chưa gán Character trong playerPrefab!");
-        }
-
         if (HasStateAuthority)
-        {
-            UpdateCharacterJson(PlayerDataHolder1.CharacterJson, Character);
+        { 
+            // Tiếp tục load character từ dữ liệu local nếu là local player
+            if (Object.HasInputAuthority)
+            {
+                UpdateCharacterJson(PlayerDataHolder1.CharacterJson);
+                RPC_SetNick(PlayerDataHolder1.PlayerName);
+                // ✅ GỌI HÀM SET DISPLAY NAME ĐỂ ĐỒNG BỘ
+                RPC_SendDisplayNameToServer(PlayerDataHolder1.PlayerName);
+            }
         }
 
+        // Load từ JSON sync lần đầu
         _lastCharacterJson = GetFullCharacterJson();
         LoadCharacter(_lastCharacterJson);
+
+        // Cài đặt camera như cũ
         vCam = GetComponentInChildren<CinemachineCamera>();
         cam = GetComponentInChildren<Camera>();
         if (Object.HasInputAuthority)
         {
-            // Kích hoạt virtual camera cho player local
-            if (vCam != null)
-                vCam.enabled = true;
-            if (cam != null)
-                cam.enabled = true;
+            if (vCam != null) vCam.enabled = true;
+            if (cam != null) cam.enabled = true;
         }
         else
         {
-            // Tắt virtual camera cho các player không phải local
-            if (vCam != null)
-                vCam.enabled = false;
-            if (cam != null)
-                cam.enabled = false;
+            if (vCam != null) vCam.enabled = false;
+            if (cam != null) cam.enabled = false;
         }
-       
     }
-  
+
+
     private string _lastSyncedJson = "";
     private bool isSpawned = false;
 
@@ -280,20 +280,30 @@ public class PlayerAvatar : NetworkBehaviour
     {
         return Object != null && Object.HasInputAuthority;
     }
-    public void InitFromSpawnData(PlayerSpawnData data)
+    [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+    public void RPC_SendDisplayNameToServer(string name)
     {
-        if (HasStateAuthority)
-        {
-            RPC_SetDisplayName(data.DisplayName.ToString());
-            Debug.Log($"[InitFromSpawnData] Gọi RPC_SetDisplayName: {data.DisplayName}");
-        }
+        // Gọi từ client → server
+        RPC_SetDisplayName(name); // server sẽ gọi tiếp cho các client khác
     }
-
 
     [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
     public void RPC_SetDisplayName(string name)
     {
-        DisplayName = name; // DisplayName là Networked<NetworkString<_32>>
+        DisplayName = name;
+        Debug.Log($"[PlayerAvatar] RPC_SetDisplayName: {name}");
+
+        // Nếu có NameTag, cập nhật luôn
+        var nameTag = GetComponentInChildren<NameTagManager>();
+        if (nameTag != null)
+        {
+            nameTag.SetName(name); // Set trực tiếp nếu có hàm
+        }
+    }
+    [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
+    private void RPC_SetNick(string name)
+    {
+        NickName = name;
     }
 
 

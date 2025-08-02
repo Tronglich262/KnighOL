@@ -27,8 +27,14 @@ public class PlayerSpawner : SimulationBehaviour, INetworkRunnerCallbacks
             Vector3 spawnPosition = new Vector3(0, -7.02f, 0);
             Quaternion spawnRotation = Quaternion.identity;
 
+            // Tạo dữ liệu spawn từ thông tin người chơi hiện tại
+            PlayerSpawnData spawnData = new PlayerSpawnData
+            {
+                DisplayName = PlayerDataHolder1.PlayerName
+            };
+
+            // Truyền vào runner.Spawn
             NetworkObject obj = runner.Spawn(playerPrefab, spawnPosition, spawnRotation, player);
-            LocalPlayerObject = obj;
 
 
             // Clone handling
@@ -52,8 +58,9 @@ public class PlayerSpawner : SimulationBehaviour, INetworkRunnerCallbacks
             {
                 Debug.Log("UpdateCharacterJson ban đầu");
                 avatar.UpdateCharacterJson(PlayerDataHolder1.CharacterJson);
-                avatar.RPC_SetDisplayName(PlayerDataHolder1.PlayerName); //  GỌI TỪ SERVER
 
+                // Gửi tên lên server
+                avatar.RPC_SendDisplayNameToServer(PlayerDataHolder1.PlayerName);
             }
 
             string nickname = PlayerDataHolder1.PlayerName;

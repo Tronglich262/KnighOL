@@ -4,6 +4,7 @@ using UnityEngine.UI;
 using UnityEngine.Networking;
 using System.Text;
 using System.Collections;
+using Unity.Jobs;
 
 public class QuestDisplay : MonoBehaviour
 {
@@ -12,7 +13,11 @@ public class QuestDisplay : MonoBehaviour
     public static QuestDisplay Instance;
     public GameObject questPanel;
     public QuestResponse[] currentQuests;
-
+    public GameObject AnQuest;
+    public GameObject nhiemvu;
+    public GameObject todoi;
+    public TextMeshProUGUI textUIan;
+    public bool CheckCanvasShop = false;
     private void Awake()
     {
         Instance = this;
@@ -156,7 +161,43 @@ public class QuestDisplay : MonoBehaviour
             ItemDetailsUI.Instance.ShowEquipMessage("Nhận thưởng thất bại: " + req.downloadHandler.text);
         }
     }
+    public void ToggleQuestUI()
+    {
+        bool isActive = questPanel.activeSelf;
 
+        questPanel.SetActive(!isActive);
+        nhiemvu.gameObject.SetActive(!isActive);
+        todoi.gameObject.SetActive(!isActive);
+        if (!isActive)
+        {
+            textUIan.text = "Ẩn";
+            CheckCanvasShop = true;
+        }
+        else
+        {
+            textUIan.text = "Hiện";
+            CheckCanvasShop = false;
+        }
+    }
+    //tat all
+    public void activeallQuestDisplay()
+    {
+        if (!CheckCanvasShop)
+        {
+            questPanel.SetActive(true);
+            nhiemvu.gameObject.SetActive(true);
+            todoi.gameObject.SetActive(true);
+            AnQuest.gameObject.SetActive(true);
+        }
+        else
+        {
+            questPanel.SetActive(false);
+            nhiemvu.gameObject.SetActive(false);
+            todoi.gameObject.SetActive(false);
+            AnQuest.gameObject.SetActive(false);
+        }
+    }
+  
 }
 
 // DTO cho claim quest reward

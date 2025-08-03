@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      c00a_22inspiration_07_1_0: 3175673312929100929
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

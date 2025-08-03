@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      c00a_10swinging_06_0: 1652675291173665849
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -17,7 +17,6 @@ public class QuestDisplay : MonoBehaviour
     public GameObject nhiemvu;
     public GameObject todoi;
     public TextMeshProUGUI textUIan;
-    public bool CheckCanvasShop = false;
     private void Awake()
     {
         Instance = this;
@@ -171,33 +170,33 @@ public class QuestDisplay : MonoBehaviour
         if (!isActive)
         {
             textUIan.text = "Ẩn";
-            CheckCanvasShop = true;
         }
         else
         {
             textUIan.text = "Hiện";
-            CheckCanvasShop = false;
         }
     }
     //tat all
-    public void activeallQuestDisplay()
+    public void TatactiveallQuestDisplay()
     {
-        if (!CheckCanvasShop)
-        {
-            questPanel.SetActive(true);
-            nhiemvu.gameObject.SetActive(true);
-            todoi.gameObject.SetActive(true);
-            AnQuest.gameObject.SetActive(true);
-        }
-        else
-        {
+       
+        
             questPanel.SetActive(false);
             nhiemvu.gameObject.SetActive(false);
             todoi.gameObject.SetActive(false);
             AnQuest.gameObject.SetActive(false);
-        }
+        
     }
-  
+    public void BatactiveallQuestDisplay()
+    {
+
+
+        questPanel.SetActive(true);
+        nhiemvu.gameObject.SetActive(true);
+        todoi.gameObject.SetActive(true);
+        AnQuest.gameObject.SetActive(true);
+
+    }
 }
 
 // DTO cho claim quest reward

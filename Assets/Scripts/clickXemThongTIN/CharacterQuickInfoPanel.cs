@@ -80,7 +80,17 @@ public class CharacterQuickInfoPanel : MonoBehaviour
         string json = _currentTarget.GetFullCharacterJson();
         CharacterPreviewPanel.Instance.ClearPreviewData();
         CharacterPreviewPanel.Instance.gameObject.SetActive(true);
-      
+        if (CharacterPreviewPanel.Instance.characterPreview != null)
+        {
+            SkillButtonManager.Instance.Skillbutton.SetActive(false);
+            WorldChatUIManager.Instance.Chat.SetActive(false);
+            QuestDisplay.Instance.TatactiveallQuestDisplay();
+            WorldChatUIManager.Instance.chatBar.SetActive(false);
+            CharacterUIManager.Instance.CharacterButton.SetActive(false);
+            SettingPanel.Instance.Setting.SetActive(false);
+
+        }
+
         CharacterPreviewPanel.Instance.LoadCharacterFromJson(json);
     }
 }

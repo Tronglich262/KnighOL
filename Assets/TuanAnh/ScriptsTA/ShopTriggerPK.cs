@@ -93,7 +93,10 @@ public class ShopTriggerPK : MonoBehaviour
                     shopPanel.SetActive(nextState);
                     SkillButtonManager.Instance.Skillbutton.SetActive(false);
                     WorldChatUIManager.Instance.Chat.SetActive(false);
-                    QuestDisplay.Instance.activeallQuestDisplay();
+                    QuestDisplay.Instance.TatactiveallQuestDisplay();
+                    WorldChatUIManager.Instance.chatBar.SetActive(false);
+                    CharacterUIManager.Instance.CharacterButton.SetActive(false);
+                    SettingPanel.Instance.Setting.SetActive(false);
 
                     if (CanvasShop.Instante.canvasShop != null)
                         CanvasShop.Instante.canvasShop.SetActive(false);

@@ -19,7 +19,7 @@ public class HealthBar : MonoBehaviour
         }
         if (hpText != null)
         {
-            hpText.text = $"{current}/{max}";
+            hpText.text = $"{current} / {max}";
         }
     }
     public void SetMana(int current, int max)
@@ -31,7 +31,7 @@ public class HealthBar : MonoBehaviour
         }
         if (manaText != null)
         {
-            manaText.text = $"{current}/{max}";
+            manaText.text = $"{current} / {max}";
         }
     }
 }

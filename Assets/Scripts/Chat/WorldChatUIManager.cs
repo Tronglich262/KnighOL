@@ -94,7 +94,7 @@ public class WorldChatUIManager : NetworkBehaviour
         ToggleBatCharbarAndChatPrivateList();
         privateChatListPanel.SetActive(false);
         SkillButtonManager.Instance.Skillbutton.SetActive(true);
-        QuestDisplay.Instance.questPanel.SetActive(true);
+        QuestDisplay.Instance.BatactiveallQuestDisplay();
         currentPrivateTargetName = null;
         
     }
@@ -124,7 +124,7 @@ public class WorldChatUIManager : NetworkBehaviour
         SkillButtonManager.Instance.Skillbutton.SetActive(false);
         privateChatPanel.SetActive(false);
         privateChatListPanel.SetActive(false);
-        QuestDisplay.Instance.questPanel.SetActive(false);
+        QuestDisplay.Instance.TatactiveallQuestDisplay();
         ToggleTatCharbarAndChatPrivateList();
         foreach (Transform child in chatContent) Destroy(child.gameObject);
         foreach (var (sender, message) in chatHistory) AddMessageToPanel(sender, message);
@@ -178,7 +178,7 @@ public class WorldChatUIManager : NetworkBehaviour
         SettingPanel.Instance.Setting.SetActive(false);
         SkillButtonManager.Instance.Skillbutton.SetActive(false);
         WorldChatUIManager.Instance.Chat.SetActive(false);
-        QuestDisplay.Instance.questPanel.SetActive(false);
+        QuestDisplay.Instance.TatactiveallQuestDisplay();
         privateChatListPanel.SetActive(true);
         currentPrivateTargetName = null;
     }
@@ -527,14 +527,12 @@ public class WorldChatUIManager : NetworkBehaviour
         chatBar.SetActive(false);
         Chat.SetActive(false);
         SettingPanel.Instance.Setting.SetActive(false);
-       // SkillButtonManager.Instance.Skillbutton.SetActive(false);
     }
     public void ToggleBatCharbarAndChatPrivateList()
     {
         chatBar.SetActive(true);
         Chat.SetActive(true);
         SettingPanel.Instance.Setting.SetActive(true);
-       // SkillButtonManager.Instance.Skillbutton.SetActive(true);
 
 
     }

@@ -43,7 +43,9 @@ namespace Assets.HeroEditor.Common.CharacterScripts
         }
 
         public void Start()
+
         {
+
             // We can use [StateHandler] attached to animation states to handle state transitions.
             foreach (var handler in Animator.GetBehaviours<StateHandler>().Where(i => i.Name.Contains("Death")))
             {

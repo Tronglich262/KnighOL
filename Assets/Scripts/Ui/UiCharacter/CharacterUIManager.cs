@@ -54,7 +54,7 @@ public class CharacterUIManager : MonoBehaviour
             button2.SetActive(false);
             codecharacterui1.SetActive(false);
             Vien.SetActive(false);
-            nhiemvu.SetActive(false);
+          //  QuestDisplay.Instance.TatactiveallQuestDisplay();
             kynangCharacter.SetActive(false);
 
         }
@@ -91,7 +91,7 @@ public class CharacterUIManager : MonoBehaviour
                 Vien.SetActive(true);
                 CharacterButton.SetActive(false); // Ẩn nút CharacterButton khi mở panel
                 WorldChatUIManager.Instance.ToggleTatCharbarAndChatPrivateList();
-                QuestDisplay.Instance.questPanel.SetActive(false);
+                QuestDisplay.Instance.TatactiveallQuestDisplay();               
                 bool checktoggle = MovementExample.Instante.checktoggle = true;
                 SkillButtonManager.Instance.Skillbutton.SetActive(false);
 
@@ -184,6 +184,12 @@ public class CharacterUIManager : MonoBehaviour
         
         characterpreviewpanel.SetActive(false);
         CharacterPreviewPanel.Instance.ClearPreviewData();
+        SkillButtonManager.Instance.Skillbutton.SetActive(true);
+        WorldChatUIManager.Instance.Chat.SetActive(true);
+        QuestDisplay.Instance.BatactiveallQuestDisplay();
+        WorldChatUIManager.Instance.chatBar.SetActive(true);
+        CharacterUIManager.Instance.CharacterButton.SetActive(true);
+        SettingPanel.Instance.Setting.SetActive(true);
     }
     public void ToggleTatall()
     {
@@ -198,7 +204,7 @@ public class CharacterUIManager : MonoBehaviour
         Vien.SetActive(false);
         kynangCharacter.SetActive(false);
         nhiemvu.SetActive(false);
-        QuestDisplay.Instance.questPanel.SetActive(true);
+        QuestDisplay.Instance.BatactiveallQuestDisplay();
         WorldChatUIManager.Instance.ToggleBatCharbarAndChatPrivateList();
         bool checktoggle = MovementExample.Instante.checktoggle = false;
         SkillButtonManager.Instance.Skillbutton.SetActive(true);

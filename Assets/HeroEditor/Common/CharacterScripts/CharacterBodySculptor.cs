@@ -34,6 +34,7 @@ namespace Assets.HeroEditor.Common.CharacterScripts
 			}
 		}
 
+
 		/// <summary>
 		/// Width slider handler.
 		/// </summary>

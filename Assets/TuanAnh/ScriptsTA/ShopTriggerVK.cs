@@ -1,5 +1,6 @@
 ﻿using Assets.HeroEditor.Common.ExampleScripts;
 using System.Collections;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -93,7 +94,11 @@ public class ShopTriggerVK : MonoBehaviour
                     shopPanel.SetActive(nextState);
                     SkillButtonManager.Instance.Skillbutton.SetActive(false);
                     WorldChatUIManager.Instance.Chat.SetActive(false);
-                    QuestDisplay.Instance.questPanel.SetActive(false);
+                    WorldChatUIManager.Instance.chatBar.SetActive(false);
+                    CharacterUIManager.Instance.CharacterButton.SetActive(false);
+                    SettingPanel.Instance.Setting.SetActive(false);
+
+                    QuestDisplay.Instance.TatactiveallQuestDisplay();
 
                     if (CanvasShop.Instante.canvasShop != null)
                         CanvasShop.Instante.canvasShop.SetActive(false);

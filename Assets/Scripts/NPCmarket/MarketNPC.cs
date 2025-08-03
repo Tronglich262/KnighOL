@@ -32,6 +32,10 @@ public class MarketNPC : MonoBehaviour
     {
         shopUIPanel.SetActive(false);
         SkillButtonManager.Instance.Skillbutton.SetActive(true);
+        QuestDisplay.Instance.BatactiveallQuestDisplay();
+        WorldChatUIManager.Instance.Chat.SetActive(true);
+        WorldChatUIManager.Instance.chatBar.SetActive(true);
+        CharacterUIManager.Instance.CharacterButton.SetActive(true);
     }
     void Update()
     {
@@ -39,6 +43,13 @@ public class MarketNPC : MonoBehaviour
         {
             if (shopUIPanel != null) shopUIPanel.SetActive(true);
             SkillButtonManager.Instance.Skillbutton.SetActive(false);
+            QuestDisplay.Instance.TatactiveallQuestDisplay();
+            WorldChatUIManager.Instance.Chat.SetActive(false);
+            WorldChatUIManager.Instance.chatBar.SetActive(false);
+            SettingPanel.Instance.Setting.SetActive(false);
+            CharacterUIManager.Instance.CharacterButton.SetActive(false); 
+         
+          
         }
     }
 }

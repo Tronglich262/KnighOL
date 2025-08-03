@@ -358,16 +358,16 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 206978335724555707, guid: e03097b6acd6acd4a97c667517880f2d, type: 3}
       propertyPath: m_Type
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 206978335724555707, guid: e03097b6acd6acd4a97c667517880f2d, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 6937817954938267909, guid: 5fc3002320e7cc649ab5e16025ceda3b, type: 3}
+      objectReference: {fileID: 836403258, guid: c79f14c2a18e92b41b5195419162382b, type: 3}
     - target: {fileID: 378390747202442836, guid: e03097b6acd6acd4a97c667517880f2d, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: -6778451746441708575, guid: ea4ec16edf3250640b9a0bbf27fd77fd, type: 3}
+      objectReference: {fileID: 396013188656270140, guid: a94ba96a98e7b7b438401e31cde375e6, type: 3}
     - target: {fileID: 691546188704233137, guid: e03097b6acd6acd4a97c667517880f2d, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
@@ -406,12 +406,12 @@ PrefabInstance:
       objectReference: {fileID: -855298285791758126, guid: b9a2f08808ef8414a948d0eed9adc7d5, type: 3}
     - target: {fileID: 1861795177498776396, guid: e03097b6acd6acd4a97c667517880f2d, type: 3}
       propertyPath: m_Type
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1861795177498776396, guid: e03097b6acd6acd4a97c667517880f2d, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 6937817954938267909, guid: 5fc3002320e7cc649ab5e16025ceda3b, type: 3}
+      objectReference: {fileID: 836403258, guid: c79f14c2a18e92b41b5195419162382b, type: 3}
     - target: {fileID: 2309349436461572313, guid: e03097b6acd6acd4a97c667517880f2d, type: 3}
       propertyPath: m_IsActive
       value: 1
@@ -487,7 +487,7 @@ PrefabInstance:
     - target: {fileID: 7378747381353132018, guid: e03097b6acd6acd4a97c667517880f2d, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: -6778451746441708575, guid: ea4ec16edf3250640b9a0bbf27fd77fd, type: 3}
+      objectReference: {fileID: 396013188656270140, guid: a94ba96a98e7b7b438401e31cde375e6, type: 3}
     - target: {fileID: 7545061930070316792, guid: e03097b6acd6acd4a97c667517880f2d, type: 3}
       propertyPath: m_IsActive
       value: 0
@@ -643,11 +643,11 @@ PrefabInstance:
     - target: {fileID: 8599114974315190799, guid: e03097b6acd6acd4a97c667517880f2d, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: -6778451746441708575, guid: ea4ec16edf3250640b9a0bbf27fd77fd, type: 3}
+      objectReference: {fileID: 396013188656270140, guid: a94ba96a98e7b7b438401e31cde375e6, type: 3}
     - target: {fileID: 8716002980603352663, guid: e03097b6acd6acd4a97c667517880f2d, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: -6778451746441708575, guid: ea4ec16edf3250640b9a0bbf27fd77fd, type: 3}
+      objectReference: {fileID: 396013188656270140, guid: a94ba96a98e7b7b438401e31cde375e6, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
@@ -1533,6 +1533,7 @@ MonoBehaviour:
   registerPassword: {fileID: 2128038186}
   loginEmail: {fileID: 912399097}
   loginPassword: {fileID: 837356502}
+  apiUrl: https://localhost:7124/api/Account
   loginMessageText: {fileID: 1980058889}
   registerMessageText: {fileID: 1779996160}
   loginPasswordToggleBtn: {fileID: 2060643760}

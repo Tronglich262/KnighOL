@@ -322,7 +322,15 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      c00a_25pokapoka_0: -597708391354837405
+      c00a_25pokapoka_1: 9036946889632006987
+      c00a_25pokapoka_2: -5212595650433603821
+      c00a_25pokapoka_3: -2136154175896990494
+      c00a_25pokapoka_4: -7779541359326159696
+      c00a_25pokapoka_5: 2064896123115069777
+      c00a_25pokapoka_6: -1921102877401584857
+      c00a_25pokapoka_7: -5604866207649892730
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

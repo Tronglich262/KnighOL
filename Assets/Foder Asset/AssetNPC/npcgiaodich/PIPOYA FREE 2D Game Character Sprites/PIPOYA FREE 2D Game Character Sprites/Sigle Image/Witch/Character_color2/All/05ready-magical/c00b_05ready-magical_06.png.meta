@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      c00b_05ready-magical_06_0: 7467436550897703434
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

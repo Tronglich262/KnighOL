@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      c00a_09stabbing_14_0: -2606166097960174472
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

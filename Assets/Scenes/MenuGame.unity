@@ -940,12 +940,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1589182250895931794, guid: 42a23c357fd1f2344a723119a022abb6, type: 3}
       propertyPath: m_Type
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1589182250895931794, guid: 42a23c357fd1f2344a723119a022abb6, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 836403258, guid: c79f14c2a18e92b41b5195419162382b, type: 3}
+      objectReference: {fileID: -356515777, guid: 560a42bee62600c4f8b0d191714dcb9c, type: 3}
     - target: {fileID: 1589182250895931794, guid: 42a23c357fd1f2344a723119a022abb6, type: 3}
       propertyPath: m_Color.b
       value: 1
@@ -960,12 +960,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1886004491556739407, guid: 42a23c357fd1f2344a723119a022abb6, type: 3}
       propertyPath: m_Type
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1886004491556739407, guid: 42a23c357fd1f2344a723119a022abb6, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 836403258, guid: c79f14c2a18e92b41b5195419162382b, type: 3}
+      objectReference: {fileID: -356515777, guid: 560a42bee62600c4f8b0d191714dcb9c, type: 3}
     - target: {fileID: 1923047484280004964, guid: 42a23c357fd1f2344a723119a022abb6, type: 3}
       propertyPath: m_Name
       value: Canvas 1

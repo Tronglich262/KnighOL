@@ -69,7 +69,7 @@ public class PlayerAvatar : NetworkBehaviour
             {
                 UpdateCharacterJson(PlayerDataHolder1.CharacterJson);
                 RPC_SetNick(PlayerDataHolder1.PlayerName);
-                // ✅ GỌI HÀM SET DISPLAY NAME ĐỂ ĐỒNG BỘ
+                //  GỌI HÀM SET DISPLAY NAME ĐỂ ĐỒNG BỘ
                 RPC_SendDisplayNameToServer(PlayerDataHolder1.PlayerName);
             }
         }
@@ -123,7 +123,7 @@ public class PlayerAvatar : NetworkBehaviour
 
             var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
 
-            // ✅ Bổ sung xử lý Melee2H đúng chuẩn
+            //  Bổ sung xử lý Melee2H đúng chuẩn
             if (dict.TryGetValue("WeaponType", out var weaponType) && weaponType == "Melee2H")
             {
                 if (dict.TryGetValue("SecondaryMeleeWeapon", out var weaponId))
@@ -141,7 +141,7 @@ public class PlayerAvatar : NetworkBehaviour
                     }
                 }
             }
-            // ✅ GỌI LẠI PHỐI ARMOR MIX (Boots, Gloves, Belt, Pauldrons, Vest)
+            //  GỌI LẠI PHỐI ARMOR MIX (Boots, Gloves, Belt, Pauldrons, Vest)
             string[] mixTypes = new[] { "Boots", "Gloves", "Belt", "Pauldrons", "Vest" };
             foreach (string t in mixTypes)
             {
@@ -150,7 +150,7 @@ public class PlayerAvatar : NetworkBehaviour
                     CharacterEquipHandler.EquipPartialArmorFromEntry(Character, partId, t);
                 }
             }
-            // ✅ Bổ sung xử lý Armor (nếu dùng HeroEditor)
+            //  Bổ sung xử lý Armor (nếu dùng HeroEditor)
             if (dict.TryGetValue("Armor", out var armorId))
             {
                 CharacterEquipHandler.TestEquipArmor(Character, armorId);

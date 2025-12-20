@@ -39,7 +39,7 @@ namespace Assets.HeroEditor.Common.CharacterScripts
             if (_initialized) return;
             _initialized = true;
 
-            Initialize();
+           // Initialize();
         }
 
         /// <summary>
@@ -250,6 +250,31 @@ namespace Assets.HeroEditor.Common.CharacterScripts
                 BowRenderers[i].sprite = i < Bow.Count ? Bow[i] : null;
             }
         }
+        public void ResetCharacterToNaked()
+        {
+            Helmet = null;
+            Hair = null;
+            Beard = null;
+            Glasses = null;
+            Mask = null;
+            Earrings = null;
+
+            Cape = null;
+            Back = null;
+            Shield = null;
+
+            PrimaryMeleeWeapon = null;
+            SecondaryMeleeWeapon = null;
+            Bow.Clear();
+            Firearms.Clear();
+
+            Armor.Clear();
+
+           // WeaponType = WeaponType.None;
+
+            Initialize();
+        }
+
     }
 
 

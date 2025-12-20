@@ -342,11 +342,12 @@ public class ItemDetailsUI : MonoBehaviour
             dict.Remove("Bow");
             dict.Remove("SecondaryMeleeWeapon");
         }
-        if (currentItem.stats.Type == "SecondaryMeleeWeapon" || currentItem.stats.Type == "MeleeWeapon2H")
+        if (currentItem.stats.Type == "MeleeWeapon2H")
         {
-            dict.Remove("PrimaryMeleeWeapon");
             dict.Remove("Bow");
+            dict.Remove("SecondaryMeleeWeapon"); // KHÔNG XOÁ PRIMARY
         }
+
 
 
         // Ghi đè item vào đúng slot
@@ -379,8 +380,11 @@ public class ItemDetailsUI : MonoBehaviour
 
                 break;
             case "MeleeWeapon2H":
-                dict["SecondaryMeleeWeapon"] = currentItem.itemId;
+                dict["PrimaryMeleeWeapon"] = currentItem.itemId; // 🔥 BẮT BUỘC
+                dict.Remove("SecondaryMeleeWeapon");              // 🔥 DỌN DẸP
                 dict["WeaponType"] = "Melee2H";
+                break;
+
 
                 break;
             default:
@@ -492,8 +496,11 @@ public class ItemDetailsUI : MonoBehaviour
             case "PrimaryMeleeWeapon":
                 return dict.ContainsKey("PrimaryMeleeWeapon") ? dict["PrimaryMeleeWeapon"] : null;
             case "MeleeWeapon2H":
-            case "SecondaryMeleeWeapon":
-                return dict.ContainsKey("SecondaryMeleeWeapon") ? dict["SecondaryMeleeWeapon"] : null;
+                return dict.ContainsKey("PrimaryMeleeWeapon")
+                    ? dict["PrimaryMeleeWeapon"]
+                    : null;
+
+
             default:
                 return CharacterUIManager1.Instance.GetItemIdFromJson(PlayerDataHolder1.CharacterJson, type);
         }
@@ -700,7 +707,8 @@ public class ItemDetailsUI : MonoBehaviour
         }
         if (dict.TryGetValue("WeaponType", out var type) && type == "Melee2H")
         {
-            if (dict.TryGetValue("SecondaryMeleeWeapon", out var weaponId))
+            if (dict.TryGetValue("PrimaryMeleeWeapon", out var weaponId))
+
             {
                 var entry = character.SpriteCollection.MeleeWeapon2H.FirstOrDefault(e => e.Id == weaponId);
                 if (entry != null)

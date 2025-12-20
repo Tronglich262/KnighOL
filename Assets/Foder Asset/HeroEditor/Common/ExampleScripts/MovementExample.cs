@@ -27,7 +27,7 @@ namespace Assets.HeroEditor.Common.ExampleScripts
             {
                 Controller = Character.gameObject.AddComponent<CharacterController>();
                 Controller.center = new Vector3(0, 1.125f);
-                Controller.height = 3.5f;
+                Controller.height = 3.4f;
                 Controller.radius = 0.75f;
                 Controller.minMoveDistance = 0;
             }

@@ -3,29 +3,20 @@ using Fusion;
 using HeroEditor.Common.Enums;
 using Newtonsoft.Json;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 using Unity.Cinemachine;
 using UnityEngine;
-using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
-using System.Linq;
 
 public class PlayerAvatar : NetworkBehaviour
 {
     [Networked] public NetworkString<_32> DisplayName { get; set; }
-    [Networked]
-    public NetworkString<_32> NickName { get; set; }
+    [Networked] public NetworkString<_32> NickName { get; set; }
 
     public static PlayerAvatar Instance;
     public Character Character;
 
-
-    public GameObject characterPrefab; // Gán trong prefab Player
-    private GameObject characterInstance;
-
-    // Các phần nhỏ của JSON  ( khởi tạo nhiều luồng để lưu dữ liệu ) vì dữ liệu quá 512
     [Networked] public NetworkString<_512> CharacterJsonPart1 { get; set; }
     [Networked] public NetworkString<_512> CharacterJsonPart2 { get; set; }
     [Networked] public NetworkString<_512> CharacterJsonPart3 { get; set; }
@@ -34,217 +25,197 @@ public class PlayerAvatar : NetworkBehaviour
     [Networked] public NetworkString<_512> CharacterJsonPart6 { get; set; }
     [Networked] public NetworkString<_512> CharacterJsonPart7 { get; set; }
 
-    public string _lastCharacterJson = "";
+    private string _lastAppliedJson = "";
+    private bool isSpawned = false;
+
     public CinemachineCamera vCam;
     public Camera cam;
+
     void Awake()
     {
-        if (HasStateAuthority)
-        {
-            Instance = this;
-            UpdateCharacterJson(PlayerDataHolder1.CharacterJson, Character);
-
-            Debug.Log(" PlayerAvatar.Instance đã được gán.");
-        }
-
-        if (HasStateAuthority)
-        {
-            UpdateCharacterJson(PlayerDataHolder1.CharacterJson, Character);
-        }
         if (Character == null)
-        {
             Character = GetComponentInChildren<Character>();
-        }
 
+        if (HasStateAuthority)
+            Instance = this;
     }
 
     public override void Spawned()
     {
         isSpawned = true;
 
-        if (HasStateAuthority)
-        { 
-            // Tiếp tục load character từ dữ liệu local nếu là local player
-            if (Object.HasInputAuthority)
-            {
-                UpdateCharacterJson(PlayerDataHolder1.CharacterJson);
-                RPC_SetNick(PlayerDataHolder1.PlayerName);
-                //  GỌI HÀM SET DISPLAY NAME ĐỂ ĐỒNG BỘ
-                RPC_SendDisplayNameToServer(PlayerDataHolder1.PlayerName);
-            }
+        if (HasStateAuthority && Object.HasInputAuthority)
+        {
+            UpdateCharacterJson(PlayerDataHolder1.CharacterJson);
+            RPC_SetNick(PlayerDataHolder1.PlayerName);
+            RPC_SendDisplayNameToServer(PlayerDataHolder1.PlayerName);
         }
 
-        // Load từ JSON sync lần đầu
-        _lastCharacterJson = GetFullCharacterJson();
-        LoadCharacter(_lastCharacterJson);
+        // Apply lần đầu
+        string json = GetFullCharacterJson();
+        ApplyCharacter(json);
 
-        // Cài đặt camera như cũ
-        vCam = GetComponentInChildren<CinemachineCamera>();
-        cam = GetComponentInChildren<Camera>();
-        if (Object.HasInputAuthority)
-        {
-            if (vCam != null) vCam.enabled = true;
-            if (cam != null) cam.enabled = true;
-        }
-        else
-        {
-            if (vCam != null) vCam.enabled = false;
-            if (cam != null) cam.enabled = false;
-        }
+        SetupCamera();
     }
-
-
-    private string _lastSyncedJson = "";
-    private bool isSpawned = false;
 
     void Update()
     {
         if (!isSpawned) return;
 
-        string currentJson = GetFullCharacterJson();
+        string json = GetFullCharacterJson();
+        if (_lastAppliedJson == json) return;
 
-        if ((_lastSyncedJson != currentJson))
-        {
-            _lastSyncedJson = currentJson;
-            LoadCharacter(currentJson);
-            Debug.Log($"[SYNC] {Runner.LocalPlayer} thấy JSON đã thay đổi.");
-        }
+        ApplyCharacter(json);
     }
 
-    //xử lý load Character
-   public void LoadCharacter(string json)
-{
-    if (Character == null || string.IsNullOrEmpty(json)) return;
-
-    try
+    // ================= APPLY CHARACTER (CHỖ DUY NHẤT) =================
+    private void ApplyCharacter(string json)
     {
-        var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
+        if (Character == null || string.IsNullOrEmpty(json)) return;
 
-        // 1️⃣ Load dữ liệu cơ bản (KHÔNG Initialize)
-        Character.FromJson(json);
+        _lastAppliedJson = json;
 
-        // 2️⃣ FIX RIÊNG MELEE 2H (BẮT BUỘC)
-        if (dict.TryGetValue("WeaponType", out var weaponType) &&
-            weaponType == "Melee2H" &&
-            dict.TryGetValue("SecondaryMeleeWeapon", out var weaponId))
+        try
         {
-            var entry = Character.SpriteCollection.MeleeWeapon2H
-                .FirstOrDefault(e => e.Id == weaponId);
+            var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
 
-            if (entry != null)
+            // 1️⃣ Base
+            Character.FromJson(json);
+
+            // 2️⃣ Weapon
+            if (dict.TryGetValue("WeaponType", out var weaponType))
             {
-                Character.WeaponType = WeaponType.Melee2H;
-                Character.Equip(entry, EquipmentPart.MeleeWeapon2H);
-
-                Debug.Log("[PlayerAvatar] Melee2H equipped BEFORE Initialize.");
-            }
-            else
-            {
-                Debug.LogWarning($"[PlayerAvatar] Không tìm thấy Melee2H entry: {weaponId}");
-            }
-        }
-
-        // 3️⃣ EQUIP ARMOR MIX (Boots, Gloves, Belt, Pauldrons, Vest)
-        string[] mixTypes = { "Boots", "Gloves", "Belt", "Pauldrons", "Vest" };
-        foreach (string t in mixTypes)
-        {
-            if (dict.TryGetValue(t, out string partId) && !string.IsNullOrEmpty(partId))
-            {
-                CharacterEquipHandler.EquipPartialArmorFromEntry(Character, partId, t);
-            }
-        }
-
-        // 4️⃣ FULL ARMOR (nếu có)
-        if (dict.TryGetValue("Armor", out var armorId))
-        {
-            CharacterEquipHandler.TestEquipArmor(Character, armorId);
-        }
-
-        // 5️⃣ REBUILD DUY NHẤT – CUỐI CÙNG
-        Character.Initialize();
-
-        Debug.Log("✅ Character loaded correctly from JSON.");
-    }
-    catch (Exception ex)
-    {
-        Debug.LogError($"❌ Failed to load character from JSON: {ex.Message}");
-    }
-}
-
-
-
-
-
-    // Cập nhật và chia nhỏ JSON thành các phần nhỏ
-    public void UpdateCharacterJson(string fullJson, Character targetCharacter)
-    {
-
-
-        if (!HasStateAuthority)
-        {
-            return;
-        }
-
-        int maxLen = 512;
-        int maxTotalLen = maxLen * 7;
-
-        if (fullJson.Length > maxTotalLen)
-        {
-            return;
-        }
-
-        CharacterJsonPart1 = fullJson.Substring(0, Mathf.Min(maxLen, fullJson.Length));
-        CharacterJsonPart2 = fullJson.Length > maxLen ? fullJson.Substring(maxLen, Mathf.Min(maxLen, fullJson.Length - maxLen)) : "";
-        CharacterJsonPart3 = fullJson.Length > maxLen * 2 ? fullJson.Substring(maxLen * 2, Mathf.Min(maxLen, fullJson.Length - maxLen * 2)) : "";
-        CharacterJsonPart4 = fullJson.Length > maxLen * 3 ? fullJson.Substring(maxLen * 3, Mathf.Min(maxLen, fullJson.Length - maxLen * 3)) : "";
-        CharacterJsonPart5 = fullJson.Length > maxLen * 4 ? fullJson.Substring(maxLen * 4, Mathf.Min(maxLen, fullJson.Length - maxLen * 4)) : "";
-        CharacterJsonPart6 = fullJson.Length > maxLen * 5 ? fullJson.Substring(maxLen * 5, Mathf.Min(maxLen, fullJson.Length - maxLen * 5)) : "";
-        CharacterJsonPart7 = fullJson.Length > maxLen * 6 ? fullJson.Substring(maxLen * 6, Mathf.Min(maxLen, fullJson.Length - maxLen * 6)) : "";
-
-        Debug.Log("CharacterJson updated and split into parts.");
-        //check melee2h đẻ hiển thị trên player ol 
-        var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(fullJson);
-
-        if (dict.TryGetValue("WeaponType", out var weaponType) && weaponType == "Melee2H")
-        {
-            if (dict.TryGetValue("SecondaryMeleeWeapon", out var weaponId))
-            {
-                var entry = targetCharacter.SpriteCollection.MeleeWeapon2H.FirstOrDefault(e => e.Id == weaponId);
-                if (entry != null)
+                if (weaponType == "Melee2H" &&
+    dict.TryGetValue("PrimaryMeleeWeapon", out var melee2HId))
                 {
-                    targetCharacter.WeaponType = WeaponType.Melee2H;
-                    targetCharacter.Equip(entry, EquipmentPart.MeleeWeapon2H);
-                 //   return;
+                    EquipMelee2H(melee2HId);
                 }
 
+                else if (weaponType == "Melee1H" &&
+                         dict.TryGetValue("PrimaryMeleeWeapon", out var melee1HId))
+                {
+                    EquipMelee1H(melee1HId);
+                }
+                else if (weaponType == "Bow" &&
+                         dict.TryGetValue("Bow", out var bowId))
+                {
+                    EquipBow(bowId);
+                }
             }
+
+            // 3️⃣ Armor mix
+            string[] mixTypes = { "Boots", "Gloves", "Belt", "Pauldrons", "Vest" };
+            foreach (var t in mixTypes)
+            {
+                if (dict.TryGetValue(t, out var partId) && !string.IsNullOrEmpty(partId))
+                    CharacterEquipHandler.EquipPartialArmorFromEntry(Character, partId, t);
+            }
+
+            // 4️⃣ Full armor
+            if (dict.TryGetValue("Armor", out var armorId) && !string.IsNullOrEmpty(armorId))
+                CharacterEquipHandler.TestEquipArmor(Character, armorId);
+
+            // 5️⃣ FINAL BUILD
+            Character.Initialize();
+
+            Debug.Log("✅ PlayerAvatar ApplyCharacter OK");
         }
-
-        //  Nếu không phải Melee2H thì dùng FromJson
-        targetCharacter.FromJson(fullJson);
-
-
-        //  Gọi lại EquipPartialArmor cho từng phần giáp nếu có
-        if (dict.TryGetValue("Armor", out var armorId))
+        catch (Exception e)
         {
-            CharacterEquipHandler.TestEquipArmor(targetCharacter, armorId);
-
+            Debug.LogError($"❌ ApplyCharacter failed: {e}");
         }
-
     }
 
-    // Lấy lại JSON đầy đủ từ các phần nhỏ
+    // ================= WEAPON HELPERS =================
+    private void EquipMelee2H(string id)
+    {
+        var entry = Character.SpriteCollection.MeleeWeapon2H.FirstOrDefault(e => e.Id == id);
+        if (entry == null)
+        {
+            Debug.LogError($"❌ Melee2H not found: {id}");
+            return;
+        }
+
+        Character.WeaponType = WeaponType.Melee2H;
+        Character.Equip(entry, EquipmentPart.MeleeWeapon2H);
+    }
+
+    private void EquipMelee1H(string id)
+    {
+        var entry = Character.SpriteCollection.MeleeWeapon1H.FirstOrDefault(e => e.Id == id);
+        if (entry == null) return;
+
+        Character.WeaponType = WeaponType.Melee1H;
+        Character.Equip(entry, EquipmentPart.MeleeWeapon1H);
+    }
+
+    private void EquipBow(string id)
+    {
+        var entry = Character.SpriteCollection.Bow.FirstOrDefault(e => e.Id == id);
+        if (entry == null) return;
+
+        Character.WeaponType = WeaponType.Bow;
+        Character.Equip(entry, EquipmentPart.Bow);
+    }
+
+    // ================= NETWORK JSON =================
+    public void UpdateCharacterJson(string fullJson)
+    {
+        if (!HasStateAuthority || string.IsNullOrEmpty(fullJson)) return;
+
+        int max = 512;
+        CharacterJsonPart1 = fullJson.Substring(0, Mathf.Min(max, fullJson.Length));
+        CharacterJsonPart2 = fullJson.Length > max ? fullJson.Substring(max, Mathf.Min(max, fullJson.Length - max)) : "";
+        CharacterJsonPart3 = fullJson.Length > max * 2 ? fullJson.Substring(max * 2, Mathf.Min(max, fullJson.Length - max * 2)) : "";
+        CharacterJsonPart4 = fullJson.Length > max * 3 ? fullJson.Substring(max * 3, Mathf.Min(max, fullJson.Length - max * 3)) : "";
+        CharacterJsonPart5 = fullJson.Length > max * 4 ? fullJson.Substring(max * 4, Mathf.Min(max, fullJson.Length - max * 4)) : "";
+        CharacterJsonPart6 = fullJson.Length > max * 5 ? fullJson.Substring(max * 5, Mathf.Min(max, fullJson.Length - max * 5)) : "";
+        CharacterJsonPart7 = fullJson.Length > max * 6 ? fullJson.Substring(max * 6, Mathf.Min(max, fullJson.Length - max * 6)) : "";
+    }
+
     public string GetFullCharacterJson()
     {
-        return CharacterJsonPart1.ToString() +
-               CharacterJsonPart2.ToString() +
-               CharacterJsonPart3.ToString() +
-               CharacterJsonPart4.ToString() +
-               CharacterJsonPart5.ToString() +
-               CharacterJsonPart6.ToString() +
-               CharacterJsonPart7.ToString();
+        return CharacterJsonPart1.ToString()
+             + CharacterJsonPart2.ToString()
+             + CharacterJsonPart3.ToString()
+             + CharacterJsonPart4.ToString()
+             + CharacterJsonPart5.ToString()
+             + CharacterJsonPart6.ToString()
+             + CharacterJsonPart7.ToString();
     }
-    //check token , kich login nếu trùng token , đẩy client về Scene Login
+
+    // ================= CAMERA =================
+    private void SetupCamera()
+    {
+        vCam = GetComponentInChildren<CinemachineCamera>();
+        cam = GetComponentInChildren<Camera>();
+
+        bool isLocal = Object.HasInputAuthority;
+        if (vCam) vCam.enabled = isLocal;
+        if (cam) cam.enabled = isLocal;
+    }
+    public bool IsLocalPlayer()
+    {
+        return Object != null && Object.HasInputAuthority;
+    }
+    public void LoadCharacter(string json)
+    {
+        ApplyCharacter(json);
+    }
+    public void SendCharacterJsonToAllClients()
+    {
+        // Fusion tự sync Networked fields
+    }
+
+    // ================= RPC =================
+    [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+    public void RPC_SendDisplayNameToServer(string name) => RPC_SetDisplayName(name);
+
+    [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+    void RPC_SetDisplayName(string name) => DisplayName = name;
+
+    [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
+    void RPC_SetNick(string name) => NickName = name;
     [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
     public void RPC_KickToLogin()
     {
@@ -254,66 +225,5 @@ public class PlayerAvatar : NetworkBehaviour
             SceneManager.LoadScene("Login");
         }
     }
-
-
-    public void SendCharacterJsonToAllClients()
-    {
-        if (!HasStateAuthority)
-        {
-            return;
-        }
-
-        // KHÔNG cần RPC. Fusion sẽ tự sync các Networked fields
-        Debug.Log(" Fusion sẽ tự đồng bộ CharacterJsonPart1-7 đến tất cả client.");
-    }
-
-
-    public void UpdateCharacterJson(string fullJson)
-    {
-        UpdateCharacterJson(fullJson, Character); // dùng chính Character của PlayerAvatar
-    }
-    [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
-    public void RPC_ReceiveCharacterJson(string json)
-    {
-        UpdateCharacterJson(json); //  Gọi từ Player thật → Fusion sẽ sync CharacterJsonPart1-7
-    }
-
-    [Serializable]
-    public class SaveCharacterDto
-    {
-        public int AccountId;
-        public string CharacterJson;
-    }
-
-    public bool IsLocalPlayer()
-    {
-        return Object != null && Object.HasInputAuthority;
-    }
-    [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
-    public void RPC_SendDisplayNameToServer(string name)
-    {
-        // Gọi từ client → server
-        RPC_SetDisplayName(name); // server sẽ gọi tiếp cho các client khác
-    }
-
-    [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
-    public void RPC_SetDisplayName(string name)
-    {
-        DisplayName = name;
-        Debug.Log($"[PlayerAvatar] RPC_SetDisplayName: {name}");
-
-        // Nếu có NameTag, cập nhật luôn
-        var nameTag = GetComponentInChildren<NameTagManager>();
-        if (nameTag != null)
-        {
-            nameTag.SetName(name); // Set trực tiếp nếu có hàm
-        }
-    }
-    [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
-    private void RPC_SetNick(string name)
-    {
-        NickName = name;
-    }
-
 
 }

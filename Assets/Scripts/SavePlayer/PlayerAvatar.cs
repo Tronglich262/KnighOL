@@ -112,57 +112,65 @@ public class PlayerAvatar : NetworkBehaviour
     }
 
     //xử lý load Character
-    public void LoadCharacter(string json)
+   public void LoadCharacter(string json)
+{
+    if (Character == null || string.IsNullOrEmpty(json)) return;
+
+    try
     {
-        if (Character == null || string.IsNullOrEmpty(json)) return;
+        var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
 
-        try
+        // 1️⃣ Load dữ liệu cơ bản (KHÔNG Initialize)
+        Character.FromJson(json);
+
+        // 2️⃣ FIX RIÊNG MELEE 2H (BẮT BUỘC)
+        if (dict.TryGetValue("WeaponType", out var weaponType) &&
+            weaponType == "Melee2H" &&
+            dict.TryGetValue("SecondaryMeleeWeapon", out var weaponId))
         {
-            Character.FromJson(json);
-            Character.Initialize();
+            var entry = Character.SpriteCollection.MeleeWeapon2H
+                .FirstOrDefault(e => e.Id == weaponId);
 
-            var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
+            if (entry != null)
+            {
+                Character.WeaponType = WeaponType.Melee2H;
+                Character.Equip(entry, EquipmentPart.MeleeWeapon2H);
 
-            //  Bổ sung xử lý Melee2H đúng chuẩn
-            if (dict.TryGetValue("WeaponType", out var weaponType) && weaponType == "Melee2H")
-            {
-                if (dict.TryGetValue("SecondaryMeleeWeapon", out var weaponId))
-                {
-                    var entry = Character.SpriteCollection.MeleeWeapon2H.FirstOrDefault(e => e.Id == weaponId);
-                    if (entry != null)
-                    {
-                        Character.WeaponType = WeaponType.Melee2H;
-                        Character.Equip(entry, EquipmentPart.MeleeWeapon2H);
-                        Debug.Log("[PlayerAvatar] Equip Melee2H thủ công sau khi FromJson.");
-                    }
-                    else
-                    {
-                        Debug.LogWarning($"[PlayerAvatar] Không tìm thấy Melee2H entry: {weaponId}");
-                    }
-                }
+                Debug.Log("[PlayerAvatar] Melee2H equipped BEFORE Initialize.");
             }
-            //  GỌI LẠI PHỐI ARMOR MIX (Boots, Gloves, Belt, Pauldrons, Vest)
-            string[] mixTypes = new[] { "Boots", "Gloves", "Belt", "Pauldrons", "Vest" };
-            foreach (string t in mixTypes)
+            else
             {
-                if (dict.TryGetValue(t, out string partId) && !string.IsNullOrEmpty(partId))
-                {
-                    CharacterEquipHandler.EquipPartialArmorFromEntry(Character, partId, t);
-                }
+                Debug.LogWarning($"[PlayerAvatar] Không tìm thấy Melee2H entry: {weaponId}");
             }
-            //  Bổ sung xử lý Armor (nếu dùng HeroEditor)
-            if (dict.TryGetValue("Armor", out var armorId))
-            {
-                CharacterEquipHandler.TestEquipArmor(Character, armorId);
-            }
-
-            Debug.Log("Character loaded from JSON.");
         }
-        catch (Exception ex)
+
+        // 3️⃣ EQUIP ARMOR MIX (Boots, Gloves, Belt, Pauldrons, Vest)
+        string[] mixTypes = { "Boots", "Gloves", "Belt", "Pauldrons", "Vest" };
+        foreach (string t in mixTypes)
         {
-            Debug.LogError($"❌ Failed to load character from JSON: {ex.Message}");
+            if (dict.TryGetValue(t, out string partId) && !string.IsNullOrEmpty(partId))
+            {
+                CharacterEquipHandler.EquipPartialArmorFromEntry(Character, partId, t);
+            }
         }
+
+        // 4️⃣ FULL ARMOR (nếu có)
+        if (dict.TryGetValue("Armor", out var armorId))
+        {
+            CharacterEquipHandler.TestEquipArmor(Character, armorId);
+        }
+
+        // 5️⃣ REBUILD DUY NHẤT – CUỐI CÙNG
+        Character.Initialize();
+
+        Debug.Log("✅ Character loaded correctly from JSON.");
     }
+    catch (Exception ex)
+    {
+        Debug.LogError($"❌ Failed to load character from JSON: {ex.Message}");
+    }
+}
+
 
 
 
@@ -206,7 +214,7 @@ public class PlayerAvatar : NetworkBehaviour
                 {
                     targetCharacter.WeaponType = WeaponType.Melee2H;
                     targetCharacter.Equip(entry, EquipmentPart.MeleeWeapon2H);
-                    return;
+                 //   return;
                 }
 
             }
@@ -214,6 +222,7 @@ public class PlayerAvatar : NetworkBehaviour
 
         //  Nếu không phải Melee2H thì dùng FromJson
         targetCharacter.FromJson(fullJson);
+
 
         //  Gọi lại EquipPartialArmor cho từng phần giáp nếu có
         if (dict.TryGetValue("Armor", out var armorId))

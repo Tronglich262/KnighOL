@@ -51,7 +51,7 @@ public class PlayerCloneController : MonoBehaviour
 
         if (TryGetComponent<Character>(out var character))
         {
-
+                
             character.FromJson(json);
             character.Initialize();
 

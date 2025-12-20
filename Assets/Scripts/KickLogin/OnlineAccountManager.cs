@@ -9,8 +9,17 @@ public class OnlineAccountManager : MonoBehaviour
     public static OnlineAccountManager Instance;
     void Awake()
     {
-        if (Instance == null) Instance = this;
-        else Destroy(gameObject);
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        Instance = this;
+
+        transform.SetParent(null);
+
         DontDestroyOnLoad(gameObject);
     }
+
 }

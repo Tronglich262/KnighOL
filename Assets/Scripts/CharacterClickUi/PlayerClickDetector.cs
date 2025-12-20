@@ -26,14 +26,17 @@ public class ClickPlayerShowInfo : MonoBehaviour
 
     bool IsAnyUIPanelOpen()
     {
-        return (CharacterPreviewPanel.Instance?.gameObject.activeSelf ?? false)
+        return
+            (CharacterPreviewPanel.Instance?.gameObject.activeSelf ?? false)
             || (CharacterUIManager1.Instance?.gameObject.activeSelf ?? false)
-            || (WorldChatUIManager.Instance.chatPanel?.gameObject.activeSelf ?? false)
-            || (WorldChatUIManager.Instance.privateChatPanel?.gameObject.activeSelf ?? false)
-            || (WorldChatUIManager.Instance.privateChatListPanel?.gameObject.activeSelf ?? false)
-            || (CharacterUIManager.Instance.TiemNang?.gameObject.activeSelf ?? false)
-            || (CharacterUIManager.Instance.Tui?.gameObject.activeSelf ?? false)
-            || (CharacterUIManager.Instance.Kynang?.gameObject.activeSelf ?? false);
+
+            || (WorldChatUIManager.Instance?.chatPanel?.gameObject.activeSelf ?? false)
+            || (WorldChatUIManager.Instance?.privateChatPanel?.gameObject.activeSelf ?? false)
+            || (WorldChatUIManager.Instance?.privateChatListPanel?.gameObject.activeSelf ?? false)
+
+            || (CharacterUIManager.Instance?.TiemNang?.gameObject.activeSelf ?? false)
+            || (CharacterUIManager.Instance?.Tui?.gameObject.activeSelf ?? false)
+            || (CharacterUIManager.Instance?.Kynang?.gameObject.activeSelf ?? false);
     }
 
 

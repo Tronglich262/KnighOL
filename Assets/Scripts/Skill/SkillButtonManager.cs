@@ -30,9 +30,14 @@ public class SkillButtonManager : MonoBehaviour
     public GameObject Skillbutton;
 
     // KHÔNG dùng static Singleton nữa!
-    public void Awake()
+    private void Awake()
     {
-            Instance = this;
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        Instance = this;
     }
     void Start()
     {

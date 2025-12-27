@@ -291,7 +291,7 @@ GameObject:
   - component: {fileID: 135693370901098114}
   - component: {fileID: 54188679937770806}
   - component: {fileID: 82122916086766212}
-  - component: {fileID: -5522308043496952882}
+  - component: {fileID: -883079557148319816}
   m_Layer: 3
   m_Name: Arrow
   m_TagString: Untagged
@@ -332,7 +332,6 @@ MonoBehaviour:
   Trail: {fileID: 1340644624321108}
   Impact: {fileID: 1291128175795340}
   Rigidbody: {fileID: 54188679937770806}
-  Damage: 10
 --- !u!212 &212251069274404834
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -533,7 +532,7 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
---- !u!114 &-5522308043496952882
+--- !u!114 &-883079557148319816
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -545,10 +544,9 @@ MonoBehaviour:
   m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SortKey: 2096054568
+  SortKey: 41196359
   ObjectInterest: 1
   Flags: 262145
   NestedObjects: []
-  NetworkedBehaviours:
-  - {fileID: 114615868666085946}
+  NetworkedBehaviours: []
   ForceRemoteRenderTimeframe: 0

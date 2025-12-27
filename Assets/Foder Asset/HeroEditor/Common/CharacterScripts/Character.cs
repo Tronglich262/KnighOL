@@ -20,26 +20,16 @@ namespace Assets.HeroEditor.Common.CharacterScripts
         public MeleeWeapon MeleeWeapon;
         public Firearm Firearm;
 
-		[Header("Service")]
-		public LayerManager LayerManager;
+        [Header("Service")]
+        public LayerManager LayerManager;
 
         [Header("Custom")]
         public bool ShowHelmet = true;
 
-
         public Vector2 BodyScale
-	    {
-		    get { return BodyRenderers.Single(i => i.name == "Torso").transform.localScale; }
-		    set => GetComponent<CharacterBodySculptor>().OnCharacterLoaded(value);
-        }
-        private bool _initialized;
-
-        private void Awake()
         {
-            if (_initialized) return;
-            _initialized = true;
-
-           // Initialize();
+            get { return BodyRenderers.Single(i => i.name == "Torso").transform.localScale; }
+            set => GetComponent<CharacterBodySculptor>().OnCharacterLoaded(value);
         }
 
         /// <summary>
@@ -53,9 +43,7 @@ namespace Assets.HeroEditor.Common.CharacterScripts
         }
 
         public void Start()
-
         {
-
             // We can use [StateHandler] attached to animation states to handle state transitions.
             foreach (var handler in Animator.GetBehaviours<StateHandler>().Where(i => i.Name.Contains("Death")))
             {
@@ -65,7 +53,6 @@ namespace Assets.HeroEditor.Common.CharacterScripts
                 handler.StateExit.RemoveAllListeners();
                 handler.StateExit.AddListener(() => SetExpression("Default"));
             }
-
         }
 
         /// <summary>
@@ -73,25 +60,20 @@ namespace Assets.HeroEditor.Common.CharacterScripts
         /// </summary>
         public void OnEnable()
         {
-            if (!Application.isPlaying) return;
-            if (HairMask == null || HelmetRenderer == null || HairRenderer == null) return;
-
             HairMask.isCustomRangeActive = true;
             HairMask.frontSortingOrder = HelmetRenderer.sortingOrder;
             HairMask.backSortingOrder = HairRenderer.sortingOrder;
-
             UpdateAnimation();
         }
 
-
         public void OnDisable()
-	    {
-		    _animationState = -1;
-	    }
+        {
+            _animationState = -1;
+        }
 
-	    private int _animationState = -1;
+        private int _animationState = -1;
 
-		/// <summary>
+        /// <summary>
         /// Initializes character renderers with selected sprites.
         /// </summary>
         public override void Initialize()
@@ -106,11 +88,11 @@ namespace Assets.HeroEditor.Common.CharacterScripts
             }
         }
 
-		/// <summary>
-		/// Initializes character renderers with selected sprites.
-		/// </summary>
-		private void TryInitialize()
-		{
+        /// <summary>
+        /// Initializes character renderers with selected sprites.
+        /// </summary>
+        private void TryInitialize()
+        {
             if (Expressions.All(i => i.Name != "Default") || Expressions.All(i => i.Name != "Angry") || Expressions.All(i => i.Name != "Dead"))
             {
                 throw new Exception("Character must have at least 3 basic expressions: Default, Angry and Dead.");
@@ -132,45 +114,45 @@ namespace Assets.HeroEditor.Common.CharacterScripts
             HeadRenderer.sprite = Head;
             EarsRenderer.sprite = Ears;
             HairRenderer.sprite = Hair;
-			SetExpression(Expression);
-			BeardRenderer.sprite = Beard;
-			MapSprites(BodyRenderers, Body);
-			GlassesRenderer.sprite = Glasses;
-			MaskRenderer.sprite = Mask;
-			EarringsRenderer.sprite = Earrings;
-			MapSprites(ArmorRenderers, Armor);
-			CapeRenderer.sprite = Cape;
-			BackRenderer.sprite = Back;
-			PrimaryMeleeWeaponRenderer.sprite = PrimaryMeleeWeapon;
-			SecondaryMeleeWeaponRenderer.sprite = SecondaryMeleeWeapon;
-			MapSprites(BowRenderers, Bow);
-			MapSprites(FirearmsRenderers, Firearms);
-			ShieldRenderer.sprite = Shield;
+            SetExpression(Expression);
+            BeardRenderer.sprite = Beard;
+            MapSprites(BodyRenderers, Body);
+            GlassesRenderer.sprite = Glasses;
+            MaskRenderer.sprite = Mask;
+            EarringsRenderer.sprite = Earrings;
+            MapSprites(ArmorRenderers, Armor);
+            CapeRenderer.sprite = Cape;
+            BackRenderer.sprite = Back;
+            PrimaryMeleeWeaponRenderer.sprite = PrimaryMeleeWeapon;
+            SecondaryMeleeWeaponRenderer.sprite = SecondaryMeleeWeapon;
+            MapSprites(BowRenderers, Bow);
+            MapSprites(FirearmsRenderers, Firearms);
+            ShieldRenderer.sprite = Shield;
 
-			PrimaryMeleeWeaponRenderer.enabled = WeaponType != WeaponType.Bow;
-			SecondaryMeleeWeaponRenderer.enabled = WeaponType == WeaponType.MeleePaired;
-			BowRenderers.ForEach(i => i.enabled = WeaponType == WeaponType.Bow);
-			ShieldRenderer.enabled = WeaponType == WeaponType.Melee1H || WeaponType == WeaponType.Firearms1H;
+            PrimaryMeleeWeaponRenderer.enabled = WeaponType != WeaponType.Bow;
+            SecondaryMeleeWeaponRenderer.enabled = WeaponType == WeaponType.MeleePaired;
+            BowRenderers.ForEach(i => i.enabled = WeaponType == WeaponType.Bow);
+            ShieldRenderer.enabled = WeaponType == WeaponType.Melee1H || WeaponType == WeaponType.Firearms1H;
 
-			if (Hair != null && Hair.name.Contains("[HideEars]") && HairRenderer.maskInteraction == SpriteMaskInteraction.None)
-			{
-				EarsRenderer.sprite = null;
-			}
+            if (Hair != null && Hair.name.Contains("[HideEars]") && HairRenderer.maskInteraction == SpriteMaskInteraction.None)
+            {
+                EarsRenderer.sprite = null;
+            }
 
-			switch (WeaponType)
-			{
+            switch (WeaponType)
+            {
                 case WeaponType.Firearms1H:
                 case WeaponType.Firearms2H:
-                {
-                    Firearm.AmmoShooted = 0;
-                    BuildFirearms(Firearm.Params);
-                    break;
-                }
+                    {
+                        Firearm.AmmoShooted = 0;
+                        BuildFirearms(Firearm.Params);
+                        break;
+                    }
             }
 
             ApplyMaterials();
             UpdateAnimation();
-		}
+        }
 
         /// <summary>
         /// Refer to Animator window for animation params, states and transitions!
@@ -179,21 +161,21 @@ namespace Assets.HeroEditor.Common.CharacterScripts
         {
             if (!Animator.isInitialized) return;
 
-            var state = 100 * (int) WeaponType;
+            var state = 100 * (int)WeaponType;
 
-            Animator.SetInteger("WeaponType", (int) WeaponType);
+            Animator.SetInteger("WeaponType", (int)WeaponType);
 
             if ((WeaponType == WeaponType.Firearms1H || WeaponType == WeaponType.Firearms2H || WeaponType == WeaponType.FirearmsPaired) && Firearm.Params != null)
             {
-				Animator.SetInteger("MagazineType", (int) Firearm.Params.MagazineType);
-                Animator.SetInteger("HoldType", (int) Firearm.Params.HoldType);
-                state += (int) Firearm.Params.HoldType;
+                Animator.SetInteger("MagazineType", (int)Firearm.Params.MagazineType);
+                Animator.SetInteger("HoldType", (int)Firearm.Params.HoldType);
+                state += (int)Firearm.Params.HoldType;
             }
 
             if (state == _animationState) return; // No need to change animation.
 
             _animationState = state;
-			
+
             if (WeaponType == WeaponType.Firearms1H || WeaponType == WeaponType.Firearms2H)
             {
                 Animator.Play("IdleFirearm", 0); // Upper body
@@ -205,12 +187,12 @@ namespace Assets.HeroEditor.Common.CharacterScripts
 
             Relax();
             SetState(CharacterState.Idle);
-		}
+        }
 
-		/// <summary>
-		/// Alternative way to Hit character (with a script).
-		/// </summary>
-		public void Spring()
+        /// <summary>
+        /// Alternative way to Hit character (with a script).
+        /// </summary>
+        public void Spring()
         {
             ScaleSpring.Begin(this, 1f, 1.1f, 40, 2);
         }
@@ -228,8 +210,6 @@ namespace Assets.HeroEditor.Common.CharacterScripts
             renderers.Add(HairRenderer);
             renderers.ForEach(i => i.sharedMaterial = i.color == Color.white ? DefaultMaterial : EquipmentPaintMaterial);
         }
-        //load dữ liệu Armor
-
         public void EquipArmor(List<Sprite> armor)
         {
             if (armor == null || ArmorRenderers == null) return;
@@ -243,12 +223,24 @@ namespace Assets.HeroEditor.Common.CharacterScripts
 
         public void EquipBow(List<Sprite> bow)
         {
+
             if (bow == null || BowRenderers == null) return;
 
+            // 1️⃣ GÁN DỮ LIỆU CHO FIELD
+            Bow.Clear();
+            Bow.AddRange(bow);
+
+            // 2️⃣ MAP SPRITE VÀO RENDERER
             for (int i = 0; i < BowRenderers.Count; i++)
             {
-                BowRenderers[i].sprite = i < Bow.Count ? Bow[i] : null;
+                BowRenderers[i].sprite = i < bow.Count ? bow[i] : null;
             }
+
+            // 3️⃣ SET ĐÚNG LOẠI VŨ KHÍ
+            WeaponType = WeaponType.Bow;
+
+            // 4️⃣ INIT LẠI
+            Initialize();
         }
         public void ResetCharacterToNaked()
         {
@@ -263,19 +255,17 @@ namespace Assets.HeroEditor.Common.CharacterScripts
             Back = null;
             Shield = null;
 
-            PrimaryMeleeWeapon = null;
-            SecondaryMeleeWeapon = null;
-            Bow.Clear();
-            Firearms.Clear();
+           // PrimaryMeleeWeapon = null;
+           // SecondaryMeleeWeapon = null;
+            //Bow.Clear();
+          //  Firearms.Clear();
 
             Armor.Clear();
 
-           // WeaponType = WeaponType.None;
+            // WeaponType = WeaponType.None;
 
             Initialize();
         }
-
     }
-
 
 }

@@ -26,7 +26,7 @@ public class SettingPanel : MonoBehaviour
     {
         settingPanel.SetActive(false);
     }
-    public async void ToggleDangXuat()
+    /*public async void ToggleDangXuat()
     {
         // Despawn player object của mình nếu còn
         if (runner != null && PlayerSpawner.LocalPlayerObject != null)
@@ -46,5 +46,5 @@ public class SettingPanel : MonoBehaviour
 
         // Quay về login/menu
         SceneManager.LoadScene("Login");
-    }
+    }*/
 }

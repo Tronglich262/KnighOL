@@ -1,30 +1,39 @@
-﻿using System.Linq;
-using Assets.HeroEditor.Common.CharacterScripts;
+﻿using Assets.HeroEditor.Common.CharacterScripts;
 using Fusion;
 using UnityEngine;
 
 namespace Assets.HeroEditor.Common.ExampleScripts
 {
-    /// <summary>
-    /// Bow shooting behaviour (charge/release bow, create arrow). Now networked with Fusion.
-    /// </summary>
     public class BowExample : NetworkBehaviour
     {
         public Character Character;
         public AnimationClip ClipCharge;
         public Transform FireTransform;
         public GameObject ArrowPrefab;
-        public bool CreateArrows;
 
-        [HideInInspector] public bool ChargeButtonDown;
-        [HideInInspector] public bool ChargeButtonUp;
+        public bool CreateArrows = true;
+        public bool ChargeButtonDown;
+        public bool ChargeButtonUp;
 
         private float _chargeTime;
+        private float _localAimAngle;
 
-        public void Update()
+        [Networked] public float AimAngle { get; private set; }
+        public override void Spawned()
         {
-            if (!HasInputAuthority) return;
+            if (Character == null) Character = GetComponent<Character>();
+            if (FireTransform == null) FireTransform = transform.Find("FireTransform"); // sửa path cho đúng
+        }
 
+        private void Update()
+        {
+            if (!Object.HasInputAuthority) return;
+
+            Vector3 mouseWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            mouseWorld.z = 0;
+
+            Vector2 dir = mouseWorld - FireTransform.position;
+            float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
             if (ChargeButtonDown)
             {
                 _chargeTime = Time.time;
@@ -34,10 +43,31 @@ namespace Assets.HeroEditor.Common.ExampleScripts
 
             if (ChargeButtonUp)
             {
-                bool charged = Time.time - _chargeTime > ClipCharge.length;
-                RPC_ReleaseCharge(charged);
+                bool charged = Time.time - _chargeTime > 0.3f;
+                RPC_Release(charged, FireTransform.position, AimAngle);
                 ChargeButtonUp = false;
             }
+
+            RPC_SetAim(angle);
+        }
+        [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
+        private void RPC_SetAim(float angle)
+        {
+            AimAngle = angle;
+        }
+        public override void FixedUpdateNetwork()
+        {
+            FireTransform.rotation = Quaternion.Euler(0, 0, AimAngle);
+        }
+        [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
+        private void RPC_Release(bool charged, Vector3 pos, float angle)
+        {
+            AimAngle = angle;
+
+            if (charged)
+                CreateArrow(pos, angle);
+
+            RPC_PlayReleaseAnim(charged);
         }
 
         [Rpc(RpcSources.InputAuthority, RpcTargets.All)]
@@ -46,54 +76,23 @@ namespace Assets.HeroEditor.Common.ExampleScripts
             Character.Animator.SetInteger("Charge", 1);
         }
 
-        [Rpc(RpcSources.InputAuthority, RpcTargets.All)]
-        private void RPC_ReleaseCharge(bool charged)
+
+
+        [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+        private void RPC_PlayReleaseAnim(bool charged)
         {
             Character.Animator.SetInteger("Charge", charged ? 2 : 3);
-
-            if (charged && CreateArrows && Object.HasStateAuthority)
-            {
-                CreateArrow();
-            }
         }
 
-        private void CreateArrow()
+        private void CreateArrow(Vector3 spawnPos, float angle)
         {
-            Vector3 spawnPos = FireTransform.position;
-            Quaternion spawnRot = Quaternion.identity;
-
-            float speed = 18.75f * Random.Range(0.85f, 1.15f);
-            Vector3 direction = FireTransform.right * Mathf.Sign(Character.transform.lossyScale.x);
+            Quaternion spawnRot = Quaternion.Euler(0, 0, angle);
 
             NetworkObject arrowObj = Runner.Spawn(ArrowPrefab, spawnPos, spawnRot);
-            GameObject arrow = arrowObj.gameObject;
 
-            var sr = arrow.GetComponent<SpriteRenderer>();
-
-            // Lấy sát thương từ player
-            var stats = Character.GetComponent<CharacterStats>();
-            int damage = stats.strength + stats.finalStrength; // hoặc công thức bạn muốn
-
-            // Truyền damage vào Init:
-            var proj = arrow.GetComponent<Projectile>();
-            if (proj != null)
-            {
-                proj.Init(direction, speed, damage); // <-- truyền sát thương!
-            }
-
-            sr.sprite = Character.Bow.FirstOrDefault(j => j.name.ToLower().Contains("arrow"));
-
-            // Tránh mũi tên va chạm người bắn
-            var characterCollider = Character.GetComponent<Collider>();
-            if (characterCollider != null)
-            {
-                Collider arrowCollider = arrow.GetComponent<Collider>();
-                Physics.IgnoreCollision(arrowCollider, characterCollider);
-            }
-
-            arrow.layer = 31;
-            Physics.IgnoreLayerCollision(31, 31, true);
+            Rigidbody rb = arrowObj.GetComponent<Rigidbody>();
+            if (rb != null)
+                rb.linearVelocity = spawnRot * Vector3.right * 18f; // Rigidbody dùng velocity (3D)
         }
-
     }
 }

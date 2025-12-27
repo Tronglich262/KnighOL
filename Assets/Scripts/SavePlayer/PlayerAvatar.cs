@@ -124,6 +124,8 @@ public class PlayerAvatar : NetworkBehaviour
         {
             Debug.LogError($"❌ ApplyCharacter failed: {e}");
         }
+
+
     }
 
     // ================= WEAPON HELPERS =================
@@ -225,5 +227,6 @@ public class PlayerAvatar : NetworkBehaviour
             SceneManager.LoadScene("Login");
         }
     }
+   
 
 }

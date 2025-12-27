@@ -100,7 +100,7 @@ public class ItemDetailsUI : MonoBehaviour
         {
             descText.text = $"ID: {item.itemId}\nSố lượng: {item.quantity}\n(stats null)";
         }
-            panel.SetActive(true);
+        panel.SetActive(true);
     }
 
     public void UseItem()
@@ -386,7 +386,6 @@ public class ItemDetailsUI : MonoBehaviour
                 break;
 
 
-                break;
             default:
                 Debug.LogWarning($"❌ Loại chưa hỗ trợ: {currentItem.stats.Type}");
                 return;
@@ -731,11 +730,11 @@ public class ItemDetailsUI : MonoBehaviour
     }
     public void OnClickBuy()
     {
-          if (currentShopItem == null)
-    {
-        Debug.LogError("currentShopItem NULL! Bạn chưa chọn item shop?");
-        return;
-    }
+        if (currentShopItem == null)
+        {
+            Debug.LogError("currentShopItem NULL! Bạn chưa chọn item shop?");
+            return;
+        }
         Debug.Log($"[OnClickBuy] currentShopItem: {currentShopItem?.itemId}, price: {currentShopItem?.price}, name: {currentShopItem?.name}");
         Debug.Log($"[OnClickBuy] currentItem: {currentItem}, currentItem.stats: {currentItem?.stats}");
         int itemId = currentItem.stats.Item_ID;
@@ -810,13 +809,13 @@ public class ItemDetailsUI : MonoBehaviour
             switch (EquipmentSlotUI.Instante.shopPanelType)
             {
                 case EquipmentSlotUI.ShopPanelType.ShopTP:
-                     ShopTP.Instance.panelshopTP.SetActive(false); // Ẩn panel shop sau khi mua 
+                    ShopTP.Instance.panelshopTP.SetActive(false); // Ẩn panel shop sau khi mua 
                     break;
                 case EquipmentSlotUI.ShopPanelType.ShopVK:
                     shopvk.Instance.panelshopvk.SetActive(false); // Ẩn panel shop sau khi mua
                     break;
                 case EquipmentSlotUI.ShopPanelType.ShopPK:
-                     shoppk.Instance.panelshoppk.SetActive(false); // Ẩn panel shop sau khi mua
+                    shoppk.Instance.panelshoppk.SetActive(false); // Ẩn panel shop sau khi mua
                     break;
             }
         }
@@ -825,7 +824,7 @@ public class ItemDetailsUI : MonoBehaviour
             ShowEquipMessage("Lỗi khi mua: " + req.downloadHandler.text);
         }
     }
-  
+
 
     public class ShopBuyResponse
     {

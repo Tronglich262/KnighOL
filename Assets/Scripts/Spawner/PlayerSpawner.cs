@@ -4,6 +4,7 @@ using Fusion.Sockets;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 public class PlayerSpawner : SimulationBehaviour, INetworkRunnerCallbacks
 {
@@ -35,7 +36,7 @@ public class PlayerSpawner : SimulationBehaviour, INetworkRunnerCallbacks
 
             // Truyền vào runner.Spawn
             NetworkObject obj = runner.Spawn(playerPrefab, spawnPosition, spawnRotation, player);
-
+          
 
             // Clone handling
             var clone = GameObject.Find("CloneUI");

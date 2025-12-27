@@ -1,28 +1,21 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-using Fusion;
 
 namespace Assets.HeroEditor.Common.ExampleScripts
 {
     /// <summary>
     /// General behaviour for projectiles: bullets, rockets and other.
     /// </summary>
-    public class Projectile : NetworkBehaviour
+    public class Projectile : MonoBehaviour
     {
         public List<Renderer> Renderers;
         public GameObject Trail;
         public GameObject Impact;
         public Rigidbody Rigidbody;
-        public int Damage = 10;
 
-        private bool _hasBanged;
-
-        public override void Spawned()
+        public void Start()
         {
-            if (HasStateAuthority)
-            {
-                Invoke(nameof(DespawnSelf), 5f);
-            }
+            Destroy(gameObject, 5);
         }
 
         public void Update()
@@ -35,33 +28,12 @@ namespace Assets.HeroEditor.Common.ExampleScripts
 
         public void OnTriggerEnter(Collider other)
         {
-            if (!_hasBanged && HasStateAuthority)
-            {
-                // Gây dame lên enemy nếu có
-                var enemy = other.GetComponent<EnemyDamageHandler>();
-                if (enemy != null)
-                {
-                    enemy.RPC_TakeDamage(Damage, Runner.LocalPlayer);
-                }
-                _hasBanged = true;
-                RPC_Bang();
-            }
+            Bang(other.gameObject);
         }
-
 
         public void OnCollisionEnter(Collision other)
         {
-            if (!_hasBanged && HasStateAuthority)
-            {
-                _hasBanged = true;
-                RPC_Bang();
-            }
-        }
-
-        [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
-        private void RPC_Bang()
-        {
-            Bang(null);
+            Bang(other.gameObject);
         }
 
         private void Bang(GameObject other)
@@ -86,8 +58,6 @@ namespace Assets.HeroEditor.Common.ExampleScripts
 
         private void ReplaceImpactSound(GameObject other)
         {
-            if (other == null) return;
-
             var sound = other.GetComponent<AudioSource>();
 
             if (sound != null && sound.clip != null)
@@ -95,25 +65,5 @@ namespace Assets.HeroEditor.Common.ExampleScripts
                 Impact.GetComponent<AudioSource>().clip = sound.clip;
             }
         }
-
-        private void DespawnSelf()
-        {
-            if (Object != null && Object.IsValid)
-            {
-                Runner.Despawn(Object);
-            }
-        }
-
-        // ✅ Add this
-
-        public void Init(Vector3 direction, float speed, int damage)
-        {
-            if (Rigidbody != null)
-            {
-                Rigidbody.linearVelocity = direction.normalized * speed;
-            }
-            Damage = damage; 
-        }
-
     }
 }

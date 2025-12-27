@@ -945,7 +945,7 @@ PrefabInstance:
     - target: {fileID: 1589182250895931794, guid: 42a23c357fd1f2344a723119a022abb6, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: -356515777, guid: 560a42bee62600c4f8b0d191714dcb9c, type: 3}
+      objectReference: {fileID: -3793037399489638654, guid: 36d3b7a8256e198449265aee93c0b64d, type: 3}
     - target: {fileID: 1589182250895931794, guid: 42a23c357fd1f2344a723119a022abb6, type: 3}
       propertyPath: m_Color.b
       value: 1
@@ -965,7 +965,7 @@ PrefabInstance:
     - target: {fileID: 1886004491556739407, guid: 42a23c357fd1f2344a723119a022abb6, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: -356515777, guid: 560a42bee62600c4f8b0d191714dcb9c, type: 3}
+      objectReference: {fileID: -3793037399489638654, guid: 36d3b7a8256e198449265aee93c0b64d, type: 3}
     - target: {fileID: 1923047484280004964, guid: 42a23c357fd1f2344a723119a022abb6, type: 3}
       propertyPath: m_Name
       value: Canvas 1
@@ -973,6 +973,10 @@ PrefabInstance:
     - target: {fileID: 1923047484280004964, guid: 42a23c357fd1f2344a723119a022abb6, type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2018005747123994226, guid: 42a23c357fd1f2344a723119a022abb6, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2031902969845015425, guid: 42a23c357fd1f2344a723119a022abb6, type: 3}
       propertyPath: interval
@@ -990,10 +994,18 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 5367185052188918751, guid: 42a23c357fd1f2344a723119a022abb6, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 782
+      objectReference: {fileID: 0}
+    - target: {fileID: 5367185052188918751, guid: 42a23c357fd1f2344a723119a022abb6, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -255
+      objectReference: {fileID: 0}
     - target: {fileID: 5398004045685342485, guid: 42a23c357fd1f2344a723119a022abb6, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 396013188656270140, guid: a94ba96a98e7b7b438401e31cde375e6, type: 3}
+      objectReference: {fileID: -7080412007675255358, guid: b5183da5428381a4794fc4769c63314a, type: 3}
     - target: {fileID: 7636039854702534741, guid: 42a23c357fd1f2344a723119a022abb6, type: 3}
       propertyPath: m_Pivot.x
       value: 0

@@ -26,10 +26,20 @@ namespace Assets.HeroEditor.Common.CharacterScripts
         [Header("Custom")]
         public bool ShowHelmet = true;
 
+
         public Vector2 BodyScale
         {
             get { return BodyRenderers.Single(i => i.name == "Torso").transform.localScale; }
             set => GetComponent<CharacterBodySculptor>().OnCharacterLoaded(value);
+        }
+        private bool _initialized;
+
+        private void Awake()
+        {
+            if (_initialized) return;
+            _initialized = true;
+
+            Initialize();
         }
 
         /// <summary>
@@ -43,7 +53,9 @@ namespace Assets.HeroEditor.Common.CharacterScripts
         }
 
         public void Start()
+
         {
+
             // We can use [StateHandler] attached to animation states to handle state transitions.
             foreach (var handler in Animator.GetBehaviours<StateHandler>().Where(i => i.Name.Contains("Death")))
             {
@@ -53,6 +65,7 @@ namespace Assets.HeroEditor.Common.CharacterScripts
                 handler.StateExit.RemoveAllListeners();
                 handler.StateExit.AddListener(() => SetExpression("Default"));
             }
+
         }
 
         /// <summary>
@@ -60,11 +73,16 @@ namespace Assets.HeroEditor.Common.CharacterScripts
         /// </summary>
         public void OnEnable()
         {
+            if (!Application.isPlaying) return;
+            if (HairMask == null || HelmetRenderer == null || HairRenderer == null) return;
+
             HairMask.isCustomRangeActive = true;
             HairMask.frontSortingOrder = HelmetRenderer.sortingOrder;
             HairMask.backSortingOrder = HairRenderer.sortingOrder;
+
             UpdateAnimation();
         }
+
 
         public void OnDisable()
         {
@@ -210,6 +228,8 @@ namespace Assets.HeroEditor.Common.CharacterScripts
             renderers.Add(HairRenderer);
             renderers.ForEach(i => i.sharedMaterial = i.color == Color.white ? DefaultMaterial : EquipmentPaintMaterial);
         }
+        //load dữ liệu Armor
+
         public void EquipArmor(List<Sprite> armor)
         {
             if (armor == null || ArmorRenderers == null) return;
@@ -223,7 +243,6 @@ namespace Assets.HeroEditor.Common.CharacterScripts
 
         public void EquipBow(List<Sprite> bow)
         {
-
             if (bow == null || BowRenderers == null) return;
 
             // 1️⃣ GÁN DỮ LIỆU CHO FIELD
@@ -242,30 +261,33 @@ namespace Assets.HeroEditor.Common.CharacterScripts
             // 4️⃣ INIT LẠI
             Initialize();
         }
-        public void ResetCharacterToNaked()
-        {
-            Helmet = null;
-            Hair = null;
-            Beard = null;
-            Glasses = null;
-            Mask = null;
-            Earrings = null;
 
-            Cape = null;
-            Back = null;
-            Shield = null;
+        //public void ResetCharacterToNaked()
+        //{
+        //    Helmet = null;
+        //    Hair = null;
+        //    Beard = null;
+        //    Glasses = null;
+        //    Mask = null;
+        //    Earrings = null;
 
-           // PrimaryMeleeWeapon = null;
-           // SecondaryMeleeWeapon = null;
-            //Bow.Clear();
-          //  Firearms.Clear();
+        //    Cape = null;
+        //    Back = null;
+        //    Shield = null;
 
-            Armor.Clear();
+        //    //PrimaryMeleeWeapon = null;
+        //    //SecondaryMeleeWeapon = null;
+        //    //Bow.Clear();
+        //    //Firearms.Clear();
 
-            // WeaponType = WeaponType.None;
+        //    Armor.Clear();
 
-            Initialize();
-        }
+        //    // WeaponType = WeaponType.None;
+
+        //    Initialize();
+        //}
+
     }
+
 
 }

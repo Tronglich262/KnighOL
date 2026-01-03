@@ -15,6 +15,9 @@ namespace Assets.HeroEditor.Common.ExampleScripts
         [Networked] private float NetworkedScaleX { get; set; }
         [Networked] private Vector2 NetworkedDirection { get; set; }
         [Networked] private CharacterState NetworkedState { get; set; }
+        [Networked] public NetworkBool LockFacing { get; set; }
+        public float CurrentScaleX => NetworkedScaleX;
+
         public static MovementExample Instante;
         public bool checktoggle = false;
         public void Awake()
@@ -39,7 +42,7 @@ namespace Assets.HeroEditor.Common.ExampleScripts
                 NetworkedScaleX = 1; // Mặc định hướng phải
             }
 
-           // Debug.Log($"[Spawned] Client {Runner.LocalPlayer}, Player {Object.Id}: Initial localScale = {Character.transform.localScale}, Initial State = {(int)NetworkedState}");
+            // Debug.Log($"[Spawned] Client {Runner.LocalPlayer}, Player {Object.Id}: Initial localScale = {Character.transform.localScale}, Initial State = {(int)NetworkedState}");
         }
 
         private void Update()
@@ -51,7 +54,7 @@ namespace Assets.HeroEditor.Common.ExampleScripts
             {
                 return;
             }
-            else 
+            else
             {
                 if (Input.GetKey(KeyCode.LeftArrow)) direction.x = -1;
                 if (Input.GetKey(KeyCode.RightArrow)) direction.x = 1;
@@ -64,7 +67,6 @@ namespace Assets.HeroEditor.Common.ExampleScripts
         private void Rpc_UpdateScaleX(float scaleX)
         {
             Character.transform.localScale = new Vector3(scaleX, 1, 1);
-           // Debug.Log($"[RPC] Client {Runner.LocalPlayer}, Player {Object.Id}: Set localScale.x = {scaleX}, current localScale = {Character.transform.localScale}");
         }
 
         [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
@@ -72,27 +74,29 @@ namespace Assets.HeroEditor.Common.ExampleScripts
         {
             NetworkedState = state;
             Character.Animator.SetInteger("State", (int)state);
-           // Debug.Log($"[RPC] Client {Runner.LocalPlayer}, Player {Object.Id}: Set NetworkedState to {(int)state}, Animator State = {(int)Character.Animator.GetInteger("State")}");
         }
 
         public override void FixedUpdateNetwork()
         {
             Vector2 direction = NetworkedDirection;
 
-            if (HasStateAuthority && direction.x != 0)
+            if (LockFacing && NetworkedDirection == Vector2.zero)
             {
-                float newScaleX = Mathf.Sign(direction.x); // -1 cho trái, 1 cho phải
+                Controller.Move(Vector3.zero);
+                return;
+            }
+
+            if (HasStateAuthority && !LockFacing && direction.x != 0)
+            {
+                float newScaleX = Mathf.Sign(direction.x);
                 if (NetworkedScaleX != newScaleX)
                 {
                     NetworkedScaleX = newScaleX;
-                    Rpc_UpdateScaleX(NetworkedScaleX); // Gửi RPC để đồng bộ scale
-                  //  Debug.Log($"[StateAuthority] Client {Runner.LocalPlayer}, Player {Object.Id}: Set NetworkedScaleX to {NetworkedScaleX}");
+                    Rpc_UpdateScaleX(NetworkedScaleX);
                 }
             }
-
-            // Áp dụng localScale trên tất cả client
             Character.transform.localScale = new Vector3(NetworkedScaleX, 1, 1);
-           // Debug.Log($"[FixedUpdate] Client {Runner.LocalPlayer}, Player {Object.Id}: NetworkedScaleX = {NetworkedScaleX}, localScale = {Character.transform.localScale}");
+
 
             if (Controller.isGrounded)
             {
@@ -103,12 +107,10 @@ namespace Assets.HeroEditor.Common.ExampleScripts
                     if (direction != Vector2.zero)
                     {
                         SetState(CharacterState.Run);
-                       // Debug.Log($"[InputAuthority] Client {Runner.LocalPlayer}, Player {Object.Id}: Set State to Run, NetworkedState = {(int)NetworkedState}");
                     }
                     else if (NetworkedState < CharacterState.DeathB)
                     {
                         SetState(CharacterState.Idle);
-                      //  Debug.Log($"[InputAuthority] Client {Runner.LocalPlayer}, Player {Object.Id}: Set State to Idle, NetworkedState = {(int)NetworkedState}");
                     }
                 }
             }
@@ -117,7 +119,6 @@ namespace Assets.HeroEditor.Common.ExampleScripts
                 if (HasInputAuthority)
                 {
                     SetState(CharacterState.Jump);
-                    //Debug.Log($"[InputAuthority] Client {Runner.LocalPlayer}, Player {Object.Id}: Set State to Jump, NetworkedState = {(int)NetworkedState}");
                 }
             }
 
@@ -125,7 +126,6 @@ namespace Assets.HeroEditor.Common.ExampleScripts
             Controller.Move(_velocity * Runner.DeltaTime);
 
             Character.Animator.SetInteger("State", (int)NetworkedState);
-          //  Debug.Log($"[FixedUpdate] Client {Runner.LocalPlayer}, Player {Object.Id}: Set Animator State to {(int)NetworkedState}");
         }
 
         private void SetState(CharacterState newState)
@@ -137,8 +137,36 @@ namespace Assets.HeroEditor.Common.ExampleScripts
                 {
                     Rpc_UpdateState(newState); // Gửi RPC để đồng bộ trạng thái
                 }
-              //  Debug.Log($"[SetState] Client {Runner.LocalPlayer}, Player {Object.Id}: NetworkedState changed to {(int)newState}");
             }
         }
+        public void ForceFaceX(float signX)
+        {
+            if (!HasStateAuthority) return;
+
+            signX = Mathf.Sign(signX);
+            if (signX == 0) return;
+
+            if (NetworkedScaleX != signX)
+            {
+                NetworkedScaleX = signX;
+                Rpc_UpdateScaleX(NetworkedScaleX);
+            }
+        }
+        public void AutoMove(Vector3 worldDir)
+        {
+            if (!HasStateAuthority) return;
+
+            Vector2 dir = new Vector2(Mathf.Sign(worldDir.x), 0);
+
+            NetworkedDirection = dir;
+
+            // ép state Run
+            if (NetworkedState != CharacterState.Run)
+            {
+                NetworkedState = CharacterState.Run;
+                Rpc_UpdateState(CharacterState.Run);
+            }
+        }
+
     }
 }

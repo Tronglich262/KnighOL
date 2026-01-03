@@ -911,6 +911,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Character: {fileID: 114665035860700710}
   Controller: {fileID: 0}
+  _LockFacing:
+    _value: 0
   checktoggle: 0
 --- !u!114 &6267084907877005911
 MonoBehaviour:
@@ -985,6 +987,7 @@ MonoBehaviour:
   enemyLayer:
     serializedVersion: 2
     m_Bits: 2048
+  indicatorPrefab: {fileID: 8751565778292562942, guid: e587d1ec6c2e9674f9817a0dd3f68fc5, type: 3}
 --- !u!1 &1148429461579488
 GameObject:
   m_ObjectHideFlags: 0

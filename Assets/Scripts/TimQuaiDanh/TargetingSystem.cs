@@ -1,9 +1,29 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class TargetingSystem : MonoBehaviour
 {
     public float searchRadius = 12f;
     public LayerMask enemyLayer;
+
+    [Header("Indicator (Prefab)")]
+    public TargetIndicator indicatorPrefab;
+    private TargetIndicator indicatorInstance;
+
+    public Enemy CurrentTarget { get; private set; }
+
+    private void Start()
+    {
+        // ⭐ Spawn mũi tên local-only (KHÔNG NetworkObject)
+        if (indicatorPrefab != null)
+        {
+            indicatorInstance = Instantiate(indicatorPrefab);
+            indicatorInstance.gameObject.SetActive(false);
+        }
+        else
+        {
+            Debug.LogError("TargetingSystem: Chưa gán indicatorPrefab!");
+        }
+    }
 
     public Enemy GetNearestEnemy(Vector3 from)
     {
@@ -25,5 +45,21 @@ public class TargetingSystem : MonoBehaviour
             }
         }
         return nearest;
+    }
+
+    public void SetTarget(Enemy enemy)
+    {
+        CurrentTarget = enemy;
+
+        if (indicatorInstance != null)
+        {
+            indicatorInstance.SetTarget(enemy != null ? enemy.transform : null);
+        }
+    }
+
+    public void ClearTarget()
+    {
+        CurrentTarget = null;
+        if (indicatorInstance != null) indicatorInstance.SetTarget(null);
     }
 }

@@ -112,7 +112,7 @@ public class CanvasShop : MonoBehaviour
     {
         panelshoptp.SetActive(!panelshoptp.activeSelf);
         //SkillButtonManager.Instance.Skillbutton.SetActive(true);
-        bool checktoggle = MovementExample.Instante.checktoggle = false;
+     //   bool checktoggle = MovementExample.Instante.checktoggle = false;
         QuestDisplay.Instance.BatactiveallQuestDisplay();
         Bat();
 
@@ -121,7 +121,7 @@ public class CanvasShop : MonoBehaviour
     {
         panelshoppk.SetActive(!panelshoppk.activeSelf);
      //   SkillButtonManager.Instance.Skillbutton.SetActive(true);
-        bool checktoggle = MovementExample.Instante.checktoggle = false;
+    //    bool checktoggle = MovementExample.Instante.checktoggle = false;
         QuestDisplay.Instance.BatactiveallQuestDisplay();
         WorldChatUIManager.Instance.chatBar.SetActive(true);
         CharacterUIManager.Instance.CharacterButton.SetActive(true);
@@ -132,7 +132,7 @@ public class CanvasShop : MonoBehaviour
     {
         panelshopvk.SetActive(!panelshopvk.activeSelf);
      //   SkillButtonManager.Instance.Skillbutton.SetActive(true);
-        bool checktoggle = MovementExample.Instante.checktoggle = false;
+      ///  bool checktoggle = MovementExample.Instante.checktoggle = false;
         QuestDisplay.Instance.BatactiveallQuestDisplay();
         WorldChatUIManager.Instance.chatBar.SetActive(true);
         CharacterUIManager.Instance.CharacterButton.SetActive(true);
@@ -143,7 +143,7 @@ public class CanvasShop : MonoBehaviour
     {
         diemdanh.SetActive(!diemdanh.activeSelf);
        // SkillButtonManager.Instance.Skillbutton.SetActive(true);
-        bool checktoggle = MovementExample.Instante.checktoggle = false;
+       // bool checktoggle = MovementExample.Instante.checktoggle = false;
         WorldChatUIManager.Instance.chatBar.SetActive(true);
         CharacterUIManager.Instance.CharacterButton.SetActive(true);
         Bat();
@@ -164,7 +164,7 @@ public class CanvasShop : MonoBehaviour
         WorldChatUIManager.Instance.Chat.SetActive(true);
         QuestDisplay.Instance.BatactiveallQuestDisplay();
 
-        bool checktoggle = MovementExample.Instante.checktoggle = false;
+      //  bool checktoggle = MovementExample.Instante.checktoggle = false;
 
     }
     public void ToogleTatpkshop()
@@ -181,7 +181,7 @@ public class CanvasShop : MonoBehaviour
         Bat();
         QuestDisplay.Instance.BatactiveallQuestDisplay();
 
-        bool checktoggle = MovementExample.Instante.checktoggle = false;
+    //    bool checktoggle = MovementExample.Instante.checktoggle = false;
 
 
     }
@@ -199,7 +199,7 @@ public class CanvasShop : MonoBehaviour
         QuestDisplay.Instance.BatactiveallQuestDisplay();
 
         Bat();
-        bool checktoggle = MovementExample.Instante.checktoggle = false;
+      //  bool checktoggle = MovementExample.Instante.checktoggle = false;
 
     }
     public void ToogleTatdiemdanhshop()
@@ -209,7 +209,7 @@ public class CanvasShop : MonoBehaviour
        // SkillButtonManager.Instance.Skillbutton.SetActive(true);
 
         Bat();
-        bool checktoggle = MovementExample.Instante.checktoggle = false;
+      //  bool checktoggle = MovementExample.Instante.checktoggle = false;
 
     }
     public void ToogleTatdiemdanhshop1()
@@ -219,7 +219,7 @@ public class CanvasShop : MonoBehaviour
      //   SkillButtonManager.Instance.Skillbutton.SetActive(true);
 
         Bat();
-        bool checktoggle = MovementExample.Instante.checktoggle = false;
+     //   bool checktoggle = MovementExample.Instante.checktoggle = false;
 
     }
     //( cấm động )

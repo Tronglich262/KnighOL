@@ -89,7 +89,7 @@ public class ShopTriggerTP : MonoBehaviour
                 {
                     StartCoroutine(LoadShopTP());
 
-                    bool checktoggle = MovementExample.Instante.checktoggle = true;
+                 //   bool checktoggle = MovementExample.Instante.checktoggle = true;
                     bool nextState = !shopPanel.activeSelf;
                     shopPanel.SetActive(nextState);
                  //   SkillButtonManager.Instance.Skillbutton.SetActive(false);  
@@ -140,7 +140,7 @@ public class ShopTriggerTP : MonoBehaviour
 
                 //  Mở UI sau khi dữ liệu sẵn sàng
                 shopPanel.SetActive(true);
-                MovementExample.Instante.checktoggle = true;
+          //      MovementExample.Instante.checktoggle = true;
               //  SkillButtonManager.Instance.Skillbutton.SetActive(false);
                 WorldChatUIManager.Instance.Chat.SetActive(false);
                 QuestDisplay.Instance.questPanel.SetActive(false);

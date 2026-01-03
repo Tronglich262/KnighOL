@@ -92,7 +92,7 @@ public class CharacterUIManager : MonoBehaviour
                 CharacterButton.SetActive(false); // Ẩn nút CharacterButton khi mở panel
                 WorldChatUIManager.Instance.ToggleTatCharbarAndChatPrivateList();
                 QuestDisplay.Instance.TatactiveallQuestDisplay();               
-                bool checktoggle = MovementExample.Instante.checktoggle = true;
+              //  bool checktoggle = MovementExample.Instante.checktoggle = true;
               //  SkillButtonManager.Instance.Skillbutton.SetActive(false);
 
             }
@@ -206,7 +206,7 @@ public class CharacterUIManager : MonoBehaviour
         nhiemvu.SetActive(false);
         QuestDisplay.Instance.BatactiveallQuestDisplay();
         WorldChatUIManager.Instance.ToggleBatCharbarAndChatPrivateList();
-        bool checktoggle = MovementExample.Instante.checktoggle = false;
+      //  bool checktoggle = MovementExample.Instante.checktoggle = false;
      //   SkillButtonManager.Instance.Skillbutton.SetActive(true);
 
     }

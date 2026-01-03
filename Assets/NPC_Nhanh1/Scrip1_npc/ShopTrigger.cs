@@ -88,7 +88,7 @@ public class ShopTriggerTA : MonoBehaviour
             {
                 if (shopPanel != null)
                 {
-                    bool checktoggle = MovementExample.Instante.checktoggle = true;
+                 //   bool checktoggle = MovementExample.Instante.checktoggle = true;
                     bool nextState = !shopPanel.activeSelf;
                     shopPanel.SetActive(nextState);
                   //  SkillButtonManager.Instance.Skillbutton.SetActive(false);

@@ -38,18 +38,27 @@ namespace Assets.HeroEditor.Common.ExampleScripts
             var targeting = GetComponent<TargetingSystem>();
             if (targeting == null) return;
 
-            Enemy enemy = targeting.GetNearestEnemy(transform.position);
+            Enemy enemy = targeting.CurrentTarget;
+            if (enemy == null)
+            {
+                enemy = targeting.GetNearestEnemy(transform.position);
+                if (enemy != null)
+                    targeting.SetTarget(enemy);
+            }
+
             if (enemy == null) return;
+
 
             if (Character.WeaponType == WeaponType.Bow)
             {
                 BowExample.AttackTarget(enemy);
-                return;
             }
-
-            // melee -> request chase on state authority
-            RPC_StartChase(enemy.Object);
+            else
+            {
+                RPC_StartChase(enemy.Object);
+            }
         }
+
 
         // =========================
         // START CHASE (StateAuthority)
@@ -62,9 +71,20 @@ namespace Assets.HeroEditor.Common.ExampleScripts
             TargetEnemy = enemyObj;
             IsChasing = true;
 
-            // IMPORTANT: disable MovementExample on all clients while auto-chasing
+            // khóa xoay + quay mặt
+            if (Movement != null)
+            {
+                Movement.LockFacing = true;
+                float dirX = enemyObj.transform.position.x - transform.position.x;
+                Movement.ForceFaceX(dirX);
+            }
+
+            // 🔥 QUAN TRỌNG: set animation RUN
+            SetRunState();
+
             RPC_SetMovementEnabled(false);
         }
+
 
         // Disable/enable MovementExample everywhere to stop it overriding state/anim/move
         [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
@@ -89,14 +109,21 @@ namespace Assets.HeroEditor.Common.ExampleScripts
             if (dist > AttackRange)
             {
                 Vector3 dir = (targetPos - pos).normalized;
+                dir.y = 0; // 🔥 KHÓA TRỤC Y
+                dir.Normalize();
+                // MOVE
                 transform.position = pos + dir * ChaseSpeed * Runner.DeltaTime;
+
+                // 🔥 GIỮ RUN TRONG SUỐT QUÁ TRÌNH CHASE
+                SetRunState();
             }
             else
             {
-                // reached range -> stop moving, wait for InputAuthority to request attack
+                // tới tầm → dừng chase
                 IsChasing = false;
             }
         }
+
 
         // =========================
         // REQUEST ATTACK (InputAuthority side)
@@ -127,17 +154,12 @@ namespace Assets.HeroEditor.Common.ExampleScripts
 
             IsAttacking = true;
 
-            // face target before attacking
-            Vector3 dir = TargetEnemy.transform.position - transform.position;
-            if (dir.x != 0)
-            {
-                var s = transform.localScale;
-                transform.localScale = new Vector3(Mathf.Sign(dir.x), s.y, s.z);
-            }
+            // dừng run → idle trước khi đánh
+            RPC_SetState(CharacterState.Idle);
 
-            // broadcast attack animation (HeroEditor flow you already know works)
             RPC_PlayMeleeAttack();
         }
+
 
         [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
         private void RPC_PlayMeleeAttack()
@@ -157,13 +179,48 @@ namespace Assets.HeroEditor.Common.ExampleScripts
         {
             IsAttacking = false;
 
-            // re-enable MovementExample after attack so player can move normally again
-            // (only if you want that)
             if (Object.HasStateAuthority)
             {
                 RPC_SetMovementEnabled(true);
                 TargetEnemy = null;
+
+                // về idle
+                RPC_SetState(CharacterState.Idle);
+            }
+
+            if (Movement != null)
+            {
+                Movement.LockFacing = false;
             }
         }
+
+        [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
+        private void RPC_LockFacingAndFace(NetworkObject enemyObj)
+        {
+            if (enemyObj == null || Movement == null) return;
+
+            Movement.LockFacing = true;
+
+            float dirX = enemyObj.transform.position.x - transform.position.x;
+            if (Mathf.Abs(dirX) < 0.01f) return;
+            Movement.ForceFaceX(dirX);
+        }
+
+        private void SetRunState()
+        {
+            if (Character == null) return;
+
+            if (Character.Animator.GetInteger("State") != (int)CharacterState.Run)
+            {
+                RPC_SetState(CharacterState.Run);
+            }
+        }
+
+        [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+        private void RPC_SetState(CharacterState state)
+        {
+            Character.Animator.SetInteger("State", (int)state);
+        }
+
     }
 }

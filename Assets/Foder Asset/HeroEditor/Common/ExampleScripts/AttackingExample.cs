@@ -155,4 +155,4 @@ namespace Assets.HeroEditor.Common.ExampleScripts
             Character.Animator.Play(anim, 0);
         }
     }
-}
+} 

@@ -2,20 +2,15 @@
 using UnityEngine.UI;
 using System;
 using System.Collections;
-using HeroEditor.Common;
 using HeroEditor.Common.Enums;
 using Assets.HeroEditor.Common.CharacterScripts;
-using Fusion; // THÊM Fusion nếu chưa có
+using Fusion;
 
 public class SkillButtonManager : MonoBehaviour
 {
-    [Header("Tham chiếu Player")]
     public Character character;
-
-    [Header("Các button skill trên UI")]
     public Button[] skillButtons;
 
-    [Header("Icon skill của từng loại vũ khí")]
     public Sprite[] melee1HIcons;
     public Sprite[] melee2HIcons;
     public Sprite[] bowIcons;
@@ -25,74 +20,35 @@ public class SkillButtonManager : MonoBehaviour
     public Action[] bowActions = new Action[5];
 
     private WeaponType lastWeaponType;
-    private bool isReady = false;
-    public static SkillButtonManager Instance;
-    public GameObject Skillbutton;
+    private bool isReady;
+    public static SkillButtonManager Instance { get; private set; }
 
-    // KHÔNG dùng static Singleton nữa!
-    private void Awake()
-    {
-        if (Instance != null && Instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
-        Instance = this;
-    }
     void Start()
     {
-        StartCoroutine(DelayFindLocalPlayer());
+        StartCoroutine(FindLocalPlayer());
     }
 
-    IEnumerator DelayFindLocalPlayer()
+    IEnumerator FindLocalPlayer()
     {
-        float timeout = 2f;
-        float t = 0f;
-
-        while (character == null && t < timeout)
+        while (character == null)
         {
-            // Tìm mọi GameObject có tag "Player"
-            foreach (var playerObj in GameObject.FindGameObjectsWithTag("Player"))
+            foreach (var p in GameObject.FindGameObjectsWithTag("Player"))
             {
-                var netObj = playerObj.GetComponent<NetworkObject>();
-                if (netObj != null && netObj.HasInputAuthority) // Chỉ lấy player local!
+                var net = p.GetComponent<NetworkObject>();
+                if (net != null && net.HasInputAuthority)
                 {
-                    character = playerObj.GetComponent<Character>();
+                    character = p.GetComponent<Character>();
                     break;
                 }
             }
-            if (character == null)
-            {
-                yield return null;
-                t += Time.deltaTime;
-            }
+            yield return null;
         }
 
-        if (character == null)
-        {
-            Debug.LogError("Không tìm thấy player local (HasInputAuthority)!");
-            enabled = false;
-            yield break;
-        }
+        var attacker = character.GetComponent<Assets.HeroEditor.Common.ExampleScripts.AttackingExample>();
 
-        // Gán function test (giữ nguyên code mẫu hoặc custom theo từng loại vũ khí)
-        melee1HActions[0] = () => Debug.Log("Kiếm 1 tay - Chém thường");
-        melee1HActions[1] = () => Debug.Log("Kiếm 1 tay - Skill 2");
-        melee1HActions[2] = () => Debug.Log("Kiếm 1 tay - Skill 3");
-        melee1HActions[3] = () => Debug.Log("Kiếm 1 tay - Skill 4");
-        melee1HActions[4] = () => Debug.Log("Kiếm 1 tay - Skill 5");
-
-        melee2HActions[0] = () => Debug.Log("Vũ khí 2 tay - Đập thường");
-        melee2HActions[1] = () => Debug.Log("Vũ khí 2 tay - Skill 2");
-        melee2HActions[2] = () => Debug.Log("Vũ khí 2 tay - Skill 3");
-        melee2HActions[3] = () => Debug.Log("Vũ khí 2 tay - Skill 4");
-        melee2HActions[4] = () => Debug.Log("Vũ khí 2 tay - Skill 5");
-
-        bowActions[0] = () => Debug.Log("Cung - Bắn thường");
-        bowActions[1] = () => Debug.Log("Cung - Skill 2");
-        bowActions[2] = () => Debug.Log("Cung - Skill 3");
-        bowActions[3] = () => Debug.Log("Cung - Skill 4");
-        bowActions[4] = () => Debug.Log("Cung - Skill 5");
+        melee1HActions[0] = () => attacker.UseSkill(0);
+        melee2HActions[0] = () => attacker.UseSkill(0);
+        bowActions[0] = () => attacker.UseSkill(0);
 
         lastWeaponType = character.WeaponType;
         UpdateSkillButtons(lastWeaponType);
@@ -101,7 +57,7 @@ public class SkillButtonManager : MonoBehaviour
 
     void Update()
     {
-        if (!isReady || character == null) return;
+        if (!isReady) return;
 
         if (character.WeaponType != lastWeaponType)
         {
@@ -110,7 +66,7 @@ public class SkillButtonManager : MonoBehaviour
         }
     }
 
-    public void UpdateSkillButtons(WeaponType weaponType)
+    void UpdateSkillButtons(WeaponType weaponType)
     {
         Sprite[] icons = null;
         Action[] actions = null;
@@ -129,20 +85,17 @@ public class SkillButtonManager : MonoBehaviour
                 icons = bowIcons;
                 actions = bowActions;
                 break;
-            default:
-                icons = new Sprite[skillButtons.Length];
-                actions = new Action[skillButtons.Length];
-                break;
         }
 
         for (int i = 0; i < skillButtons.Length; i++)
         {
-            skillButtons[i].image.sprite = (icons != null && i < icons.Length) ? icons[i] : null;
+            skillButtons[i].image.sprite = icons != null && i < icons.Length ? icons[i] : null;
             skillButtons[i].onClick.RemoveAllListeners();
+
             if (actions != null && i < actions.Length && actions[i] != null)
             {
                 int idx = i;
-                skillButtons[i].onClick.AddListener(() => actions[idx]?.Invoke());
+                skillButtons[i].onClick.AddListener(() => actions[idx]());
             }
         }
     }

@@ -140,6 +140,7 @@ GameObject:
   - component: {fileID: 3920576557346083502}
   - component: {fileID: 4466471571327298266}
   - component: {fileID: -2877692240757520620}
+  - component: {fileID: 3301054783792314332}
   m_Layer: 11
   m_Name: Enemy
   m_TagString: Enemy
@@ -258,6 +259,7 @@ MonoBehaviour:
   - {fileID: 5810338864654378503}
   - {fileID: 3920576557346083502}
   - {fileID: -2877692240757520620}
+  - {fileID: 3301054783792314332}
   ForceRemoteRenderTimeframe: 0
 --- !u!114 &5810338864654378503
 MonoBehaviour:
@@ -396,6 +398,19 @@ MonoBehaviour:
   StateHashes: 00000000dcf716f558d4c01a5cea58fe467b62140d286c404e865f43
   TriggerHashes: 000000002b122898
   TotalWords: 1
+--- !u!114 &3301054783792314332
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6951187957792402292}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1084a07dbb95df47bba6c3c73e9aef9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  IsAlive: 1
 --- !u!1 &8317407220499649175
 GameObject:
   m_ObjectHideFlags: 0

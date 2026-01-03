@@ -1,98 +1,123 @@
 ﻿using Assets.HeroEditor.Common.CharacterScripts;
 using Fusion;
 using UnityEngine;
+using HeroEditor.Common.Enums;
 
 namespace Assets.HeroEditor.Common.ExampleScripts
 {
     public class BowExample : NetworkBehaviour
     {
+        [Header("Refs")]
         public Character Character;
-        public AnimationClip ClipCharge;
         public Transform FireTransform;
-        public GameObject ArrowPrefab;
 
-        public bool CreateArrows = true;
-        public bool ChargeButtonDown;
-        public bool ChargeButtonUp;
-
-        private float _chargeTime;
-        private float _localAimAngle;
-
+        [Header("Aim")]
         [Networked] public float AimAngle { get; private set; }
+
+        // (Các giới hạn giống pack HeroEditor)
+        public float MinAngle = -40f;
+        public float MaxAngle = 40f;
+
         public override void Spawned()
         {
             if (Character == null) Character = GetComponent<Character>();
-            if (FireTransform == null) FireTransform = transform.Find("FireTransform"); // sửa path cho đúng
+            if (FireTransform == null) FireTransform = transform.Find("FireTransform");
         }
 
-        private void Update()
+        // =========================
+        // CALLED BY SKILL BUTTON
+        // =========================
+        public void AttackTarget(Enemy enemy)
         {
             if (!Object.HasInputAuthority) return;
 
-            Vector3 mouseWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            mouseWorld.z = 0;
-
-            Vector2 dir = mouseWorld - FireTransform.position;
+            Vector3 dir = enemy.transform.position - FireTransform.position;
             float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
-            if (ChargeButtonDown)
-            {
-                _chargeTime = Time.time;
-                RPC_StartCharge();
-                ChargeButtonDown = false;
-            }
 
-            if (ChargeButtonUp)
-            {
-                bool charged = Time.time - _chargeTime > 0.3f;
-                RPC_Release(charged, FireTransform.position, AimAngle);
-                ChargeButtonUp = false;
-            }
+            // clamp để khớp rig HeroEditor
+            angle = Mathf.Clamp(angle, MinAngle, MaxAngle);
 
-            RPC_SetAim(angle);
+            RPC_StartBowAttack(angle);
         }
+
+        // =========================
+        // STATE AUTHORITY DRIVES AIM + ANIM
+        // =========================
         [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
-        private void RPC_SetAim(float angle)
-        {
-            AimAngle = angle;
-        }
-        public override void FixedUpdateNetwork()
-        {
-            FireTransform.rotation = Quaternion.Euler(0, 0, AimAngle);
-        }
-        [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
-        private void RPC_Release(bool charged, Vector3 pos, float angle)
+        private void RPC_StartBowAttack(float angle)
         {
             AimAngle = angle;
 
-            if (charged)
-                CreateArrow(pos, angle);
+            // 1) Kéo cung
+            RPC_SetCharge(1);
 
-            RPC_PlayReleaseAnim(charged);
+            // 2) Nhả sau delay (giống phím T)
+            Invoke(nameof(ReleaseBow), 0.35f);
         }
 
-        [Rpc(RpcSources.InputAuthority, RpcTargets.All)]
-        private void RPC_StartCharge()
+        private void ReleaseBow()
         {
-            Character.Animator.SetInteger("Charge", 1);
+            RPC_SetCharge(2);
         }
 
-
-
+        // =========================
+        // SYNC ANIM TO ALL
+        // =========================
         [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
-        private void RPC_PlayReleaseAnim(bool charged)
+        private void RPC_SetCharge(int value)
         {
-            Character.Animator.SetInteger("Charge", charged ? 2 : 3);
+            if (Character == null) return;
+            Character.Animator.SetInteger("Charge", value);
         }
 
-        private void CreateArrow(Vector3 spawnPos, float angle)
+        // =========================
+        // APPLY AIM TO ARM + BOW (QUAN TRỌNG)
+        // =========================
+        private void LateUpdate()
         {
-            Quaternion spawnRot = Quaternion.Euler(0, 0, angle);
+            if (Character == null) return;
+            if (Character.WeaponType != WeaponType.Bow) return;
 
-            NetworkObject arrowObj = Runner.Spawn(ArrowPrefab, spawnPos, spawnRot);
+            // HeroEditor xoay tay/cung theo AimAngle
+            // BowRenderers[3] thường là cung; ArmL là tay trái
+            var armL = Character.BodyRenderers.Find(r => r.name == "ArmL")?.transform;
+            var bow = Character.BowRenderers != null && Character.BowRenderers.Count > 3
+                        ? Character.BowRenderers[3].transform
+                        : null;
 
-            Rigidbody rb = arrowObj.GetComponent<Rigidbody>();
-            if (rb != null)
-                rb.linearVelocity = spawnRot * Vector3.right * 18f; // Rigidbody dùng velocity (3D)
+            if (armL == null || bow == null) return;
+
+            // Tính target ảo từ AimAngle để dùng hàm xoay chuẩn
+            Vector2 dir = Quaternion.Euler(0, 0, AimAngle) * Vector2.right;
+            Vector2 target = (Vector2)armL.position + dir * 1000f;
+
+            RotateArm(armL, bow, target, MinAngle, MaxAngle);
+        }
+
+        // ======= HÀM XOAY GIỐNG HEROEDITOR GỐC =======
+        private void RotateArm(Transform arm, Transform weapon, Vector2 target, float angleMin, float angleMax)
+        {
+            target = arm.transform.InverseTransformPoint(target);
+
+            var angleToTarget = Vector2.SignedAngle(Vector2.right, target);
+            var angleToArm = Vector2.SignedAngle(weapon.right, arm.transform.right) * Mathf.Sign(weapon.lossyScale.x);
+            var fix = weapon.InverseTransformPoint(arm.transform.position).y / target.magnitude;
+
+            fix = Mathf.Clamp(fix, -1, 1);
+            var angleFix = Mathf.Asin(fix) * Mathf.Rad2Deg;
+            var angle = angleToTarget + angleFix + arm.transform.localEulerAngles.z;
+
+            angle = NormalizeAngle(angle);
+            angle = Mathf.Clamp(angle, angleMin, angleMax);
+
+            arm.transform.localEulerAngles = new Vector3(0, 0, angle + angleToArm);
+        }
+
+        private static float NormalizeAngle(float angle)
+        {
+            while (angle > 180) angle -= 360;
+            while (angle < -180) angle += 360;
+            return angle;
         }
     }
 }

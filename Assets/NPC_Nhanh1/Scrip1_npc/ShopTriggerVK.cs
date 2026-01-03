@@ -92,7 +92,7 @@ public class ShopTriggerVK : MonoBehaviour
                     bool checktoggle = MovementExample.Instante.checktoggle = true;
                     bool nextState = !shopPanel.activeSelf;
                     shopPanel.SetActive(nextState);
-                    SkillButtonManager.Instance.Skillbutton.SetActive(false);
+                  //  SkillButtonManager.Instance.Skillbutton.SetActive(false);
                     WorldChatUIManager.Instance.Chat.SetActive(false);
                     WorldChatUIManager.Instance.chatBar.SetActive(false);
                     CharacterUIManager.Instance.CharacterButton.SetActive(false);
@@ -142,7 +142,7 @@ public class ShopTriggerVK : MonoBehaviour
                 //  MỞ UI SAU KHI LOAD XONG
                 shopPanel.SetActive(true);
                 MovementExample.Instante.checktoggle = true;
-                SkillButtonManager.Instance.Skillbutton.SetActive(false);
+              //  SkillButtonManager.Instance.Skillbutton.SetActive(false);
                 WorldChatUIManager.Instance.Chat.SetActive(false);
                 QuestDisplay.Instance.questPanel.SetActive(false);
             //    CanvasShop.Instante.HideAllCanvas();

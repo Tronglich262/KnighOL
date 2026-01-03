@@ -1,158 +1,169 @@
 ﻿using Assets.HeroEditor.Common.CharacterScripts;
-using Assets.HeroEditor.Common.CharacterScripts.Firearms;
-using Assets.HeroEditor.Common.CharacterScripts.Firearms.Enums;
 using Fusion;
 using HeroEditor.Common.Enums;
-using System;
 using UnityEngine;
 
 namespace Assets.HeroEditor.Common.ExampleScripts
 {
     public class AttackingExample : NetworkBehaviour
     {
+        [Header("Refs")]
         public Character Character;
         public BowExample BowExample;
-        public Firearm Firearm;
-        public Transform ArmL;
-        public Transform ArmR;
-        public KeyCode FireButton;
-        public KeyCode ReloadButton;
-        [Header("Check to disable arm auto rotation.")]
-        public bool FixedArm;
+        public MovementExample Movement; // HeroEditor demo movement
+
+        [Header("Melee Settings")]
+        public float AttackRange = 2f;
+        public float ChaseSpeed = 4f;
+
+        [Networked] private NetworkObject TargetEnemy { get; set; }
+        [Networked] private NetworkBool IsChasing { get; set; }
+        [Networked] private NetworkBool IsAttacking { get; set; }
 
         public override void Spawned()
         {
-            Character = GetComponent<Character>();
-            BowExample = GetComponent<BowExample>(); //  LẤY TRÊN CHÍNH PLAYER
+            if (Character == null) Character = GetComponent<Character>();
+            if (BowExample == null) BowExample = GetComponent<BowExample>();
+            if (Movement == null) Movement = GetComponent<MovementExample>();
         }
 
-
-        public void Update()
+        // =========================
+        // CALLED BY SKILL BUTTON
+        // =========================
+        public void UseSkill(int skillIndex)
         {
-            if (!Object.HasInputAuthority)
+            if (!Object.HasInputAuthority) return;
+            if (IsAttacking) return;
+
+            var targeting = GetComponent<TargetingSystem>();
+            if (targeting == null) return;
+
+            Enemy enemy = targeting.GetNearestEnemy(transform.position);
+            if (enemy == null) return;
+
+            if (Character.WeaponType == WeaponType.Bow)
+            {
+                BowExample.AttackTarget(enemy);
                 return;
-
-
-            if (Character.Animator.GetInteger("State") >= (int)CharacterState.DeathB) return;
-
-            switch (Character.WeaponType)
-            {
-                case WeaponType.Melee1H:
-                case WeaponType.Melee2H:
-                case WeaponType.MeleePaired:
-                    if (Input.GetKeyDown(FireButton))
-                    {
-                        RPC_Slash();
-                    }
-                    break;
-
-                case WeaponType.Bow:
-                    BowExample.ChargeButtonDown = Input.GetKeyDown(FireButton);
-                    BowExample.ChargeButtonUp = Input.GetKeyUp(FireButton);
-                    break;
-
-                case WeaponType.Firearms1H:
-                case WeaponType.Firearms2H:
-                    Firearm.Fire.FireButtonDown = Input.GetKeyDown(FireButton);
-                    Firearm.Fire.FireButtonPressed = Input.GetKey(FireButton);
-                    Firearm.Fire.FireButtonUp = Input.GetKeyUp(FireButton);
-                    Firearm.Reload.ReloadButtonDown = Input.GetKeyDown(ReloadButton);
-                    break;
-
-                case WeaponType.Supplies:
-                    if (Input.GetKeyDown(FireButton))
-                    {
-                        RPC_PlaySupplyAnim();
-                    }
-                    break;
             }
 
-            if (Input.GetKeyDown(FireButton))
+            // melee -> request chase on state authority
+            RPC_StartChase(enemy.Object);
+        }
+
+        // =========================
+        // START CHASE (StateAuthority)
+        // =========================
+        [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
+        private void RPC_StartChase(NetworkObject enemyObj)
+        {
+            if (IsAttacking) return;
+
+            TargetEnemy = enemyObj;
+            IsChasing = true;
+
+            // IMPORTANT: disable MovementExample on all clients while auto-chasing
+            RPC_SetMovementEnabled(false);
+        }
+
+        // Disable/enable MovementExample everywhere to stop it overriding state/anim/move
+        [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+        private void RPC_SetMovementEnabled(bool enabled)
+        {
+            if (Movement != null) Movement.enabled = enabled;
+        }
+
+        // =========================
+        // MOVE (StateAuthority only)
+        // =========================
+        public override void FixedUpdateNetwork()
+        {
+            if (!Object.HasStateAuthority) return;
+            if (!IsChasing || TargetEnemy == null || IsAttacking) return;
+
+            Vector3 targetPos = TargetEnemy.transform.position;
+            Vector3 pos = transform.position;
+
+            float dist = Vector3.Distance(pos, targetPos);
+
+            if (dist > AttackRange)
             {
-                Character.GetReady();
+                Vector3 dir = (targetPos - pos).normalized;
+                transform.position = pos + dir * ChaseSpeed * Runner.DeltaTime;
+            }
+            else
+            {
+                // reached range -> stop moving, wait for InputAuthority to request attack
+                IsChasing = false;
             }
         }
 
-        private void LateUpdate()
+        // =========================
+        // REQUEST ATTACK (InputAuthority side)
+        // This replicates the "press T" style: input authority asks to attack.
+        // =========================
+        private void Update()
         {
+            if (!Object.HasInputAuthority) return;
+            if (IsAttacking) return;
+            if (TargetEnemy == null) return;
+
+            // Only for melee
+            if (Character != null && Character.WeaponType == WeaponType.Bow) return;
+
+            // If we already stopped chasing on host and we are in range -> request attack once
+            float dist = Vector3.Distance(transform.position, TargetEnemy.transform.position);
+            if (!IsChasing && dist <= AttackRange)
+            {
+                RPC_RequestAttack();
+            }
+        }
+
+        [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
+        private void RPC_RequestAttack()
+        {
+            if (IsAttacking) return;
+            if (TargetEnemy == null) return;
+
+            IsAttacking = true;
+
+            // face target before attacking
+            Vector3 dir = TargetEnemy.transform.position - transform.position;
+            if (dir.x != 0)
+            {
+                var s = transform.localScale;
+                transform.localScale = new Vector3(Mathf.Sign(dir.x), s.y, s.z);
+            }
+
+            // broadcast attack animation (HeroEditor flow you already know works)
+            RPC_PlayMeleeAttack();
+        }
+
+        [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+        private void RPC_PlayMeleeAttack()
+        {
+            // EXACTLY like your old "press T" feeling:
+            // GetReady then Slash
             if (Character == null) return;
-            if (Character.WeaponType != WeaponType.Bow) return;
-            Debug.Log("LateUpdate rotate: " + BowExample.AimAngle);
 
-            // ❗ KHÔNG check InputAuthority
-            // ❗ MỌI CLIENT ĐỀU RENDER THEO AimAngle
+            Character.GetReady();
+            Character.Slash();
 
-            Transform arm = ArmL;
-            Transform weapon = Character.BowRenderers[3].transform;
-
-            Vector2 target = GetTargetFromAimAngle(BowExample.AimAngle);
-
-            RotateArm(arm, weapon, target, -40f, 40f);
+            // unlock after a short time (tune to your anim length)
+            Invoke(nameof(UnlockAfterAttack), 0.7f);
         }
 
-
-
-
-        private void ApplyBowAim(float angle)
+        private void UnlockAfterAttack()
         {
-            angle = Mathf.Clamp(angle, -40f, 40f);
+            IsAttacking = false;
 
-        }
-        private Vector2 GetTargetFromAimAngle(float angle)
-        {
-            Vector2 dir = Quaternion.Euler(0, 0, angle) * Vector2.right;
-            return (Vector2)ArmL.position + dir * 1000f;
-        }
-
-
-
-
-
-        public float AngleToTarget;
-        public float AngleToArm;
-
-        public void RotateArm(Transform arm, Transform weapon, Vector2 target, float angleMin, float angleMax)
-        {
-            target = arm.transform.InverseTransformPoint(target);
-
-            var angleToTarget = Vector2.SignedAngle(Vector2.right, target);
-            var angleToArm = Vector2.SignedAngle(weapon.right, arm.transform.right) * Math.Sign(weapon.lossyScale.x);
-            var fix = weapon.InverseTransformPoint(arm.transform.position).y / target.magnitude;
-
-            AngleToTarget = angleToTarget;
-            AngleToArm = angleToArm;
-
-            fix = Mathf.Clamp(fix, -1, 1);
-            var angleFix = Mathf.Asin(fix) * Mathf.Rad2Deg;
-            var angle = angleToTarget + angleFix + arm.transform.localEulerAngles.z;
-            angle = NormalizeAngle(angle);
-            angle = Mathf.Clamp(angle, angleMin, angleMax);
-
-            if (float.IsNaN(angle)) Debug.LogWarning(angle);
-
-            arm.transform.localEulerAngles = new Vector3(0, 0, angle + angleToArm);
-        }
-
-        private static float NormalizeAngle(float angle)
-        {
-            while (angle > 180) angle -= 360;
-            while (angle < -180) angle += 360;
-            return angle;
-        }
-
-        // --- Networked attack methods (Fusion) ---
-
-        [Rpc(RpcSources.InputAuthority, RpcTargets.All)]
-        private void RPC_Slash()
-        {
-            Character.Slash(); // All clients will see the slash animation
-        }
-
-        [Rpc(RpcSources.InputAuthority, RpcTargets.All)]
-        private void RPC_PlaySupplyAnim()
-        {
-            string anim = Time.frameCount % 2 == 0 ? "UseSupply" : "ThrowSupply";
-            Character.Animator.Play(anim, 0);
+            // re-enable MovementExample after attack so player can move normally again
+            // (only if you want that)
+            if (Object.HasStateAuthority)
+            {
+                RPC_SetMovementEnabled(true);
+                TargetEnemy = null;
+            }
         }
     }
-} 
+}

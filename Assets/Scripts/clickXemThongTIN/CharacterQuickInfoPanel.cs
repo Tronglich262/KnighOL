@@ -82,7 +82,7 @@ public class CharacterQuickInfoPanel : MonoBehaviour
         CharacterPreviewPanel.Instance.gameObject.SetActive(true);
         if (CharacterPreviewPanel.Instance.characterPreview != null)
         {
-            SkillButtonManager.Instance.Skillbutton.SetActive(false);
+           // SkillButtonManager.Instance.Skillbutton.SetActive(false);
             WorldChatUIManager.Instance.Chat.SetActive(false);
             QuestDisplay.Instance.TatactiveallQuestDisplay();
             WorldChatUIManager.Instance.chatBar.SetActive(false);

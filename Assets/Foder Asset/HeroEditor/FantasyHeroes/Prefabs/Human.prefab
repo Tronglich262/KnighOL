@@ -407,6 +407,7 @@ GameObject:
   - component: {fileID: -3477762209005985728}
   - component: {fileID: 8200367910344495327}
   - component: {fileID: 6115010359866230793}
+  - component: {fileID: 6404322538657781565}
   m_Layer: 7
   m_Name: Human
   m_TagString: Player
@@ -857,14 +858,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Character: {fileID: 114665035860700710}
   BowExample: {fileID: 6115010359866230793}
-  Firearm: {fileID: 8293370063637748550}
-  ArmL: {fileID: 4314068295598354}
-  ArmR: {fileID: 4957315199455554}
-  FireButton: 116
-  ReloadButton: 114
-  FixedArm: 1
-  AngleToTarget: 0
-  AngleToArm: 0
+  Movement: {fileID: 0}
+  AttackRange: 2
+  ChaseSpeed: 4
 --- !u!114 &-4778966891055361141
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -969,13 +965,26 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Character: {fileID: 114665035860700710}
-  ClipCharge: {fileID: 7400000, guid: 20538db717b94efeaa004e68d9284e3f, type: 2}
   FireTransform: {fileID: 4394355602126684}
-  ArrowPrefab: {fileID: 1846010953453456, guid: 44e6882ae2145a3419bcdeee6e8f2f8b, type: 3}
-  CreateArrows: 1
-  ChargeButtonDown: 0
-  ChargeButtonUp: 0
   _AimAngle: 0
+  MinAngle: -40
+  MaxAngle: 40
+--- !u!114 &6404322538657781565
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1109986072035710}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 43b91a509e9cbbd43b165b906609d66c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  searchRadius: 12
+  enemyLayer:
+    serializedVersion: 2
+    m_Bits: 2048
 --- !u!1 &1148429461579488
 GameObject:
   m_ObjectHideFlags: 0

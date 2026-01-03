@@ -29,9 +29,9 @@ namespace Assets.HeroEditor.Common.EditorScripts
             MovementExample.Character = character;
             AttackingExample.Character = character;
             BowExample.Character = character;
-            AttackingExample.Firearm = character.Firearm;
-            AttackingExample.ArmL = character.BodyRenderers.First(i => i.name == "ArmL").transform;
-            AttackingExample.ArmR = character.BodyRenderers.First(i => i.name == "ArmR[1]").transform;
+            //AttackingExample.Firearm = character.Firearm;
+            //AttackingExample.ArmL = character.BodyRenderers.First(i => i.name == "ArmL").transform;
+            //AttackingExample.ArmR = character.BodyRenderers.First(i => i.name == "ArmR[1]").transform;
             EquipmentExample.Character = character;
         }
 

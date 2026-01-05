@@ -88,10 +88,10 @@ public class ShopTriggerPK : MonoBehaviour
                 if (shopPanel != null)
                 {
                     StartCoroutine(LoadShopPK());
-                    bool checkToggle = MovementExample.Instante.checktoggle = true;
+                   // bool checkToggle = MovementExample.Instante.checktoggle = true;
                     bool nextState = !shopPanel.activeSelf;
                     shopPanel.SetActive(nextState);
-                    SkillButtonManager.Instance.Skillbutton.SetActive(false);
+                   // SkillButtonManager.Instance.Skillbutton.SetActive(false);
                     WorldChatUIManager.Instance.Chat.SetActive(false);
                     QuestDisplay.Instance.TatactiveallQuestDisplay();
                     WorldChatUIManager.Instance.chatBar.SetActive(false);
@@ -139,8 +139,8 @@ public class ShopTriggerPK : MonoBehaviour
 
                 // ✅ Mở UI sau khi load xong
               //  shopPanel.SetActive(true);
-                MovementExample.Instante.checktoggle = true;
-                SkillButtonManager.Instance.Skillbutton.SetActive(false);
+           //     MovementExample.Instante.checktoggle = true;
+             //   SkillButtonManager.Instance.Skillbutton.SetActive(false);
                 WorldChatUIManager.Instance.Chat.SetActive(false);
                 QuestDisplay.Instance.questPanel.SetActive(false);
                // CanvasShop.Instante.HideAllCanvas();

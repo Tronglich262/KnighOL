@@ -96,7 +96,14 @@ public class CharacterUIManager1 : MonoBehaviour
 
         DisplayItem1(Helmetslot, characterData.Helmet);
         DisplayItem1(MeleeWeapon1Hslot, characterData.PrimaryMeleeWeapon);
-        DisplayItem1(MeleeWeapon2Hslot, characterData.SecondaryMeleeWeapon);
+        if (characterData.WeaponType == "Melee2H")
+        {
+            DisplayItem1(
+                MeleeWeapon2Hslot,
+                characterData.PrimaryMeleeWeapon,
+                "MeleeWeapon2H"
+            );
+        }
         if (characterData.WeaponType == "Firearms1H" && !string.IsNullOrEmpty(characterData.Firearms))
         {
             DisplayItem1(Firearms1Hslot, characterData.Firearms);
@@ -459,19 +466,32 @@ public class CharacterUIManager1 : MonoBehaviour
     {
         if (sprite == null) return;
 
-        var entry = new HeroEditor.Common.SpriteGroupEntry(
-            edition: "Custom",
-            collection: "Default",
-            type: type.ToString(),
-            name: sprite.name,
-            path: "",
-            sprite: sprite,
-            sprites: new List<Sprite> { sprite }
-        );
+        if (type == WeaponType.Melee2H)
+        {
+            var entry = character.SpriteCollection.MeleeWeapon2H
+                .FirstOrDefault(e => e.Sprites.Contains(sprite));
 
-        character.WeaponType = type;
-        character.Equip(entry, EquipmentPart.MeleeWeapon1H);
+            if (entry == null)
+            {
+                Debug.LogError($"❌ Melee2H entry not found: {sprite.name}");
+                return;
+            }
+
+            character.WeaponType = WeaponType.Melee2H;
+            character.Equip(entry, EquipmentPart.MeleeWeapon2H);
+        }
+        else if (type == WeaponType.Melee1H)
+        {
+            var entry = character.SpriteCollection.MeleeWeapon1H
+                .FirstOrDefault(e => e.Sprites.Contains(sprite));
+
+            if (entry == null) return;
+
+            character.WeaponType = WeaponType.Melee1H;
+            character.Equip(entry, EquipmentPart.MeleeWeapon1H);
+        }
     }
+
     private void EnsureArmorListSize(int index)
     {
         while (character.Armor.Count <= index)
@@ -489,25 +509,28 @@ public class CharacterUIManager1 : MonoBehaviour
         StartCoroutine(EquipAllArmorAfterJson());
 
         //  NEW: Ép lại vũ khí Melee2H nếu đang dùng
-        string melee2HId = GetItemIdFromJson(PlayerDataHolder1.CharacterJson, "SecondaryMeleeWeapon");
-        if (!string.IsNullOrEmpty(melee2HId))
+        // 🔥 FIX CHUẨN: Ép lại Melee2H từ PrimaryMeleeWeapon
+        if (GetItemIdFromJson(PlayerDataHolder1.CharacterJson, "WeaponType") == "Melee2H")
         {
-            var stats = ItemDatabase.Instance.GetItemStatsById(melee2HId.Split('.').Last(), "MeleeWeapon2H");
-            if (stats != null)
+            string melee2HId = GetItemIdFromJson(PlayerDataHolder1.CharacterJson, "PrimaryMeleeWeapon");
+            if (!string.IsNullOrEmpty(melee2HId))
             {
-                var entry = character.SpriteCollection.MeleeWeapon2H.FirstOrDefault(e => e.Id == stats.itemId);
+                var entry = character.SpriteCollection.MeleeWeapon2H
+                    .FirstOrDefault(e => e.Id == melee2HId);
+
                 if (entry != null)
                 {
                     character.WeaponType = WeaponType.Melee2H;
                     character.Equip(entry, EquipmentPart.MeleeWeapon2H);
-                    Debug.Log(" Đã ép lại MeleeWeapon2H sau khi load JSON.");
+                    Debug.Log("✅ Đã ép lại MeleeWeapon2H từ PrimaryMeleeWeapon");
                 }
                 else
                 {
-                    Debug.LogWarning($"⚠ Không tìm thấy entry MeleeWeapon2H với ID: {stats.itemId}");
+                    Debug.LogWarning($"⚠ Không tìm thấy MeleeWeapon2H entry: {melee2HId}");
                 }
             }
         }
+
 
         LoadCharacterToUI(); // Cập nhật UI
     }
@@ -580,6 +603,5 @@ public class CharacterUIManager1 : MonoBehaviour
         }
         return result;
     }
-
 
 }

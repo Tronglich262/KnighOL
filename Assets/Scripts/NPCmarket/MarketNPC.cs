@@ -10,7 +10,7 @@ public class MarketNPC : MonoBehaviour
         if (shopUIPanel != null) shopUIPanel.SetActive(false);
     }
 
-    void OnTriggerEnter(Collider other)
+    void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Player"))
         {
@@ -19,7 +19,7 @@ public class MarketNPC : MonoBehaviour
         }
     }
 
-    void OnTriggerExit(Collider other)
+    void OnTriggerExit2D(Collider2D other)
     {
         if (other.CompareTag("Player"))
         {
@@ -31,7 +31,7 @@ public class MarketNPC : MonoBehaviour
     public void ToggleTat()
     {
         shopUIPanel.SetActive(false);
-        SkillButtonManager.Instance.Skillbutton.SetActive(true);
+       // SkillButtonManager.Instance.Skillbutton.SetActive(true);
         QuestDisplay.Instance.BatactiveallQuestDisplay();
         WorldChatUIManager.Instance.Chat.SetActive(true);
         WorldChatUIManager.Instance.chatBar.SetActive(true);
@@ -42,7 +42,7 @@ public class MarketNPC : MonoBehaviour
         if (playerInRange && Input.GetKeyDown(KeyCode.E))
         {
             if (shopUIPanel != null) shopUIPanel.SetActive(true);
-            SkillButtonManager.Instance.Skillbutton.SetActive(false);
+         //   SkillButtonManager.Instance.Skillbutton.SetActive(false);
             QuestDisplay.Instance.TatactiveallQuestDisplay();
             WorldChatUIManager.Instance.Chat.SetActive(false);
             WorldChatUIManager.Instance.chatBar.SetActive(false);

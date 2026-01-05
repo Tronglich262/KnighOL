@@ -71,10 +71,14 @@ public class AuthManager : MonoBehaviour
     {
         while (true)
         {
-            yield return new WaitForSeconds(1f); // kiểm tra mỗi 1 giây
-            yield return StartCoroutine(GetUserProfile()); // gọi API kiểm tra token
+            if (!gameObject.activeInHierarchy)
+                yield break;
+
+            yield return new WaitForSeconds(1f);
+            yield return StartCoroutine(GetUserProfile());
         }
     }
+
 
     // === HÀM HIỂN THỊ & TỰ ẨN THÔNG BÁO ===
     public void ShowLoginMessage(string msg, float duration = 3.5f)
@@ -84,10 +88,19 @@ public class AuthManager : MonoBehaviour
     }
     IEnumerator ClearLoginMessageAfterDelay(string msg, float delay)
     {
+        // UI không tồn tại → bỏ
+        if (loginMessageText == null)
+            yield break;
+
         loginMessageText.text = msg;
+
         yield return new WaitForSeconds(delay);
-        loginMessageText.text = "";
+
+        // Scene khác rồi → UI bị destroy
+        if (loginMessageText != null)
+            loginMessageText.text = "";
     }
+
     public void ShowRegisterMessage(string msg, float duration = 3.5f)
     {
         if (registerMessageCoroutine != null) StopCoroutine(registerMessageCoroutine);
@@ -95,10 +108,21 @@ public class AuthManager : MonoBehaviour
     }
     IEnumerator ClearRegisterMessageAfterDelay(string msg, float delay)
     {
+        if (registerMessageText == null)
+            yield break;
+
         registerMessageText.text = msg;
+
         yield return new WaitForSeconds(delay);
-        registerMessageText.text = "";
+
+        if (registerMessageText != null)
+            registerMessageText.text = "";
     }
+    private void OnDisable()
+    {
+        StopAllCoroutines();
+    }
+
 
     // ==== ĐĂNG KÝ ====
     public void OnRegisterClick()
@@ -268,6 +292,11 @@ public class AuthManager : MonoBehaviour
             UserSession.Token = loginResponse.token;
             yield return new WaitForSeconds(1f);
 
+
+            loginMessageText = null;
+            registerMessageText = null;
+            loginEmail = null;
+            loginPassword = null;
             SceneManager.LoadScene("MenuGame");
         }
         else
@@ -512,6 +541,7 @@ public class AuthManager : MonoBehaviour
         if (req.result == UnityWebRequest.Result.Success)
         {
             // Reload lại quest UI:
+
             var questDisplay = GameObject.FindObjectOfType<QuestDisplay>();
             if (questDisplay != null) questDisplay.ReloadQuests();
 

@@ -15,6 +15,9 @@ public class PlayerDataManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
+
+            transform.SetParent(null);
+
             DontDestroyOnLoad(gameObject);
         }
         else
@@ -22,6 +25,7 @@ public class PlayerDataManager : MonoBehaviour
             Destroy(gameObject);
         }
     }
+
 
     public void SetAccountId(int accountId)
     {

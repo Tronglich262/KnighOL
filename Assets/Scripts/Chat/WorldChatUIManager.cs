@@ -93,10 +93,10 @@ public class WorldChatUIManager : NetworkBehaviour
         privateChatPanel.SetActive(false);
         ToggleBatCharbarAndChatPrivateList();
         privateChatListPanel.SetActive(false);
-        SkillButtonManager.Instance.Skillbutton.SetActive(true);
+       // SkillButtonManager.Instance.Skillbutton.SetActive(true);
         QuestDisplay.Instance.BatactiveallQuestDisplay();
         currentPrivateTargetName = null;
-        
+
     }
 
     void ShowChatPanel()
@@ -121,7 +121,7 @@ public class WorldChatUIManager : NetworkBehaviour
             || isCanvasShoptp || isCanvasShopvk || isCanvasShoppk || isCanvasShopdiemdanh || isCanvasShopnv)
             return;
         chatPanel.SetActive(true);
-        SkillButtonManager.Instance.Skillbutton.SetActive(false);
+       // SkillButtonManager.Instance.Skillbutton.SetActive(false);
         privateChatPanel.SetActive(false);
         privateChatListPanel.SetActive(false);
         QuestDisplay.Instance.TatactiveallQuestDisplay();
@@ -176,7 +176,7 @@ public class WorldChatUIManager : NetworkBehaviour
         privateChatPanel.SetActive(false);
         Chat.SetActive(false);
         SettingPanel.Instance.Setting.SetActive(false);
-        SkillButtonManager.Instance.Skillbutton.SetActive(false);
+      //  SkillButtonManager.Instance.Skillbutton.SetActive(false);
         WorldChatUIManager.Instance.Chat.SetActive(false);
         QuestDisplay.Instance.TatactiveallQuestDisplay();
         privateChatListPanel.SetActive(true);
@@ -413,7 +413,7 @@ public class WorldChatUIManager : NetworkBehaviour
         chatBar.SetActive(true);
         Chat.SetActive(true);
         SettingPanel.Instance.Setting.SetActive(true);
-       SkillButtonManager.Instance.Skillbutton.SetActive(true);
+       // SkillButtonManager.Instance.Skillbutton.SetActive(true);
         WorldChatUIManager.Instance.Chat.SetActive(true);
         QuestDisplay.Instance.questPanel.SetActive(true);
     }
@@ -519,8 +519,8 @@ public class WorldChatUIManager : NetworkBehaviour
             chatInputUI.SetPlayerChat(myPlayerChat);
         }
     }
-    
-   
+
+
     //hàm tắt bật characterButton gọi qua các srcip ( cấm động )
     public void ToggleTatCharbarAndChatPrivateList()
     {

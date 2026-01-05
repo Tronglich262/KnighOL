@@ -541,6 +541,7 @@ public class AuthManager : MonoBehaviour
         if (req.result == UnityWebRequest.Result.Success)
         {
             // Reload lại quest UI:
+
             var questDisplay = GameObject.FindObjectOfType<QuestDisplay>();
             if (questDisplay != null) questDisplay.ReloadQuests();
 

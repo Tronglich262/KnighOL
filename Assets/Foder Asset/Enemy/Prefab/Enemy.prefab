@@ -132,16 +132,16 @@ GameObject:
   - component: {fileID: 1885194886120568665}
   - component: {fileID: 7176159798065462173}
   - component: {fileID: 7613525544998485238}
+  - component: {fileID: 3920576557346083502}
   - component: {fileID: 5189910724474778432}
   - component: {fileID: 5810338864654378503}
   - component: {fileID: 5656768480407457621}
   - component: {fileID: 608644996511295153}
   - component: {fileID: 184991168305608156}
-  - component: {fileID: 3920576557346083502}
   - component: {fileID: 4466471571327298266}
   - component: {fileID: -2877692240757520620}
   - component: {fileID: 3301054783792314332}
-  - component: {fileID: 2076826060933443013}
+  - component: {fileID: 8424594892516670620}
   m_Layer: 11
   m_Name: Enemy
   m_TagString: Enemy
@@ -234,11 +234,29 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   patrolDistance: 5
   moveSpeed: 10
+  acceleration: 15
   detectRange: 4
+  attackRange: 0.6
+  attackCooldown: 2
   playerLayer:
     serializedVersion: 2
     m_Bits: 128
-  attackCooldown: 1
+--- !u!114 &3920576557346083502
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6951187957792402292}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 56610df094fd8004d835de1ff2d584ae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _CurrentHealth: 0
+  EnemyId: 101
+  MaxHealth: 1000
+  healthBarSlider: {fileID: 6068199244454001725}
 --- !u!114 &5189910724474778432
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -257,8 +275,8 @@ MonoBehaviour:
   NestedObjects: []
   NetworkedBehaviours:
   - {fileID: 7613525544998485238}
-  - {fileID: 5810338864654378503}
   - {fileID: 3920576557346083502}
+  - {fileID: 5810338864654378503}
   - {fileID: -2877692240757520620}
   - {fileID: 3301054783792314332}
   ForceRemoteRenderTimeframe: 0
@@ -303,9 +321,9 @@ Rigidbody:
   m_ImplicitTensor: 1
   m_UseGravity: 0
   m_IsKinematic: 0
-  m_Interpolate: 1
+  m_Interpolate: 0
   m_Constraints: 120
-  m_CollisionDetection: 1
+  m_CollisionDetection: 0
 --- !u!136 &608644996511295153
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -351,22 +369,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &3920576557346083502
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6951187957792402292}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 56610df094fd8004d835de1ff2d584ae, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _CurrentHealth: 0
-  EnemyId: 101
-  MaxHealth: 1000
-  healthBarSlider: {fileID: 6068199244454001725}
 --- !u!114 &4466471571327298266
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -412,7 +414,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   IsAlive: 1
---- !u!114 &2076826060933443013
+--- !u!114 &8424594892516670620
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

@@ -3,144 +3,213 @@ using Fusion;
 
 public class EnemyAI : NetworkBehaviour
 {
-    [Header("AI Settings")]
+    [Header("Movement")]
     public float patrolDistance = 5f;
     public float moveSpeed = 2f;
-    public float detectRange = 4f;
-    public LayerMask playerLayer;
-    public float attackCooldown = 1f;
+    public float acceleration = 15f;
 
-    private Vector3 _startPos;
-    private bool _movingRight = true;
-    private Rigidbody rb;
+    [Header("Combat")]
+    public float detectRange = 4f;      // chỉ nhìn thấy
+    public float aggroRange = 1.2f;     // vào quá gần → aggro
+    public float attackRange = 0.6f;
+    public float attackCooldown = 1f;
+    public LayerMask playerLayer;
+
     private Animator animator;
+
+    private Vector3 startPos;
+    private bool movingRight;
+
+    private Transform target;
+    private bool isAggro;
+
+    private float detectTimer;
+    private float currentVelX;
+    private float facing = 1;
 
     [Networked] private TickTimer attackCooldownTimer { get; set; }
 
+    // =========================
     public override void Spawned()
     {
-        rb = GetComponent<Rigidbody>();
         animator = GetComponent<Animator>();
-        _startPos = transform.position;
-
-        // Thêm: Random hướng di chuyển ban đầu
-        _movingRight = Random.value > 0.5f;
+        startPos = transform.position;
+        movingRight = Random.value > 0.5f;
     }
 
-
+    // =========================
     public override void FixedUpdateNetwork()
     {
-        if (HasStateAuthority)
-        {
-            Transform player = DetectPlayer();
+        if (!HasStateAuthority) return;
 
-            if (player != null)
+        UpdateDetection();
+
+        if (isAggro && target != null)
+            UpdateChaseAndAttack();
+        else
+            UpdatePatrol();
+
+        ApplyMovement();
+        UpdateAnimator();
+        UpdateFacing();
+    }
+
+    // =====================================================
+    // DETECT + AGGRO LOGIC (CHUẨN GAME OL)
+    // =====================================================
+    private void UpdateDetection()
+    {
+        detectTimer -= Runner.DeltaTime;
+        if (detectTimer > 0) return;
+        detectTimer = 0.25f;
+
+        // =========================
+        // 1️⃣ ĐÃ AGGRO → GIỮ TARGET
+        // =========================
+        if (isAggro && target != null)
+        {
+            float dist = Vector3.Distance(transform.position, target.position);
+
+            // chạy quá xa → mất aggro
+            if (dist > detectRange * 1.5f)
             {
-                Attack(player);
+                target = null;
+                isAggro = false;
             }
-            else
+            return;
+        }
+
+        // =========================
+        // 2️⃣ CHƯA AGGRO → CHỈ QUAN SÁT
+        // =========================
+        var hits = Physics.OverlapSphere(transform.position, detectRange, playerLayer);
+
+        foreach (var hit in hits)
+        {
+            if (!hit.CompareTag("Player")) continue;
+
+            float dist = Vector3.Distance(transform.position, hit.transform.position);
+
+            // ❗ CHỈ AGGRO KHI VÀO RẤT GẦN
+            if (dist <= aggroRange)
             {
-                Patrol();
+                target = hit.transform;
+                isAggro = true;
+                break;
             }
         }
     }
 
-    private void Patrol()
-{
-    Vector3 target = _startPos + Vector3.right * (_movingRight ? patrolDistance : -patrolDistance);
-    float distanceToTarget = Mathf.Abs(transform.position.x - target.x);
-    float dir = Mathf.Sign(target.x - transform.position.x);
-
-    // Nếu còn cách target hơn 0.1f thì di chuyển, ngược lại dừng và đảo hướng
-    if (distanceToTarget > 0.1f)
+    // =====================================================
+    // PATROL
+    // =====================================================
+    private void UpdatePatrol()
     {
-        Vector3 velocity = new Vector3(dir * moveSpeed, rb.linearVelocity.y, 0);
-        rb.linearVelocity = velocity;
+        float patrolX = startPos.x + (movingRight ? patrolDistance : -patrolDistance);
+        float dx = patrolX - transform.position.x;
 
-        bool isMovingNow = Mathf.Abs(velocity.x) > 0.1f;
-        RPC_SetMoveState(isMovingNow);
-        RPC_Flip(dir > 0);
+        if (Mathf.Abs(dx) > 0.15f)
+            Move(Mathf.Sign(dx));
+        else
+        {
+            Stop();
+            movingRight = !movingRight;
+        }
     }
-    else
+
+    // =====================================================
+    // CHASE + ATTACK
+    // =====================================================
+    private void UpdateChaseAndAttack()
     {
-        // Đặt vị trí về đúng target (chặn việc overshoot do vật lý)
-        transform.position = new Vector3(target.x, transform.position.y, transform.position.z);
-        rb.linearVelocity = Vector3.zero;
-        RPC_SetMoveState(false);
+        float dx = target.position.x - transform.position.x;
+        float distance = Mathf.Abs(dx);
 
-        // Có thể chờ 1 thời gian (patrolPause) trước khi đảo hướng nếu muốn
-        _movingRight = !_movingRight;
+        if (distance > attackRange)
+            Move(Mathf.Sign(dx));
+        else
+        {
+            Stop();
+            TryAttack();
+        }
     }
-}
 
-
-    private void Attack(Transform player)
+    private void TryAttack()
     {
         if (!attackCooldownTimer.ExpiredOrNotRunning(Runner)) return;
 
-        Vector3 dirToPlayer = (player.position - transform.position).normalized;
-        float distance = Vector3.Distance(transform.position, player.position);
-
-        if (distance > 0.5f)
-        {
-            Vector3 velocity = new Vector3(dirToPlayer.x * moveSpeed, rb.linearVelocity.y, 0);
-            rb.linearVelocity = velocity;
-
-            RPC_SetMoveState(true);
-        }
-        else
-        {
-            rb.linearVelocity = Vector3.zero;
-            RPC_SetMoveState(false);
-        }
-
-        RPC_Flip(dirToPlayer.x > 0);
         attackCooldownTimer = TickTimer.CreateFromSeconds(Runner, attackCooldown);
-        RPC_PlayAttackAnimation();
+        animator.SetTrigger("AttackTrigger");
     }
 
-    private Transform DetectPlayer()
+    // =====================================================
+    // MOVEMENT (SMOOTH)
+    // =====================================================
+    private void Move(float dir)
     {
-        Collider[] hits = Physics.OverlapSphere(transform.position, detectRange, playerLayer);
-        foreach (var hit in hits)
-        {
-            if (hit.CompareTag("Player"))
-            {
-                return hit.transform;
-            }
-        }
-        return null;
+        facing = dir;
+        currentVelX = Mathf.MoveTowards(
+            currentVelX,
+            dir * moveSpeed,
+            acceleration * Runner.DeltaTime
+        );
     }
 
-    [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
-    private void RPC_PlayAttackAnimation()
+    private void Stop()
     {
-        if (animator != null)
-        {
-            animator.SetTrigger("AttackTrigger");
-        }
+        currentVelX = Mathf.MoveTowards(
+            currentVelX,
+            0,
+            acceleration * Runner.DeltaTime
+        );
     }
 
-    [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
-    private void RPC_SetMoveState(bool moving)
+    private void ApplyMovement()
     {
-        if (animator != null)
-        {
-            animator.SetBool("isMoving", moving);
-        }
+        transform.position += Vector3.right * currentVelX * Runner.DeltaTime;
     }
 
-    [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
-    private void RPC_Flip(bool faceRight)
+    // =====================================================
+    // ANIMATION
+    // =====================================================
+    private bool wasMoving;
+
+    private void UpdateAnimator()
     {
+        bool isMovingNow = Mathf.Abs(currentVelX) > 0.05f;
+
+        if (isMovingNow && !wasMoving)
+            animator.SetTrigger("MoveTrigger");
+
+        wasMoving = isMovingNow;
+    }
+
+    private void UpdateFacing()
+    {
+        if (Mathf.Abs(currentVelX) < 0.01f) return;
+
         Vector3 scale = transform.localScale;
-        scale.x = Mathf.Abs(scale.x) * (faceRight ? -1 : 1);
+        scale.x = Mathf.Abs(scale.x) * (facing > 0 ? -1 : 1);
         transform.localScale = scale;
     }
 
+    // =====================================================
+    // AGGRO KHI BỊ ĐÁNH (BẮT BUỘC)
+    // =====================================================
+    public void ForceAggro(Transform attacker)
+    {
+        target = attacker;
+        isAggro = true;
+    }
+
+#if UNITY_EDITOR
     private void OnDrawGizmosSelected()
     {
-        Gizmos.color = Color.red;
+        Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position, detectRange);
+
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, aggroRange);
     }
+#endif
 }

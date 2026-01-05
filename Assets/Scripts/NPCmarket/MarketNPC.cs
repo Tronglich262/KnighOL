@@ -10,7 +10,7 @@ public class MarketNPC : MonoBehaviour
         if (shopUIPanel != null) shopUIPanel.SetActive(false);
     }
 
-    void OnTriggerEnter(Collider other)
+    void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Player"))
         {
@@ -19,7 +19,7 @@ public class MarketNPC : MonoBehaviour
         }
     }
 
-    void OnTriggerExit(Collider other)
+    void OnTriggerExit2D(Collider2D other)
     {
         if (other.CompareTag("Player"))
         {

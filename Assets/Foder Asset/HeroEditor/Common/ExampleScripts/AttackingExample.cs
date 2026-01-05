@@ -38,16 +38,14 @@ namespace Assets.HeroEditor.Common.ExampleScripts
             var targeting = GetComponent<TargetingSystem>();
             if (targeting == null) return;
 
-            Enemy enemy = targeting.CurrentTarget;
+            Enemy enemy = targeting.CurrentEnemy;
+
+            // ❌ MMO: chưa target thì KHÔNG ĐÁNH
             if (enemy == null)
             {
-                enemy = targeting.GetNearestEnemy(transform.position);
-                if (enemy != null)
-                    targeting.SetTarget(enemy);
+                Debug.Log("No target selected.");
+                return;
             }
-
-            if (enemy == null) return;
-
 
             if (Character.WeaponType == WeaponType.Bow)
             {
@@ -58,6 +56,7 @@ namespace Assets.HeroEditor.Common.ExampleScripts
                 RPC_StartChase(enemy.Object);
             }
         }
+
 
 
         // =========================

@@ -757,6 +757,7 @@ MonoBehaviour:
   - {fileID: 6267084907877005911}
   - {fileID: 6115010359866230793}
   - {fileID: 4016210544103328236}
+  - {fileID: 7617709807282559961}
   - {fileID: 2729830217243597031}
   - {fileID: 5824957876360393704}
   ForceRemoteRenderTimeframe: 0
@@ -968,6 +969,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Character: {fileID: 114665035860700710}
   FireTransform: {fileID: 4394355602126684}
+  ArrowPrefab:
+    RawGuidValue: 44e6882ae2145a3419bcdeee6e8f2f8b
+  ArrowSpeed: 40
   _AimAngle: 0
   MinAngle: -40
   MaxAngle: 40
@@ -983,11 +987,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 43b91a509e9cbbd43b165b906609d66c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  searchRadius: 12
   enemyLayer:
     serializedVersion: 2
     m_Bits: 2048
+  npcLayer:
+    serializedVersion: 2
+    m_Bits: 8192
+  enemyRadius: 12
+  npcRadius: 8
+  loseTargetDistance: 15
+  tabKey: 9
+  includeNPCInTab: 1
+  requireLineOfSight: 1
+  tabCooldown: 0.1
+  enableSoftTarget: 1
+  softTargetHysteresis: 1.5
   indicatorPrefab: {fileID: 8751565778292562942, guid: e587d1ec6c2e9674f9817a0dd3f68fc5, type: 3}
+  targetInfoPanel: {fileID: 0}
 --- !u!1 &1148429461579488
 GameObject:
   m_ObjectHideFlags: 0
@@ -5299,6 +5315,7 @@ GameObject:
   - component: {fileID: 95570845223693640}
   - component: {fileID: 114289189664409796}
   - component: {fileID: 4016210544103328236}
+  - component: {fileID: 7617709807282559961}
   m_Layer: 7
   m_Name: Animation
   m_TagString: Untagged
@@ -5376,6 +5393,24 @@ MonoBehaviour:
   StateHashes: 000000003ea01f483811d589392fadbeff06fadac6c09ede42af3c372ae307dca6fa3a3a6bce3cd63d2b003c682f8a96c41fe9e474605abef87967589cebff3410f2c2d2ad60984d6da81b5da703c16eac048645446b7af7cbf583607314b21c0b55c687cab16243d8438aa72ddd3adb3f2fd23fc81d5d6e87901830ee8e17f0fc7cff1409e24f681b10a78c0b4e704544c3351b728674080e0bd309f77472b9fc733592c8f34108e794d175c63906bf5ca3b4e60ee92b6f05ee6c44bfd5ea41c7949eda36dcf6fbbac5cb1da1609f62d41dec98f5d42f0a4f4d72f920e23b68767617f2b23778a51100fbbe6bd5a32d3e0d31af2ef6da874b871ec80e78689cad4feb87656df405ff2ac5e18268f67b9f23c86b28a981077d711385
   TriggerHashes: 00000000f5680fc6968b165dc8168ab2a1609f62f77472b9bfd5ea4136dcf6fbf5d42f0a
   TotalWords: 9
+--- !u!114 &7617709807282559961
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1757109176523624}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c8883945250b00845bdba57d9344f932, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damage: 100
+  hitRadius: 1.2
+  enemyLayer:
+    serializedVersion: 2
+    m_Bits: 2048
+  hitPoint: {fileID: 0}
 --- !u!1 &1760108719779260
 GameObject:
   m_ObjectHideFlags: 0
@@ -6270,7 +6305,7 @@ Transform:
   m_GameObject: {fileID: 3914394862936414243}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 4.7999997, z: -10}
+  m_LocalPosition: {x: 0, y: 5.9999995, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -6301,7 +6336,7 @@ MonoBehaviour:
     CustomLookAtTarget: 0
   Lens:
     FieldOfView: 40
-    OrthographicSize: 12
+    OrthographicSize: 15
     NearClipPlane: 0
     FarClipPlane: 5000
     Dutch: 0

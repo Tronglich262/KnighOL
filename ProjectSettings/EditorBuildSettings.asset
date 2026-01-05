@@ -24,7 +24,7 @@ EditorBuildSettings:
     path: Assets/Foder Asset/HeroEditor/QUICK START.unity
     guid: cb276a8ee57340c9a153edf75bd96b62
   m_configObjects:
-    com.unity.addressableassets: {fileID: 11400000, guid: 0071019bd87f4264782cf5e0db310412, type: 2}
+    com.unity.addressableassets: {fileID: 11400000, guid: 802556228256bdd458e318a7754216e8, type: 2}
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
     com.unity.localization.settings: {fileID: 11400000, guid: 0a3961b4682b97e4a95528a5ae441e9c, type: 2}
   m_UseUCBPForAssetBundles: 0

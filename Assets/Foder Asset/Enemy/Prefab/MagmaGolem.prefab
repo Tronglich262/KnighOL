@@ -252,6 +252,9 @@ GameObject:
   - component: {fileID: 4521719724563012033}
   - component: {fileID: 4741489522973247518}
   - component: {fileID: 5160354511669536539}
+  - component: {fileID: 90279194176241076}
+  - component: {fileID: 5051339024846952023}
+  - component: {fileID: 3734981255714171301}
   m_Layer: 11
   m_Name: MagmaGolem
   m_TagString: Enemy
@@ -387,10 +390,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56610df094fd8004d835de1ff2d584ae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _CurrentHealth: 0
   EnemyId: 101
   MaxHealth: 1000
-  healthBarSlider: {fileID: 0}
+  healthBarSlider: {fileID: 8220225182695219660}
 --- !u!114 &4904653853514410820
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -433,7 +435,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SortKey: 2908726158
   ObjectInterest: 1
-  Flags: 262145
+  Flags: 786433
   NestedObjects: []
   NetworkedBehaviours:
   - {fileID: 4603624849760815438}
@@ -441,6 +443,9 @@ MonoBehaviour:
   - {fileID: 4904653853514410820}
   - {fileID: 7752603726689702576}
   - {fileID: 4521719724563012033}
+  - {fileID: 90279194176241076}
+  - {fileID: 5051339024846952023}
+  - {fileID: 3734981255714171301}
   ForceRemoteRenderTimeframe: 0
 --- !u!114 &7752603726689702576
 MonoBehaviour:
@@ -535,6 +540,48 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 4.32, y: 5.34}
   m_EdgeRadius: 0
+--- !u!114 &90279194176241076
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6828922712980065891}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5d4c38c0a298244d81ceadb37ee9311, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &5051339024846952023
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6828922712980065891}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ced5e90acfe5884489b7d513778b0e62, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Stats: {fileID: 3734981255714171301}
+  Aggro: {fileID: 90279194176241076}
+  AI: {fileID: 4603624849760815438}
+--- !u!114 &3734981255714171301
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6828922712980065891}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e459443e3ee8774bafd6e9a94c47056, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _MaxHP: 1000
+  _HP: 500
+  _Attack: 50
 --- !u!1 &7829296387970327382
 GameObject:
   m_ObjectHideFlags: 0

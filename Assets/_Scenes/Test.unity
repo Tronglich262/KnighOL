@@ -13308,10 +13308,18 @@ MonoBehaviour:
   enemyPrefab:
     RawGuidValue: 0c7fdddfb0724a241be092dac8fdf9dc
   spawnPoints:
-  - {fileID: 2130971381}
-  - {fileID: 1158160410}
-  - {fileID: 547910535}
-  - {fileID: 685736686}
+  - monsterId: 101
+    spawnTransform: {fileID: 2130971381}
+    respawnTime: 5
+  - monsterId: 101
+    spawnTransform: {fileID: 1158160410}
+    respawnTime: 5
+  - monsterId: 101
+    spawnTransform: {fileID: 547910535}
+    respawnTime: 5
+  - monsterId: 101
+    spawnTransform: {fileID: 685736686}
+    respawnTime: 5
 --- !u!4 &628239765
 Transform:
   m_ObjectHideFlags: 0

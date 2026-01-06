@@ -9,8 +9,8 @@ public class EnemyAI : NetworkBehaviour
     public float acceleration = 15f;
 
     [Header("Combat")]
-    public float detectRange = 4f;      // chỉ nhìn thấy
-    public float aggroRange = 1.2f;     // vào quá gần → aggro
+    public float detectRange = 4f;      // nhìn thấy
+    public float aggroRange = 1.2f;     // vào rất gần → aggro
     public float attackRange = 0.6f;
     public float attackCooldown = 1f;
     public LayerMask playerLayer;
@@ -20,19 +20,21 @@ public class EnemyAI : NetworkBehaviour
     private Vector3 startPos;
     private bool movingRight;
 
-    private Transform target;
-    private bool isAggro;
-
     private float detectTimer;
     private float currentVelX;
     private float facing = 1;
 
     [Networked] private TickTimer attackCooldownTimer { get; set; }
 
+    // 🔥 MMO: aggro tách riêng
+    private EnemyAggroSystem aggro;
+
     // =========================
     public override void Spawned()
     {
         animator = GetComponent<Animator>();
+        aggro = GetComponent<EnemyAggroSystem>();
+
         startPos = transform.position;
         movingRight = Random.value > 0.5f;
     }
@@ -44,7 +46,7 @@ public class EnemyAI : NetworkBehaviour
 
         UpdateDetection();
 
-        if (isAggro && target != null)
+        if (aggro.CurrentTarget != null)
             UpdateChaseAndAttack();
         else
             UpdatePatrol();
@@ -55,7 +57,7 @@ public class EnemyAI : NetworkBehaviour
     }
 
     // =====================================================
-    // DETECT + AGGRO LOGIC (CHUẨN GAME OL)
+    // DETECT (chỉ để aggro gần – KHÔNG ghi đè threat)
     // =====================================================
     private void UpdateDetection()
     {
@@ -63,45 +65,29 @@ public class EnemyAI : NetworkBehaviour
         if (detectTimer > 0) return;
         detectTimer = 0.25f;
 
-        // =========================
-        // 1️⃣ ĐÃ AGGRO → GIỮ TARGET
-        // =========================
-        if (isAggro && target != null)
-        {
-            float dist = Vector3.Distance(transform.position, target.position);
+        if (aggro.CurrentTarget != null) return;
 
-            // chạy quá xa → mất aggro
-            if (dist > detectRange * 1.5f)
-            {
-                target = null;
-                isAggro = false;
-            }
-            return;
-        }
-
-        // =========================
-        // 2️⃣ CHƯA AGGRO → CHỈ QUAN SÁT
-        // =========================
-        var hits = Physics.OverlapSphere(transform.position, detectRange, playerLayer);
-
+        var hits = Physics2D.OverlapCircleAll(transform.position, detectRange, playerLayer);
         foreach (var hit in hits)
         {
             if (!hit.CompareTag("Player")) continue;
 
             float dist = Vector3.Distance(transform.position, hit.transform.position);
-
-            // ❗ CHỈ AGGRO KHI VÀO RẤT GẦN
             if (dist <= aggroRange)
             {
-                target = hit.transform;
-                isAggro = true;
+                // aggro nhẹ (MMO-style proximity)
+                aggro.AddThreat(
+                    hit.GetComponent<NetworkObject>().InputAuthority,
+                    1f,
+                    hit.transform
+                );
                 break;
             }
         }
     }
 
     // =====================================================
-    // PATROL
+    // PATROL (GIỮ NGUYÊN)
     // =====================================================
     private void UpdatePatrol()
     {
@@ -118,10 +104,13 @@ public class EnemyAI : NetworkBehaviour
     }
 
     // =====================================================
-    // CHASE + ATTACK
+    // CHASE + ATTACK (DÙNG AGGRO)
     // =====================================================
     private void UpdateChaseAndAttack()
     {
+        Transform target = aggro.CurrentTarget;
+        if (target == null) return;
+
         float dx = target.position.x - transform.position.x;
         float distance = Mathf.Abs(dx);
 
@@ -143,7 +132,7 @@ public class EnemyAI : NetworkBehaviour
     }
 
     // =====================================================
-    // MOVEMENT (SMOOTH)
+    // MOVEMENT (GIỮ NGUYÊN)
     // =====================================================
     private void Move(float dir)
     {
@@ -170,7 +159,7 @@ public class EnemyAI : NetworkBehaviour
     }
 
     // =====================================================
-    // ANIMATION
+    // ANIMATION (GIỮ NGUYÊN)
     // =====================================================
     private bool wasMoving;
 
@@ -193,23 +182,4 @@ public class EnemyAI : NetworkBehaviour
         transform.localScale = scale;
     }
 
-    // =====================================================
-    // AGGRO KHI BỊ ĐÁNH (BẮT BUỘC)
-    // =====================================================
-    public void ForceAggro(Transform attacker)
-    {
-        target = attacker;
-        isAggro = true;
-    }
-
-#if UNITY_EDITOR
-    private void OnDrawGizmosSelected()
-    {
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(transform.position, detectRange);
-
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, aggroRange);
-    }
-#endif
 }

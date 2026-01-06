@@ -29,7 +29,7 @@ public class TargetInfoPanel : MonoBehaviour
         Hide();
     }
 
-    private void Update()
+  /*  private void Update()
     {
         // realtime update HP text
         if (currentEnemyHp != null)
@@ -38,7 +38,7 @@ public class TargetInfoPanel : MonoBehaviour
                 $"HP: {currentEnemyHp.CurrentHealth} / {currentEnemyHp.MaxHealth}";
         }
     }
-
+*/
     // =========================
     // ENEMY
     // =========================
@@ -64,15 +64,29 @@ public class TargetInfoPanel : MonoBehaviour
 
         if (currentEnemyHp != null)
         {
-            targetHpText.gameObject.SetActive(true);
-            targetHpText.text =
-                $"HP: {currentEnemyHp.CurrentHealth} / {currentEnemyHp.MaxHealth}";
+            var stats = currentEnemyHp.GetComponent<EnemyStats>();
+            if (stats != null)
+            {
+                targetHpText.gameObject.SetActive(true);
+                targetHpText.text = $"HP: {stats.HP} / {stats.MaxHP}";
+            }
         }
         else
         {
             targetHpText.gameObject.SetActive(false);
         }
     }
+    public void NotifyHPChanged(EnemyStats stats)
+    {
+        if (currentEnemyHp == null) return;
+
+        var curStats = currentEnemyHp.GetComponent<EnemyStats>();
+        if (curStats != stats) return;
+
+        targetHpText.gameObject.SetActive(true);
+        targetHpText.text = $"HP: {stats.HP} / {stats.MaxHP}";
+    }
+
 
     // =========================
     // NPC

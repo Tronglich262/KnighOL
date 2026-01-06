@@ -21,7 +21,7 @@ public class ArrowDamage : NetworkBehaviour
     // =========================
     // COLLISION
     // =========================
-    private void OnTriggerEnter(Collider other)
+    private void OnTriggerEnter2D(Collider2D other)
     {
         if (!Object.HasStateAuthority) return;
         if (hasHit) return;

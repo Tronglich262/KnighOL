@@ -634,6 +634,7 @@ public class ItemDetailsUI : MonoBehaviour
 
                     character.WeaponType = WeaponType.Bow;
                     character.Equip(entry, EquipmentPart.Bow);
+
                     break;
                 }
             default:

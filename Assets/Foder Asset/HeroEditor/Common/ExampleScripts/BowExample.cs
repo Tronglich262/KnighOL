@@ -84,11 +84,12 @@ namespace Assets.HeroEditor.Common.ExampleScripts
             GameObject arrow = arrowObj.gameObject;
 
             // ===== velocity =====
-            Rigidbody rb = arrow.GetComponent<Rigidbody>();
+            Rigidbody2D rb = arrow.GetComponent<Rigidbody2D>();
             if (rb != null)
             {
                 rb.linearVelocity = arrow.transform.right * ArrowSpeed;
             }
+
 
             // ===== sprite =====
             SpriteRenderer sr = arrow.GetComponent<SpriteRenderer>();

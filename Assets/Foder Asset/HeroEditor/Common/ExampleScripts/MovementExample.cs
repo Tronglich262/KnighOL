@@ -17,12 +17,15 @@ namespace Assets.HeroEditor.Common.ExampleScripts
         [Networked] private CharacterState NetworkedState { get; set; }
         [Networked] public NetworkBool LockFacing { get; set; }
         public float CurrentScaleX => NetworkedScaleX;
+        PlayerMapState mapState;
 
         public static MovementExample Instante;
         public bool checktoggle = false;
         public void Awake()
         {
             Instante = this;
+            mapState = GetComponent<PlayerMapState>();
+
         }
         public override void Spawned()
         {
@@ -49,17 +52,19 @@ namespace Assets.HeroEditor.Common.ExampleScripts
         {
             if (!HasInputAuthority) return;
 
-            Vector2 direction = Vector2.zero;
-            if (checktoggle == true)
-            {
+            // 🚫 FREEZE → KHÔNG NHẬN INPUT
+            if (mapState != null && mapState.FreezeMovement)
                 return;
-            }
-            else
+
+            Vector2 direction = Vector2.zero;
+
+            if (!checktoggle)
             {
                 if (Input.GetKey(KeyCode.LeftArrow)) direction.x = -1;
                 if (Input.GetKey(KeyCode.RightArrow)) direction.x = 1;
                 if (Input.GetKey(KeyCode.UpArrow)) direction.y = 1;
             }
+
             NetworkedDirection = direction;
         }
 
@@ -78,9 +83,21 @@ namespace Assets.HeroEditor.Common.ExampleScripts
 
         public override void FixedUpdateNetwork()
         {
+            if (Controller == null || !Controller.enabled)
+                return;
+
+            // 🔒 FREEZE → ĐỨNG IM TUYỆT ĐỐI
+            if (mapState != null && mapState.FreezeMovement)
+            {
+                _velocity = Vector3.zero;
+                NetworkedDirection = Vector2.zero;
+                Controller.Move(Vector3.zero);
+                return;
+            }
+
             Vector2 direction = NetworkedDirection;
 
-            if (LockFacing && NetworkedDirection == Vector2.zero)
+            if (LockFacing && direction == Vector2.zero)
             {
                 Controller.Move(Vector3.zero);
                 return;
@@ -95,8 +112,8 @@ namespace Assets.HeroEditor.Common.ExampleScripts
                     Rpc_UpdateScaleX(NetworkedScaleX);
                 }
             }
-            Character.transform.localScale = new Vector3(NetworkedScaleX, 1, 1);
 
+            Character.transform.localScale = new Vector3(NetworkedScaleX, 1, 1);
 
             if (Controller.isGrounded)
             {
@@ -105,28 +122,21 @@ namespace Assets.HeroEditor.Common.ExampleScripts
                 if (HasInputAuthority)
                 {
                     if (direction != Vector2.zero)
-                    {
                         SetState(CharacterState.Run);
-                    }
                     else if (NetworkedState < CharacterState.DeathB)
-                    {
                         SetState(CharacterState.Idle);
-                    }
                 }
             }
             else
             {
                 if (HasInputAuthority)
-                {
                     SetState(CharacterState.Jump);
-                }
             }
 
             _velocity.y -= 25 * Runner.DeltaTime;
             Controller.Move(_velocity * Runner.DeltaTime);
-
-            Character.Animator.SetInteger("State", (int)NetworkedState);
         }
+
 
         private void SetState(CharacterState newState)
         {
@@ -167,6 +177,17 @@ namespace Assets.HeroEditor.Common.ExampleScripts
                 Rpc_UpdateState(CharacterState.Run);
             }
         }
+        public void ForceStop()
+        {
+            if (!HasStateAuthority) return;
+
+            NetworkedDirection = Vector2.zero;
+            _velocity = Vector3.zero;
+
+            NetworkedState = CharacterState.Idle;
+            Rpc_UpdateState(CharacterState.Idle);
+        }
+
 
     }
 }

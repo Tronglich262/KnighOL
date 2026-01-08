@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using TMPro;
+using UnityEngine;
+using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.Collections.Generic;
@@ -82,7 +84,7 @@ public class CharacterQuickInfoPanel : MonoBehaviour
         CharacterPreviewPanel.Instance.gameObject.SetActive(true);
         if (CharacterPreviewPanel.Instance.characterPreview != null)
         {
-           // SkillButtonManager.Instance.Skillbutton.SetActive(false);
+            // SkillButtonManager.Instance.Skillbutton.SetActive(false);
             WorldChatUIManager.Instance.Chat.SetActive(false);
             QuestDisplay.Instance.TatactiveallQuestDisplay();
             WorldChatUIManager.Instance.chatBar.SetActive(false);

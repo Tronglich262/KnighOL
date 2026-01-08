@@ -16,31 +16,56 @@ public class ClickToTarget2D : MonoBehaviour
     {
         foreach (var p in GameObject.FindGameObjectsWithTag("Player"))
         {
-            var no = p.GetComponent<NetworkObject>();
-            if (no == null || !no.HasInputAuthority) continue;
+            var localNO = p.GetComponent<NetworkObject>();
+            if (localNO == null || !localNO.HasInputAuthority) continue;
 
             var ts = p.GetComponent<TargetingSystem>();
             if (ts == null) return;
 
-            // ===== ENEMY =====
+            // ======================
+            // ENEMY
+            // ======================
             if (enemy != null)
             {
                 ts.SetManualEnemy(enemy);
                 return;
             }
 
-            // ===== PLAYER =====
+            // ======================
+            // PLAYER
+            // ======================
             if (playerInfo != null)
             {
-                var selfNo = no;
-                if (!playerInfo.CanBeTargetedBy(selfNo))
-                    return; // ❌ không target bản thân
+                // ❌ không target chính mình
+                if (!playerInfo.CanBeTargetedBy(localNO))
+                    return;
 
-                ts.SetManualPlayer(playerInfo);
+                // Transform player được click
+                Transform playerTransform = playerInfo.transform;
+
+                // 🔹 NẾU CHƯA CÓ MŨI TÊN → SET TARGET
+                if (ts.CurrentVisualTarget != playerTransform)
+                {
+                    ts.SetManualPlayer(playerInfo);
+                    return;
+                }
+
+                // 🔹 CHỈ KHI MŨI TÊN ĐANG Ở TRÊN ĐẦU PLAYER → MỚI SHOW INFO
+                var avatar = playerInfo.GetComponent<PlayerAvatar>();
+                var nameTag = playerInfo.GetComponentInChildren<NameTagManager>();
+                string nick = nameTag != null ? nameTag.Nickname : null;
+
+                if (avatar != null)
+                {
+                    CharacterQuickInfoPanel.Instance.Show(avatar, nick);
+                }
                 return;
             }
 
-            // ===== NPC =====
+
+            // ======================
+            // NPC
+            // ======================
             ts.SetManualVisual(transform);
             return;
         }

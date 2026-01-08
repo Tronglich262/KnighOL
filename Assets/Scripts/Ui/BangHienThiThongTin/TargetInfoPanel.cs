@@ -12,7 +12,8 @@ public class TargetInfoPanel : MonoBehaviour
     [Header("Default")]
     public Sprite defaultEnemyIcon;
     public Sprite defaultNpcIcon;
-
+    [Header("Default")]
+    public Sprite defaultPlayerIcon;
     public static TargetInfoPanel Instance { get; private set; }
 
     private EnemyDamageHandler currentEnemyHp;
@@ -121,4 +122,28 @@ public class TargetInfoPanel : MonoBehaviour
         currentEnemyHp = null;
         gameObject.SetActive(false);
     }
+    public void ShowPlayer(PlayerInfo player)
+    {
+        if (player == null)
+        {
+            Hide();
+            return;
+        }
+
+        gameObject.SetActive(true);
+
+        // 🔥 lấy tên từ NameTagManager
+        targetName.text = player.PlayerName;
+
+        if (player.playerIcon != null)
+            targetIcon.sprite = player.playerIcon;
+        else
+            targetIcon.sprite = defaultPlayerIcon;
+
+        // ❌ player không có HP kiểu enemy
+        currentEnemyHp = null;
+        targetHpText.gameObject.SetActive(false);
+    }
+
+
 }

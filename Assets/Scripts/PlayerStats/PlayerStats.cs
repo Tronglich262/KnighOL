@@ -9,4 +9,5 @@ public class PlayerStats
     public int spirit;
     public int defense;
     public int potentialPoints;
+    public int intelligence;
 }

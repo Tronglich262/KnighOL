@@ -412,6 +412,7 @@ GameObject:
   - component: {fileID: 8518741362921170321}
   - component: {fileID: 2321589901228712067}
   - component: {fileID: 6788928430631294400}
+  - component: {fileID: 4855063729590005260}
   m_Layer: 7
   m_Name: Human
   m_TagString: Player
@@ -900,11 +901,12 @@ MonoBehaviour:
   agility: 0
   speed: 0
   spirit: 0
+  Intelligence: 0
   finalStrength: 0
   finalDefense: 0
   finalAgility: 0
-  finalIntelligence: 0
   finalVitality: 0
+  finalIntelligence: 0
 --- !u!114 &8462416670710693349
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1065,6 +1067,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 533716fffbee41d46941eb480bf9999f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &4855063729590005260
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1109986072035710}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bfae113ba6a342448b09fd0a110888d9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  equippedItems: []
 --- !u!1 &1148429461579488
 GameObject:
   m_ObjectHideFlags: 0

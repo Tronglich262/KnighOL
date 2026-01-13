@@ -745,11 +745,12 @@ MonoBehaviour:
   agility: 1000
   speed: 0
   spirit: 0
+  Intelligence: 0
   finalStrength: 0
   finalDefense: 0
   finalAgility: 0
-  finalIntelligence: 0
   finalVitality: 0
+  finalIntelligence: 0
 --- !u!114 &667302533407903244
 MonoBehaviour:
   m_ObjectHideFlags: 0

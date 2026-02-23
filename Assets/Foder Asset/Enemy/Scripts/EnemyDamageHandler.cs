@@ -5,8 +5,7 @@ using UnityEngine.UI;
 
 public class EnemyDamageHandler : NetworkBehaviour
 {
-    [Networked, OnChangedRender(nameof(OnHealthChanged))]
-    public int CurrentHealth { get; set; }
+    
 
     public int EnemyId;
     public int MaxHealth = 1000;
@@ -16,56 +15,53 @@ public class EnemyDamageHandler : NetworkBehaviour
 
     private readonly List<PlayerRef> attackers = new();
 
+    // 🔥 MMO core
+    private EnemyAggroSystem aggro;
+
     // =========================
+    private EnemyStats stats;
+    private EnemyCore core;
+    private int lastHP = -1;
+
     public override void Spawned()
     {
         animator = GetComponent<Animator>();
-
-        if (healthBarSlider == null)
-            healthBarSlider = GetComponentInChildren<Slider>();
+        aggro = GetComponent<EnemyAggroSystem>();
+        stats = GetComponent<EnemyStats>();
+        core = GetComponent<EnemyCore>();
 
         if (HasStateAuthority)
         {
-            CurrentHealth = MaxHealth;
+            stats.HP = stats.MaxHP;
             attackers.Clear();
+            aggro.Clear();
         }
 
-        OnHealthChanged();
+        UpdateHealthUI(stats.HP, stats.MaxHP);
     }
 
+
+
     // =====================================================
-    // CLIENT -> SERVER DAMAGE
+    // CLIENT → STATE AUTHORITY
     // =====================================================
     [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
     public void RPC_TakeDamage(int amount, PlayerRef attacker, NetworkObject attackerObj)
     {
-        TakeDamage(amount, attacker, attackerObj);
-    }
-
-    // =====================================================
-    // SERVER HANDLE DAMAGE
-    // =====================================================
-    private void TakeDamage(int amount, PlayerRef attacker, NetworkObject attackerObj)
-    {
-        if (!HasStateAuthority || CurrentHealth <= 0)
+        if (!HasStateAuthority || stats.HP <= 0)
             return;
 
-        CurrentHealth -= amount;
+        stats.HP -= amount;
 
         if (!attackers.Contains(attacker))
             attackers.Add(attacker);
 
-        // Force aggro đúng người đánh
         if (attackerObj != null)
-        {
-            EnemyAI ai = GetComponent<EnemyAI>();
-            if (ai != null)
-                ai.ForceAggro(attackerObj.transform);
-        }
+            aggro.AddThreat(attacker, amount, attackerObj.transform);
 
-        if (CurrentHealth <= 0)
+        if (stats.HP <= 0)
         {
-            CurrentHealth = 0;
+            stats.HP = 0;
             Die();
         }
         else
@@ -73,39 +69,34 @@ public class EnemyDamageHandler : NetworkBehaviour
             RPC_PlayHitEffect();
         }
     }
+    public void UpdateHealthUI(int hp, int maxHp)
+    {
+        if (healthBarSlider != null)
+        {
+            healthBarSlider.maxValue = maxHp;
+            healthBarSlider.value = hp;
+        }
+    }
+
 
     // =====================================================
     private void Die()
     {
         Debug.Log($"[Enemy] Die | EnemyId={EnemyId}");
+
         foreach (var attacker in attackers)
         {
             RPC_GiveExp(attacker, 50, EnemyId);
         }
-        Enemy deadEnemy = GetComponent<Enemy>();
-
-        /*foreach (var player in GameObject.FindGameObjectsWithTag("Player"))
-        {
-            var targetSys = player.GetComponent<TargetingSystem>();
-            if (targetSys != null && targetSys.CurrentTarget == GetComponent<Enemy>())
-            {
-                targetSys.ClearTarget();
-            }
-        }
-*/
-
 
         RPC_PlayDeathAnim();
-        Invoke(nameof(DisableEnemy), 1f);
+
+        // 🔥 QUAN TRỌNG: giao quyền cho Core
+        core.Die();
     }
 
 
-    private void DisableEnemy()
-    {
-        if (HasStateAuthority && Object != null && Object.IsValid)
-            Runner.Despawn(Object);
-    }
-
+    
     // =====================================================
     [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
     private void RPC_PlayHitEffect() { }
@@ -118,11 +109,9 @@ public class EnemyDamageHandler : NetworkBehaviour
     }
 
     // =====================================================
-    // ⚠️ FIX QUAN TRỌNG: KHÔNG DÙNG Object.HasInputAuthority
     [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
     private void RPC_GiveExp(PlayerRef who, int exp, int enemyId)
     {
-        // ✅ GIỐNG CODE CŨ – KHÔNG CHECK Runner.LocalPlayer
         if (AuthManager.Instance == null)
             return;
 
@@ -135,19 +124,24 @@ public class EnemyDamageHandler : NetworkBehaviour
             enemyId,
             1
         );
-
-        Debug.Log($"[QUEST OK] enemyId={enemyId}");
     }
-
-
-
-    // =====================================================
-    private void OnHealthChanged()
+    public override void Render()
     {
-        if (healthBarSlider != null)
+        if (stats == null) return;
+
+        // 🔥 CHỈ UPDATE KHI HP THAY ĐỔI
+        if (stats.HP != lastHP)
         {
-            healthBarSlider.maxValue = MaxHealth;
-            healthBarSlider.value = CurrentHealth;
+            lastHP = stats.HP;
+            UpdateHealthUI(stats.HP, stats.MaxHP);
+
+            // 🔥 update target panel nếu đang target
+            var panel = TargetInfoPanel.Instance;
+            if (panel != null)
+                panel.NotifyHPChanged(stats);
         }
     }
-}  
+
+    // =====================================================
+
+}

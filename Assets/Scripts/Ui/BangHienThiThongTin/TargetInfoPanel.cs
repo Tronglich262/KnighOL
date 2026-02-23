@@ -12,7 +12,8 @@ public class TargetInfoPanel : MonoBehaviour
     [Header("Default")]
     public Sprite defaultEnemyIcon;
     public Sprite defaultNpcIcon;
-
+    [Header("Default")]
+    public Sprite defaultPlayerIcon;
     public static TargetInfoPanel Instance { get; private set; }
 
     private EnemyDamageHandler currentEnemyHp;
@@ -29,7 +30,7 @@ public class TargetInfoPanel : MonoBehaviour
         Hide();
     }
 
-    private void Update()
+  /*  private void Update()
     {
         // realtime update HP text
         if (currentEnemyHp != null)
@@ -38,7 +39,7 @@ public class TargetInfoPanel : MonoBehaviour
                 $"HP: {currentEnemyHp.CurrentHealth} / {currentEnemyHp.MaxHealth}";
         }
     }
-
+*/
     // =========================
     // ENEMY
     // =========================
@@ -64,15 +65,29 @@ public class TargetInfoPanel : MonoBehaviour
 
         if (currentEnemyHp != null)
         {
-            targetHpText.gameObject.SetActive(true);
-            targetHpText.text =
-                $"HP: {currentEnemyHp.CurrentHealth} / {currentEnemyHp.MaxHealth}";
+            var stats = currentEnemyHp.GetComponent<EnemyStats>();
+            if (stats != null)
+            {
+                targetHpText.gameObject.SetActive(true);
+                targetHpText.text = $"HP: {stats.HP} / {stats.MaxHP}";
+            }
         }
         else
         {
             targetHpText.gameObject.SetActive(false);
         }
     }
+    public void NotifyHPChanged(EnemyStats stats)
+    {
+        if (currentEnemyHp == null) return;
+
+        var curStats = currentEnemyHp.GetComponent<EnemyStats>();
+        if (curStats != stats) return;
+
+        targetHpText.gameObject.SetActive(true);
+        targetHpText.text = $"HP: {stats.HP} / {stats.MaxHP}";
+    }
+
 
     // =========================
     // NPC
@@ -107,4 +122,28 @@ public class TargetInfoPanel : MonoBehaviour
         currentEnemyHp = null;
         gameObject.SetActive(false);
     }
+    public void ShowPlayer(PlayerInfo player)
+    {
+        if (player == null)
+        {
+            Hide();
+            return;
+        }
+
+        gameObject.SetActive(true);
+
+        // 🔥 lấy tên từ NameTagManager
+        targetName.text = player.PlayerName;
+
+        if (player.playerIcon != null)
+            targetIcon.sprite = player.playerIcon;
+        else
+            targetIcon.sprite = defaultPlayerIcon;
+
+        // ❌ player không có HP kiểu enemy
+        currentEnemyHp = null;
+        targetHpText.gameObject.SetActive(false);
+    }
+
+
 }

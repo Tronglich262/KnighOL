@@ -34,6 +34,7 @@ public class TargetingSystem : MonoBehaviour
     public Enemy CurrentEnemy { get; private set; }             // combat target
     public Transform CurrentVisualTarget { get; private set; }  // enemy hoặc npc
     public bool HasManualTarget => mode == TargetMode.Manual;
+    public PlayerInfo CurrentPlayer { get; private set; }
 
     private enum TargetMode { None, Soft, Manual }
     private TargetMode mode = TargetMode.None;
@@ -115,6 +116,17 @@ public class TargetingSystem : MonoBehaviour
                 return;
             }
         }
+        // PLAYER despawn
+        if (CurrentPlayer != null)
+        {
+            var no = CurrentPlayer.GetComponent<NetworkObject>();
+            if (no == null || !no || !no.IsValid)
+            {
+                ClearTarget();
+                return;
+            }
+        }
+
     }
 
     // =========================================================
@@ -303,6 +315,7 @@ public class TargetingSystem : MonoBehaviour
     public void ClearTarget()
     {
         CurrentEnemy = null;
+        CurrentPlayer = null;
         CurrentVisualTarget = null;
         mode = TargetMode.None;
 
@@ -312,6 +325,7 @@ public class TargetingSystem : MonoBehaviour
         if (targetInfoPanel != null)
             targetInfoPanel.Hide();
     }
+
 
 
     // =========================================================
@@ -338,7 +352,6 @@ public class TargetingSystem : MonoBehaviour
         if (indicatorInstance != null)
             indicatorInstance.SetTarget(t);
 
-        // ===== UI UPDATE =====
         if (targetInfoPanel != null)
         {
             if (t == null)
@@ -347,15 +360,35 @@ public class TargetingSystem : MonoBehaviour
             }
             else
             {
+                // ENEMY
                 EnemyInfo e = t.GetComponent<EnemyInfo>();
                 if (e != null)
+                {
                     targetInfoPanel.ShowEnemy(e);
-                NpcShopId a = t.GetComponent<NpcShopId>();
-                if (a != null)
-                    targetInfoPanel.ShowNPC(a);
+                    return;
+                }
+
+                // NPC
+                NpcShopId npc = t.GetComponent<NpcShopId>();
+                if (npc != null)
+                {
+                    targetInfoPanel.ShowNPC(npc);
+                    return;
+                }
+
+                // PLAYER
+                PlayerInfo p = t.GetComponent<PlayerInfo>();
+                if (p != null)
+                {
+                    targetInfoPanel.ShowPlayer(p);
+                    return;
+                }
+
+                targetInfoPanel.Hide();
             }
         }
     }
+
 
 
     // =========================================================
@@ -403,6 +436,19 @@ public class TargetingSystem : MonoBehaviour
             }
         }
         return nearest;
+    }
+    public void SetManualPlayer(PlayerInfo player)
+    {
+        if (player == null)
+        {
+            ClearTarget();
+            return;
+        }
+
+        CurrentEnemy = null;
+        CurrentPlayer = player;
+        mode = TargetMode.Manual;
+        SetVisual(player.transform);
     }
 
 #if UNITY_EDITOR

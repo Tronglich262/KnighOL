@@ -225,6 +225,17 @@ public class ItemDetailsPanel : MonoBehaviour
             }
         }
         CharacterUIManager1.Instance.UpdateCharacterStatsAndUI();
+        // ===== UPDATE CHỈ SỐ NGAY KHI THÁO =====
+        var player = GameObject.FindWithTag("Player");
+        if (player != null)
+        {
+            var equipMgr = player.GetComponent<EquipmentStatManager>();
+            if (equipMgr != null)
+            {
+                equipMgr.Unequip(currentType);
+            }
+        }
+
         if (currentType == "Hair")
         {
             ShowEquipMessage("    Không thể gỡ bỏ", 2.5f);

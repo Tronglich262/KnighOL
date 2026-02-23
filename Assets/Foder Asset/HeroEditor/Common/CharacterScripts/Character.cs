@@ -194,17 +194,17 @@ namespace Assets.HeroEditor.Common.CharacterScripts
 
             _animationState = state;
 
-            if (WeaponType == WeaponType.Firearms1H || WeaponType == WeaponType.Firearms2H)
+            if (WeaponType == WeaponType.Bow)
             {
-                Animator.Play("IdleFirearm", 0); // Upper body
+                Animator.Play("ReadyBow", 0); // Upper body
             }
             else
             {
                 Animator.Play("IdleMelee", 0); // Upper body
             }
 
-            Relax();
-            SetState(CharacterState.Idle);
+            //Relax();
+            //SetState(CharacterState.Idle);
         }
 
         /// <summary>
@@ -261,6 +261,7 @@ namespace Assets.HeroEditor.Common.CharacterScripts
             // 4️⃣ INIT LẠI
             Initialize();
         }
+      
 
         //public void ResetCharacterToNaked()
         //{

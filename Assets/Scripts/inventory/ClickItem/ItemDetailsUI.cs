@@ -162,7 +162,16 @@ public class ItemDetailsUI : MonoBehaviour
         }
 
         EquipToCharacter(currentItem.stats);
-
+        // ===== UPDATE CHỈ SỐ NGAY KHI MẶC =====
+        var player = GameObject.FindWithTag("Player");
+        if (player != null)
+        {
+            var equipMgr = player.GetComponent<EquipmentStatManager>();
+            if (equipMgr != null)
+            {
+                equipMgr.Equip(currentItem.stats);
+            }
+        }
 
         if (CharacterUIManager1.Instance != null && currentItem != null)
         {
@@ -462,7 +471,6 @@ public class ItemDetailsUI : MonoBehaviour
 
         //  Tắt panel
         panel.SetActive(false);
-        StartCoroutine(DelayUpdateStatsAndUI());
         // Gửi JSON lên server để lưu theo account của chính client
         // Thay vì check HasStateAuthority của PlayerAvatar.Instance, check theo account hiện tại
         if (AuthManager.Instance != null)
@@ -478,11 +486,7 @@ public class ItemDetailsUI : MonoBehaviour
 
 
     }
-    private IEnumerator DelayUpdateStatsAndUI()
-    {
-        yield return null;
-        CharacterUIManager1.Instance.UpdateCharacterStatsAndUI();
-    }
+   
 
     private string GetEquippedWeaponId(string type)
     {
@@ -634,6 +638,7 @@ public class ItemDetailsUI : MonoBehaviour
 
                     character.WeaponType = WeaponType.Bow;
                     character.Equip(entry, EquipmentPart.Bow);
+
                     break;
                 }
             default:

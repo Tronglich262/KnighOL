@@ -77,6 +77,7 @@ public class ShopTriggerTP : MonoBehaviour
         if (CanvasShop.Instante.canvasShop != null && CanvasShop.Instante.canvasShop.activeSelf)
             return;
 
+
         // --- Chỉ cho phép xử lý click nếu đang trong vùng trigger ---
         if (Input.GetMouseButtonDown(0))
         {
@@ -113,6 +114,10 @@ public class ShopTriggerTP : MonoBehaviour
 
                     if (CanvasShop.Instante.nv != null)
                         CanvasShop.Instante.nv.SetActive(false);
+                    if (SkillButtonManager.Instance.skill != null)
+                        SkillButtonManager.Instance.ToggleSkills(false);
+                    if (FpsGame.Instance.BangHienThiThongTin != null)
+                        FpsGame.Instance.ToggleTatBanghienthithongtin();
                 }
                 else
                 {

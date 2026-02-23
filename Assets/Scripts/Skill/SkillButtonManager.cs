@@ -14,6 +14,7 @@ public class SkillButtonManager : MonoBehaviour
     public Sprite[] melee1HIcons;
     public Sprite[] melee2HIcons;
     public Sprite[] bowIcons;
+    public GameObject[] skill;
 
     public Action[] melee1HActions = new Action[5];
     public Action[] melee2HActions = new Action[5];
@@ -22,7 +23,13 @@ public class SkillButtonManager : MonoBehaviour
     private WeaponType lastWeaponType;
     private bool isReady;
     public static SkillButtonManager Instance { get; private set; }
-
+    private void Awake()
+    {
+        if (Instance == null)
+            Instance = this;
+        else
+            Destroy(gameObject);
+    }
     void Start()
     {
         StartCoroutine(FindLocalPlayer());
@@ -99,4 +106,13 @@ public class SkillButtonManager : MonoBehaviour
             }
         }
     }
+    //tat bat skill
+     public void ToggleSkills(bool isActive)
+    {
+        foreach (var button in skill)
+        {
+            button.gameObject.SetActive(isActive);
+        }
+    }
+
 }

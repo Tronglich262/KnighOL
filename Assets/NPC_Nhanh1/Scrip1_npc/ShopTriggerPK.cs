@@ -112,6 +112,10 @@ public class ShopTriggerPK : MonoBehaviour
 
                     if (CanvasShop.Instante.nv != null)
                         CanvasShop.Instante.nv.SetActive(false);
+                    if (SkillButtonManager.Instance.skill != null)
+                        SkillButtonManager.Instance.ToggleSkills(false);
+                    if (FpsGame.Instance.BangHienThiThongTin != null)
+                        FpsGame.Instance.ToggleTatBanghienthithongtin();
                 }
                 else
                 {

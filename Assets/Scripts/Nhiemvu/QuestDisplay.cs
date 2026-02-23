@@ -14,6 +14,7 @@ public class QuestDisplay : MonoBehaviour
     public GameObject questPanel;
     public QuestResponse[] currentQuests;
     public GameObject AnQuest;
+    public GameObject HienQuest;
     public GameObject nhiemvu;
     public GameObject todoi;
     public TextMeshProUGUI textUIan;
@@ -169,11 +170,13 @@ public class QuestDisplay : MonoBehaviour
         todoi.gameObject.SetActive(!isActive);
         if (!isActive)
         {
-            textUIan.text = "Ẩn";
+            AnQuest.gameObject.SetActive(true);
+            HienQuest.gameObject.SetActive(false);
         }
         else
         {
-            textUIan.text = "Hiện";
+            HienQuest.gameObject.SetActive(true);
+            AnQuest.gameObject.SetActive(false);
         }
     }
     //tat all
@@ -185,7 +188,7 @@ public class QuestDisplay : MonoBehaviour
             nhiemvu.gameObject.SetActive(false);
             todoi.gameObject.SetActive(false);
             AnQuest.gameObject.SetActive(false);
-        
+
     }
     public void BatactiveallQuestDisplay()
     {

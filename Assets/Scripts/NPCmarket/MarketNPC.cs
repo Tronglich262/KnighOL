@@ -36,6 +36,8 @@ public class MarketNPC : MonoBehaviour
         WorldChatUIManager.Instance.Chat.SetActive(true);
         WorldChatUIManager.Instance.chatBar.SetActive(true);
         CharacterUIManager.Instance.CharacterButton.SetActive(true);
+        SkillButtonManager.Instance.ToggleSkills(true);
+        FpsGame.Instance.ToggleBatBanghienthithongtin();
     }
     void Update()
     {
@@ -47,9 +49,11 @@ public class MarketNPC : MonoBehaviour
             WorldChatUIManager.Instance.Chat.SetActive(false);
             WorldChatUIManager.Instance.chatBar.SetActive(false);
             SettingPanel.Instance.Setting.SetActive(false);
-            CharacterUIManager.Instance.CharacterButton.SetActive(false); 
-         
-          
+            CharacterUIManager.Instance.CharacterButton.SetActive(false);
+                SkillButtonManager.Instance.ToggleSkills(false);
+                FpsGame.Instance.ToggleTatBanghienthithongtin();
+
+
         }
     }
 }

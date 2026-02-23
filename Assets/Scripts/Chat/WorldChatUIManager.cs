@@ -93,9 +93,12 @@ public class WorldChatUIManager : NetworkBehaviour
         privateChatPanel.SetActive(false);
         ToggleBatCharbarAndChatPrivateList();
         privateChatListPanel.SetActive(false);
-       // SkillButtonManager.Instance.Skillbutton.SetActive(true);
+       SkillButtonManager.Instance.ToggleSkills(true);
+        FpsGame.Instance.ToggleBatBanghienthithongtin();
         QuestDisplay.Instance.BatactiveallQuestDisplay();
         currentPrivateTargetName = null;
+        QuestDisplay.Instance.BatactiveallQuestDisplay();
+        QuestDisplay.Instance.HienQuest.SetActive(false);
 
     }
 
@@ -121,7 +124,8 @@ public class WorldChatUIManager : NetworkBehaviour
             || isCanvasShoptp || isCanvasShopvk || isCanvasShoppk || isCanvasShopdiemdanh || isCanvasShopnv)
             return;
         chatPanel.SetActive(true);
-       // SkillButtonManager.Instance.Skillbutton.SetActive(false);
+       SkillButtonManager.Instance.ToggleSkills(false);
+        FpsGame.Instance.ToggleTatBanghienthithongtin();
         privateChatPanel.SetActive(false);
         privateChatListPanel.SetActive(false);
         QuestDisplay.Instance.TatactiveallQuestDisplay();
@@ -176,7 +180,8 @@ public class WorldChatUIManager : NetworkBehaviour
         privateChatPanel.SetActive(false);
         Chat.SetActive(false);
         SettingPanel.Instance.Setting.SetActive(false);
-      //  SkillButtonManager.Instance.Skillbutton.SetActive(false);
+       SkillButtonManager.Instance.ToggleSkills(false);
+        FpsGame.Instance.ToggleTatBanghienthithongtin();
         WorldChatUIManager.Instance.Chat.SetActive(false);
         QuestDisplay.Instance.TatactiveallQuestDisplay();
         privateChatListPanel.SetActive(true);
@@ -413,9 +418,12 @@ public class WorldChatUIManager : NetworkBehaviour
         chatBar.SetActive(true);
         Chat.SetActive(true);
         SettingPanel.Instance.Setting.SetActive(true);
-       // SkillButtonManager.Instance.Skillbutton.SetActive(true);
+       SkillButtonManager.Instance.ToggleSkills(true);
+        FpsGame.Instance.ToggleBatBanghienthithongtin();
         WorldChatUIManager.Instance.Chat.SetActive(true);
         QuestDisplay.Instance.questPanel.SetActive(true);
+        QuestDisplay.Instance.BatactiveallQuestDisplay();
+        QuestDisplay.Instance.HienQuest.SetActive(false);
     }
 
     void UpdatePrivateMsgNotify()

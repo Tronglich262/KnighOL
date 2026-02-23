@@ -9,8 +9,13 @@ public class CharacterUIManager : MonoBehaviour
     public GameObject Tui;
     public GameObject TiemNang;
     public GameObject Kynang;
-    public GameObject button;
-    public GameObject button2;
+    public GameObject Tiemnangbtn;
+    public GameObject Kynangbtn;
+    public GameObject Banthanbtn;
+    public GameObject Nhiemvubtn;
+    public GameObject Tuibtn;
+    public GameObject Thongtinbtn;
+    public GameObject Closebtn;
     public GameObject codecharacterui1;
     public GameObject characterpreviewpanel;
     public GameObject CharacterButton;
@@ -30,9 +35,14 @@ public class CharacterUIManager : MonoBehaviour
         characterpreviewpanel.SetActive(false);
         TiemNang.SetActive(false);
         Kynang.SetActive(false);
-        button.SetActive(false);
+        Tiemnangbtn.SetActive(false);
+        Kynangbtn.SetActive(false);
+        Banthanbtn.SetActive(false);
+        Nhiemvubtn.SetActive(false);
+        Tuibtn.SetActive(false);
+        Thongtinbtn.SetActive(false);
+        Closebtn.SetActive(false);
         Tui.SetActive(false);
-        button2.SetActive(false);
         codecharacterui1.SetActive(false);
         Vien.SetActive(false);
         nhiemvu.SetActive(false);
@@ -42,6 +52,8 @@ public class CharacterUIManager : MonoBehaviour
     public void TogglePanel()
     {
         bool isActive = characterPanel.activeSelf;
+        FpsGame.Instance.ToggleTatBanghienthithongtin();
+        SkillButtonManager.Instance.ToggleSkills(false);
 
         if (isActive)
         {
@@ -50,8 +62,13 @@ public class CharacterUIManager : MonoBehaviour
             Tui.SetActive(false);
             TiemNang.SetActive(false);
             Kynang.SetActive(false);
-            button.SetActive(false);
-            button2.SetActive(false);
+            Tiemnangbtn.SetActive(false);
+            Kynangbtn.SetActive(false);
+            Banthanbtn.SetActive(false);
+            Nhiemvubtn.SetActive(false);
+            Tuibtn.SetActive(false);
+            Thongtinbtn.SetActive(false);
+            Closebtn.SetActive(false);
             codecharacterui1.SetActive(false);
             Vien.SetActive(false);
           //  QuestDisplay.Instance.TatactiveallQuestDisplay();
@@ -85,8 +102,13 @@ public class CharacterUIManager : MonoBehaviour
                 Kynang.SetActive(false);
                 nhiemvu.SetActive(false);
                 kynangCharacter.SetActive(false);
-                button.SetActive(true);
-                button2.SetActive(true);
+                Tiemnangbtn.SetActive(true);
+                Kynangbtn.SetActive(true);
+                Banthanbtn.SetActive(true);
+                Nhiemvubtn.SetActive(true);
+                Tuibtn.SetActive(true);
+                Thongtinbtn.SetActive(true);
+                Closebtn.SetActive(true);
                 codecharacterui1.SetActive(true);
                 Vien.SetActive(true);
                 CharacterButton.SetActive(false); // Ẩn nút CharacterButton khi mở panel
@@ -138,7 +160,10 @@ public class CharacterUIManager : MonoBehaviour
         Kynang.SetActive(false);
         TiemNang.SetActive(false);
         characterPanel.SetActive(true);
-        button.SetActive(true);
+        Tiemnangbtn.SetActive(true);
+        Kynangbtn.SetActive(true);
+        Banthanbtn.SetActive(true);
+        Nhiemvubtn.SetActive(true);
         Vien.SetActive(true);
         nhiemvu.SetActive(false);
 
@@ -149,7 +174,11 @@ public class CharacterUIManager : MonoBehaviour
         Kynang.SetActive(false);
         TiemNang.SetActive(false);
         characterPanel.SetActive(true);
-        button.SetActive(true);
+        Tiemnangbtn.SetActive(true);
+        Kynangbtn.SetActive(true);
+        Banthanbtn.SetActive(true);
+        Nhiemvubtn.SetActive(true);
+      
         Vien.SetActive(true);
 
     }
@@ -159,7 +188,11 @@ public class CharacterUIManager : MonoBehaviour
         Kynang.SetActive(true);
         TiemNang.SetActive(false);
         Tui.SetActive(false);
-        button.SetActive(true);
+        Tiemnangbtn.SetActive(true);
+        Kynangbtn.SetActive(true);
+        Banthanbtn.SetActive(true);
+        Nhiemvubtn.SetActive(true);
+      
         Vien.SetActive(true);
         nhiemvu.SetActive(false);
         if (ThongTin.instance != null && ThongTin.instance.gameObject.activeInHierarchy)
@@ -197,17 +230,24 @@ public class CharacterUIManager : MonoBehaviour
         characterPanel.SetActive(false);
         TiemNang.SetActive(false);
         Kynang.SetActive(false);
-        button.SetActive(false);
+        Tiemnangbtn.SetActive(false);
+        Kynangbtn.SetActive(false);
+        Banthanbtn.SetActive(false);
+        Nhiemvubtn.SetActive(false);
+        Tuibtn.SetActive(false);
+        Thongtinbtn.SetActive(false);
+        Closebtn.SetActive(false);
         Tui.SetActive(false);
-        button2.SetActive(false);
         codecharacterui1.SetActive(false);
         Vien.SetActive(false);
         kynangCharacter.SetActive(false);
         nhiemvu.SetActive(false);
         QuestDisplay.Instance.BatactiveallQuestDisplay();
         WorldChatUIManager.Instance.ToggleBatCharbarAndChatPrivateList();
-      //  bool checktoggle = MovementExample.Instante.checktoggle = false;
-     //   SkillButtonManager.Instance.Skillbutton.SetActive(true);
+        FpsGame.Instance.ToggleBatBanghienthithongtin();
+
+        //  bool checktoggle = MovementExample.Instante.checktoggle = false;
+        SkillButtonManager.Instance.ToggleSkills(true);
 
     }
     //hàm tắt bật characterButton gọi qua các srcip ( cấm động )

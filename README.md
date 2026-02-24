@@ -68,8 +68,15 @@ Dự án tập trung vào **combat, hệ thống vũ khí – kỹ năng và mul
 ---
 
 ## 📷 Demo
-<img width="898" height="505" alt="image" src="https://github.com/user-attachments/assets/27fd5a1f-b4a6-4edb-8da1-c125447a770d" />
 
-<img width="903" height="507" alt="image" src="https://github.com/user-attachments/assets/4c673476-0ef7-48b6-a8b4-11718a43f1c4" />
+<img width="1202" height="677" alt="{5C5569DD-7B9F-4D5D-BBE5-8E4743A95EA9}" src="https://github.com/user-attachments/assets/9216fc98-9fd4-4f0c-9841-dc52720d5a33" />
+<img width="1204" height="676" alt="{6CE04093-2950-43B6-B1A3-8813E0F7CDC8}" src="https://github.com/user-attachments/assets/6117b2ba-0b37-425b-adda-1f9e6453502c" />
+<img width="1202" height="677" alt="{B30ABC98-9478-49AB-8BAA-680A136737AC}" src="https://github.com/user-attachments/assets/43af5eca-6c99-4fa1-b921-fa16caf8f61b" />
+<img width="1203" height="675" alt="{C793BF46-7A4D-46F8-BA06-A74CC0841337}" src="https://github.com/user-attachments/assets/2280d856-c044-4e95-9fc9-162b85f6a2a0" />
+<img width="1203" height="672" alt="{4FA146AC-6F0D-493D-97CD-20DD61D226C7}" src="https://github.com/user-attachments/assets/f59df16b-cd88-43f6-a2bc-e90b5312bc7c" />
+<img width="1200" height="675" alt="{BFEE8FF7-512F-4F6B-B4AC-D7DFF75AD412}" src="https://github.com/user-attachments/assets/ff1eeba0-5e4d-41c6-8992-a24663d1e853" />
+
+
+
 
 

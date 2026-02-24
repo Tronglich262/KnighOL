@@ -6,7 +6,7 @@ using System.Collections;
 public class LoadingScreen : MonoBehaviour
 {
     public Slider loadingSlider;
-    public TextMeshProUGUI loadingText;
+    public Text loadingText;
 
     public float loadDuration = 5f; // Tổng thời gian loading giả lập
     public Vector2 textScaleRange = new Vector2(1f, 1.3f); // Phạm vi scale cho animation

@@ -1,10 +1,11 @@
 ﻿using UnityEngine;
 using TMPro;
-using Assets.HeroEditor.Common.CommonScripts; // Bỏ nếu bạn dùng Text thường
+using Assets.HeroEditor.Common.CommonScripts;
+using UnityEngine.UI; // Bỏ nếu bạn dùng Text thường
 
 public class LoadingDots : MonoBehaviour
 {
-    public TextMeshProUGUI loadingText; // Kéo text "Loading" vào
+    public Text loadingText; // Kéo text "Loading" vào
     public float interval = 0.3f;        // Thời gian giữa mỗi lần đổi
 
     private string baseText = "Loading";

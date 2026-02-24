@@ -1,4 +1,5 @@
 ﻿using Fusion;
+using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -20,11 +21,31 @@ public class SettingPanel : MonoBehaviour
     public void showSettingPanel()
     {
         settingPanel.SetActive(true);
+        WorldChatUIManager.Instance.privateChatListPanel.SetActive(false);
+        WorldChatUIManager.Instance.chatBar.SetActive(false);
+        WorldChatUIManager.Instance.Chat.SetActive(false);
+        Setting.SetActive(false);
+        SkillButtonManager.Instance.ToggleSkills(false);
+        FpsGame.Instance.ToggleTatBanghienthithongtin();
+        WorldChatUIManager.Instance.Chat.SetActive(false);
+        QuestDisplay.Instance.questPanel.SetActive(false);
+        QuestDisplay.Instance.TatactiveallQuestDisplay();
+        QuestDisplay.Instance.HienQuest.SetActive(false);
     }
 
     public void offSettingPanel()
     {
         settingPanel.SetActive(false);
+        WorldChatUIManager.Instance.privateChatListPanel.SetActive(false);
+        WorldChatUIManager.Instance.chatBar.SetActive(true);
+        WorldChatUIManager.Instance.Chat.SetActive(true);
+        Setting.SetActive(true);
+        SkillButtonManager.Instance.ToggleSkills(true);
+        FpsGame.Instance.ToggleBatBanghienthithongtin();
+        WorldChatUIManager.Instance.Chat.SetActive(true);
+        QuestDisplay.Instance.questPanel.SetActive(true);
+        QuestDisplay.Instance.BatactiveallQuestDisplay();
+        QuestDisplay.Instance.AnQuest.SetActive(true);
     }
     /*public async void ToggleDangXuat()
     {

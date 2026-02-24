@@ -1,9 +1,10 @@
 ﻿using UnityEngine;
 using TMPro;
+using UnityEngine.UI;
 
 public class Nhiemvuinfo : MonoBehaviour
 {
-    public TMP_Text nhiemVuText;  // Kéo text ở Inspector vào
+    public Text nhiemVuText;  // Kéo text ở Inspector vào
     public static Nhiemvuinfo Instance;
     public void Awake()
     {

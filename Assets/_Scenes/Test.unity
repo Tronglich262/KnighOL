@@ -1919,7 +1919,7 @@ GameObject:
   - component: {fileID: 35042483}
   - component: {fileID: 35042482}
   m_Layer: 5
-  m_Name: Image
+  m_Name: NhiemvuIcon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7972,7 +7972,7 @@ GameObject:
   - component: {fileID: 131525601}
   - component: {fileID: 131525600}
   m_Layer: 5
-  m_Name: Button
+  m_Name: Panel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8062,7 +8062,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -8996125858950296539, guid: 22d098448b6ef2540a99e1cd936b9b5a, type: 3}
+  m_Sprite: {fileID: -809804992619026284, guid: 39e0242329775814891ef673e48ae932, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -9736,7 +9736,7 @@ GameObject:
   - component: {fileID: 172420448}
   - component: {fileID: 172420447}
   m_Layer: 5
-  m_Name: Image
+  m_Name: TodoiIcon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -22351,7 +22351,7 @@ GameObject:
   - component: {fileID: 384635227}
   - component: {fileID: 384635226}
   m_Layer: 0
-  m_Name: ===CHISOPLAYER==
+  m_Name: ===CHISO==
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -33310,12 +33310,20 @@ PrefabInstance:
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 6798252336732525636, guid: 0781429562f6982488bab4fcdce8f3d2, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 2560.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 6798252336732525636, guid: 0781429562f6982488bab4fcdce8f3d2, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 1439.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 6798252336732525636, guid: 0781429562f6982488bab4fcdce8f3d2, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -306
+      value: -307
       objectReference: {fileID: 0}
     - target: {fileID: 6798252336732525636, guid: 0781429562f6982488bab4fcdce8f3d2, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -11
+      value: -8
       objectReference: {fileID: 0}
     - target: {fileID: 8009363312345683086, guid: 0781429562f6982488bab4fcdce8f3d2, type: 3}
       propertyPath: m_MatchWidthOrHeight
@@ -52210,6 +52218,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Thao
       objectReference: {fileID: 0}
+    - target: {fileID: 3133592280147805342, guid: c761843ae3b0aae4ea41d113ea8bf1a3, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 200
+      objectReference: {fileID: 0}
     - target: {fileID: 3176600221491022328, guid: c761843ae3b0aae4ea41d113ea8bf1a3, type: 3}
       propertyPath: m_Name
       value: Close
@@ -52303,8 +52315,20 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6798252336732525636, guid: c761843ae3b0aae4ea41d113ea8bf1a3, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 2560.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 6798252336732525636, guid: c761843ae3b0aae4ea41d113ea8bf1a3, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 1439.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 6798252336732525636, guid: c761843ae3b0aae4ea41d113ea8bf1a3, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 200
+      value: 0.0032692
+      objectReference: {fileID: 0}
+    - target: {fileID: 6798252336732525636, guid: c761843ae3b0aae4ea41d113ea8bf1a3, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -0.0061417
       objectReference: {fileID: 0}
     - target: {fileID: 8009363312345683086, guid: c761843ae3b0aae4ea41d113ea8bf1a3, type: 3}
       propertyPath: m_ReferenceResolution.x
@@ -87582,7 +87606,7 @@ MonoBehaviour:
   closeButton: {fileID: 1661033296}
   scrollRect: {fileID: 819210089}
   privateChatPanel: {fileID: 1607905399}
-  privateTitle: {fileID: 0}
+  privateTitle: {fileID: 1399208468}
   privateInput: {fileID: 2032234750}
   privateSendBtn: {fileID: 1572910118}
   privateCloseBtn: {fileID: 1847236681}
@@ -98843,7 +98867,7 @@ GameObject:
   - component: {fileID: 1789701089}
   - component: {fileID: 1789701088}
   m_Layer: 5
-  m_Name: Button
+  m_Name: Panel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -98933,7 +98957,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -8996125858950296539, guid: 22d098448b6ef2540a99e1cd936b9b5a, type: 3}
+  m_Sprite: {fileID: -809804992619026284, guid: 39e0242329775814891ef673e48ae932, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1

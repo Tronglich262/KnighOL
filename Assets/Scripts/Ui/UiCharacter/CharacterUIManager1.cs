@@ -40,8 +40,8 @@ public class CharacterUIManager1 : MonoBehaviour
     public static CharacterUIManager1 Instance;
     public Character character; // ← nhân vật trong UI
 
-    public TextMeshProUGUI gold;
-    public TextMeshProUGUI diamond;
+    public Text gold;
+    public Text diamond;
     private void Awake()
     {
         Instance = this;

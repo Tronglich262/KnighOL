@@ -34,7 +34,7 @@ public class WorldChatUIManager : NetworkBehaviour
 
     [Header("Private Chat (chat riêng)")]
     public GameObject privateChatPanel;
-    public TMP_Text privateTitle;
+    public Text privateTitle;
     public TMP_InputField privateInput;
     public Button privateSendBtn, privateCloseBtn;
     public Transform privateContent;
@@ -148,7 +148,7 @@ public class WorldChatUIManager : NetworkBehaviour
         unreadPartners.Remove(nickName);
         UpdatePrivateMsgNotify();
         UpdatePartnerButtonNotify(nickName, false);
-        privateTitle.text = $"Chat với   {nickName}";
+        privateTitle.text = $"{nickName}";
         ShowPrivateChatLog(nickName);
         privateInput.text = "";
         privateInput.ActivateInputField();

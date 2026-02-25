@@ -413,6 +413,7 @@ GameObject:
   - component: {fileID: 2321589901228712067}
   - component: {fileID: 6788928430631294400}
   - component: {fileID: 4855063729590005260}
+  - component: {fileID: 3759468853630382076}
   m_Layer: 7
   m_Name: Human
   m_TagString: Player
@@ -764,6 +765,7 @@ MonoBehaviour:
   - {fileID: 6115010359866230793}
   - {fileID: 3510908247620882012}
   - {fileID: 8518741362921170321}
+  - {fileID: 3759468853630382076}
   - {fileID: 4016210544103328236}
   - {fileID: 7617709807282559961}
   - {fileID: 2729830217243597031}
@@ -1080,6 +1082,66 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   equippedItems: []
+--- !u!114 &3759468853630382076
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1109986072035710}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9db1cd2bb2d99334594504f70197886a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  skillCooldownTimes:
+  - 10
+  - 10
+  - 10
+  - 10
+  - 10
+  - 10
+  - 5
+  - 5
+  - 5
+  - 5
+  - 5
+  - 5
+  buffEffectPrefabs:
+  - RawGuidValue: 97c43495f80a3244fad1301dfafbe252
+  - RawGuidValue: a58aa9a78f2b45b45bb0f3e2e1e3ad3c
+  - RawGuidValue: 1245b8d2997d5b34fb1637be70a7eb05
+  - RawGuidValue: 4d9a3b35b3bc07649b697df7fb497b6d
+  - RawGuidValue: 43d1d06cf70fcb2488255051aaae40a5
+  - RawGuidValue: bad5794a53f5c3645bb444b3a040ba01
+  castEffectPrefabs:
+  - RawGuidValue: 45e0f06c750176947862c10346226439
+  - RawGuidValue: b99922c2f59b1a542bdd06ae8bee47ae
+  - RawGuidValue: 52c7d057cba585641bb68312c10d7791
+  - RawGuidValue: 5156d6689efbccb4991059f3a5755566
+  - RawGuidValue: 13c990b8270c70b4c9f196019286028c
+  - RawGuidValue: d2ffbc8b168cdf74a9dbb7c6c1cfdf2f
+  hitEffectPrefabs:
+  - RawGuidValue: 46009f57772e5e743bec9df57a49ed66
+  - RawGuidValue: 645ebd7cef59b7b40b27c29bf3e99cf2
+  - RawGuidValue: 867c572a5be680d42a042d2349f10143
+  - RawGuidValue: 37ab7e60d7b792c4ead4feb01381c6cc
+  - RawGuidValue: 653866134638b354ca265558d783dd1d
+  - RawGuidValue: 3bdca15d736d48f409ccf70e68bf79de
+  _IsActive:
+  - _value: 0
+  - _value: 0
+  - _value: 0
+  - _value: 0
+  - _value: 0
+  - _value: 0
+  _IsCasting:
+  - _value: 0
+  - _value: 0
+  - _value: 0
+  - _value: 0
+  - _value: 0
+  - _value: 0
 --- !u!1 &1148429461579488
 GameObject:
   m_ObjectHideFlags: 0

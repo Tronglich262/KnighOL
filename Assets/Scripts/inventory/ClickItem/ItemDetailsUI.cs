@@ -605,6 +605,7 @@ public class ItemDetailsUI : MonoBehaviour
                          ?? stats.Icon;
                 character.PrimaryMeleeWeapon = sprite;
                 character.WeaponType = WeaponType.Melee1H;
+
                 break;
 
             // ===== Secondary Melee (Paired / 2H) =====

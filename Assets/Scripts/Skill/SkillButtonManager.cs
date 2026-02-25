@@ -19,7 +19,7 @@ public class SkillButtonManager : MonoBehaviour
     public Action[] melee1HActions = new Action[5];
     public Action[] melee2HActions = new Action[5];
     public Action[] bowActions = new Action[5];
-
+    public SkillCooldownUI cooldownManager;
     private WeaponType lastWeaponType;
     private bool isReady;
     public static SkillButtonManager Instance { get; private set; }
@@ -56,7 +56,27 @@ public class SkillButtonManager : MonoBehaviour
         melee1HActions[0] = () => attacker.UseSkill(0);
         melee2HActions[0] = () => attacker.UseSkill(0);
         bowActions[0] = () => attacker.UseSkill(0);
+        //them skill buff
+        var buffSkill = character.GetComponent<BuffSkillNetwork>();
+        var buff = character.GetComponent<BuffSkillNetwork>();
 
+        // Melee1H
+        melee1HActions[1] = () => buff.TryUseBuff(0);
+        melee1HActions[2] = () => buff.TryUseBuff(1);
+        melee1HActions[3] = () => buff.TryUseAttack(6);
+        melee1HActions[4] = () => buff.TryUseAttack(7);
+
+        // Melee2H
+        melee2HActions[1] = () => buff.TryUseBuff(2);
+        melee2HActions[2] = () => buff.TryUseBuff(3);
+       melee2HActions[3] = () => buff.TryUseAttack(10);
+        melee2HActions[4] = () => buff.TryUseAttack(11);
+
+        // Bow
+        bowActions[1] = () => buff.TryUseBuff(4);
+        bowActions[2] = () => buff.TryUseBuff(5);
+        bowActions[3] = () => buff.TryUseAttack(8);
+        bowActions[4] = () => buff.TryUseAttack(9);
         lastWeaponType = character.WeaponType;
         UpdateSkillButtons(lastWeaponType);
         isReady = true;
@@ -84,10 +104,12 @@ public class SkillButtonManager : MonoBehaviour
                 icons = melee1HIcons;
                 actions = melee1HActions;
                 break;
+
             case WeaponType.Melee2H:
                 icons = melee2HIcons;
                 actions = melee2HActions;
                 break;
+
             case WeaponType.Bow:
                 icons = bowIcons;
                 actions = bowActions;
@@ -96,7 +118,9 @@ public class SkillButtonManager : MonoBehaviour
 
         for (int i = 0; i < skillButtons.Length; i++)
         {
-            skillButtons[i].image.sprite = icons != null && i < icons.Length ? icons[i] : null;
+            skillButtons[i].image.sprite =
+                icons != null && i < icons.Length ? icons[i] : null;
+
             skillButtons[i].onClick.RemoveAllListeners();
 
             if (actions != null && i < actions.Length && actions[i] != null)
@@ -105,14 +129,50 @@ public class SkillButtonManager : MonoBehaviour
                 skillButtons[i].onClick.AddListener(() => actions[idx]());
             }
         }
+
+        // ===== FIX COOLDOWN INDEX =====
+
+        switch (weaponType)
+        {
+            case WeaponType.Melee1H:
+                cooldownManager.SetSkillIndex(0, 0); // Buff 0
+                cooldownManager.SetSkillIndex(1, 1); // Buff 1
+                cooldownManager.SetSkillIndex(2, 6); // Attack 1
+                cooldownManager.SetSkillIndex(3, 7); // Attack 2
+                break;
+
+            case WeaponType.Melee2H:
+                cooldownManager.SetSkillIndex(0, 2); // Buff 2
+                cooldownManager.SetSkillIndex(1, 3); // Buff 3
+                cooldownManager.SetSkillIndex(2, 10);
+                cooldownManager.SetSkillIndex(3, 11);
+                break;
+
+            case WeaponType.Bow:
+                cooldownManager.SetSkillIndex(0, 4); // Buff 4
+                cooldownManager.SetSkillIndex(1, 5); // Buff 5
+                cooldownManager.SetSkillIndex(2, 8);
+                cooldownManager.SetSkillIndex(3, 9);
+                break;
+        }
     }
     //tat bat skill
-     public void ToggleSkills(bool isActive)
+    public void ToggleSkills(bool isActive)
     {
         foreach (var button in skill)
         {
             button.gameObject.SetActive(isActive);
         }
+    }
+    int GetWeaponBaseIndex(WeaponType type)
+    {
+        switch (type)
+        {
+            case WeaponType.Melee1H: return 0;
+            case WeaponType.Melee2H: return 2;
+            case WeaponType.Bow: return 4;
+        }
+        return -1;
     }
 
 }

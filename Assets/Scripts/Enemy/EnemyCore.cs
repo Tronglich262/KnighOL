@@ -10,7 +10,8 @@ public class EnemyCore : NetworkBehaviour
 
     private EnemySpawner spawner;
     private EnemySpawnPoint spawnPoint;
-
+    //dame text
+    public GameObject damageTextPrefab;
     public override void Spawned()
     {
         Stats = GetComponent<EnemyStats>();
@@ -42,5 +43,37 @@ public class EnemyCore : NetworkBehaviour
         if (Object != null && Object.IsValid)
             Runner.Despawn(Object);
     }
+    public void ReceiveHit(int damage, PlayerRef attacker)
+    {
+        if (!HasStateAuthority) return;
 
+        Stats.HP -= damage;
+
+        RPC_ShowDamage(damage);
+
+        if (Stats.HP <= 0)
+            Die();
+    }
+    [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+    void RPC_ShowDamage(int damage)
+    {
+        if (damageTextPrefab == null) return;
+
+        Vector3 spawnPos = transform.position + Vector3.up * 2f;
+
+        var obj = Instantiate(damageTextPrefab, spawnPos, Quaternion.identity);
+        obj.GetComponent<DamageText>().Setup(damage);
+    }
+    [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+    public void RPC_RequestHit(int damage, PlayerRef attacker)
+    {
+        if (!HasStateAuthority) return;
+
+        Stats.HP -= damage;
+
+        RPC_ShowDamage(damage);
+
+        if (Stats.HP <= 0)
+            Die();
+    }
 }

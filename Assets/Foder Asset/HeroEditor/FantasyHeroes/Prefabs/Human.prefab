@@ -1007,7 +1007,7 @@ MonoBehaviour:
     m_Bits: 8192
   enemyRadius: 40
   npcRadius: 15
-  loseTargetDistance: 15
+  loseTargetDistance: 40
   tabKey: 9
   includeNPCInTab: 1
   requireLineOfSight: 1
@@ -1109,6 +1109,53 @@ MonoBehaviour:
   - 5
   - 5
   - 1.5
+  _IsActive:
+  - _value: 0
+  - _value: 0
+  - _value: 0
+  - _value: 0
+  - _value: 0
+  - _value: 0
+  _IsCasting:
+  - _value: 0
+  - _value: 0
+  - _value: 0
+  - _value: 0
+  - _value: 0
+  - _value: 0
+  _CurrentTargetId:
+    Raw: 0
+  aoeSkills:
+  - radius: 10
+    maxTargets: 3
+    coneAngle: 0
+    minDamage: 100
+    maxDamage: 200
+  - radius: 10
+    maxTargets: 3
+    coneAngle: 0
+    minDamage: 100
+    maxDamage: 200
+  - radius: 10
+    maxTargets: 3
+    coneAngle: 0
+    minDamage: 100
+    maxDamage: 200
+  - radius: 10
+    maxTargets: 3
+    coneAngle: 0
+    minDamage: 100
+    maxDamage: 200
+  - radius: 10
+    maxTargets: 3
+    coneAngle: 0
+    minDamage: 100
+    maxDamage: 200
+  - radius: 10
+    maxTargets: 3
+    coneAngle: 0
+    minDamage: 100
+    maxDamage: 200
   buffEffectPrefabs:
   - RawGuidValue: 97c43495f80a3244fad1301dfafbe252
   - RawGuidValue: a58aa9a78f2b45b45bb0f3e2e1e3ad3c
@@ -1130,20 +1177,6 @@ MonoBehaviour:
   - RawGuidValue: 37ab7e60d7b792c4ead4feb01381c6cc
   - RawGuidValue: 653866134638b354ca265558d783dd1d
   - RawGuidValue: 3bdca15d736d48f409ccf70e68bf79de
-  _IsActive:
-  - _value: 0
-  - _value: 0
-  - _value: 0
-  - _value: 0
-  - _value: 0
-  - _value: 0
-  _IsCasting:
-  - _value: 0
-  - _value: 0
-  - _value: 0
-  - _value: 0
-  - _value: 0
-  - _value: 0
 --- !u!1 &1148429461579488
 GameObject:
   m_ObjectHideFlags: 0

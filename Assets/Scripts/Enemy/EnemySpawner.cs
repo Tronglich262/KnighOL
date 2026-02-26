@@ -6,18 +6,20 @@ public class EnemySpawner : NetworkBehaviour
 {
     public NetworkPrefabRef enemyPrefab;
     public EnemySpawnPoint[] spawnPoints;
-
+    [Networked] private NetworkBool HasInitialized { get; set; }
     public override void Spawned()
     {
         if (!HasStateAuthority) return;
 
+        if (HasInitialized) return;
+
+        HasInitialized = true;
+
         foreach (var sp in spawnPoints)
         {
-            if (!sp.IsOccupied)
-                Spawn(sp);
+            Spawn(sp);
         }
     }
-
     void Spawn(EnemySpawnPoint sp)
     {
         var obj = Runner.Spawn(

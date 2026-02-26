@@ -1,5 +1,8 @@
-﻿using UnityEngine;
+﻿using Assets.HeroEditor.Common.ExampleScripts;
 using Fusion;
+using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
 
 public class BuffSkillNetwork : NetworkBehaviour
 {
@@ -7,13 +10,18 @@ public class BuffSkillNetwork : NetworkBehaviour
     private const int ATTACK_COUNT = 6;
     private const int TOTAL_SKILL_COUNT = 13;
     private const int BASE_INDEX = 12;
+
     public float[] skillCooldownTimes =
-{
-    10f, 10f, 10f, 10f, 10f, 10f, // 6 buff
-    5f, 10f, 5f,10f,5f,10f   ,3f                  // 6 attack
-};
+    {
+        10f, 10f, 10f, 10f, 10f, 10f,   // 6 buff
+        5f, 10f, 5f, 10f, 5f, 10f,     // 6 attack
+        3f                             // base attack
+    };
+
     // ================= NETWORK DATA =================
+
     private NetworkObject[] pendingTargets = new NetworkObject[ATTACK_COUNT];
+
     [Networked, Capacity(TOTAL_SKILL_COUNT)]
     public NetworkArray<TickTimer> BuffTimers => default;
 
@@ -25,7 +33,8 @@ public class BuffSkillNetwork : NetworkBehaviour
 
     [Networked, Capacity(TOTAL_SKILL_COUNT)]
     public NetworkArray<NetworkBool> IsCasting => default;
-
+    [Networked] public NetworkId CurrentTargetId { get; set; }
+    public AOESkillData[] aoeSkills = new AOESkillData[ATTACK_COUNT];
     // ================= PREFABS =================
 
     public NetworkPrefabRef[] buffEffectPrefabs = new NetworkPrefabRef[BUFF_COUNT];
@@ -48,17 +57,37 @@ public class BuffSkillNetwork : NetworkBehaviour
         if (!HasInputAuthority) return;
 
         var ts = GetComponent<TargetingSystem>();
-        NetworkObject targetNO = null;
+        NetworkId targetId = default;
 
         if (ts != null && ts.CurrentVisualTarget != null)
         {
-            targetNO = ts.CurrentVisualTarget.GetComponent<NetworkObject>();
+            var no = ts.CurrentVisualTarget.GetComponent<NetworkObject>();
+            if (no != null)
+                targetId = no.Id;
         }
 
-        RPC_RequestUseAttack(skillIndex, targetNO);
+        RPC_RequestUseAttack(skillIndex, targetId);
     }
 
-    // ================= BUFF RPC =================
+    public void TryUseBaseSkill()
+    {
+        if (!HasInputAuthority) return;
+
+        var ts = GetComponent<TargetingSystem>();
+        if (ts == null || ts.CurrentVisualTarget == null) return;
+
+        var no = ts.CurrentVisualTarget.GetComponent<NetworkObject>();
+        if (no == null) return;
+
+        RPC_SetTarget(no.Id);
+        RPC_RequestUseBaseSkill();
+    }
+    [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
+    void RPC_SetTarget(NetworkId id)
+    {
+        CurrentTargetId = id;
+    }
+    // ================= BUFF =================
 
     [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
     void RPC_RequestUseBuff(int skillIndex)
@@ -95,18 +124,16 @@ public class BuffSkillNetwork : NetworkBehaviour
 
             var follow = obj.GetComponent<NetworkBuffFollow>();
             if (follow != null)
-            {
                 follow.SetTarget(Object, Vector3.zero);
-            }
 
             activeBuffEffects[index] = obj;
         }
     }
 
-    // ================= ATTACK RPC =================
+    // ================= ATTACK =================
 
     [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
-    void RPC_RequestUseAttack(int skillIndex, NetworkObject targetNO)
+    void RPC_RequestUseAttack(int skillIndex, NetworkId targetId)
     {
         if (skillIndex < BUFF_COUNT || skillIndex >= BUFF_COUNT + ATTACK_COUNT)
             return;
@@ -116,6 +143,10 @@ public class BuffSkillNetwork : NetworkBehaviour
 
         if (IsCasting[skillIndex])
             return;
+
+        NetworkObject targetNO = null;
+        if (Runner.TryFindObject(targetId, out NetworkObject found))
+            targetNO = found;
 
         StartCast(skillIndex, targetNO);
     }
@@ -129,10 +160,8 @@ public class BuffSkillNetwork : NetworkBehaviour
         BuffTimers.Set(skillIndex,
             TickTimer.CreateFromSeconds(Runner, 1f));
 
-        // Lưu target theo từng skill
         pendingTargets[attackIndex] = targetNO;
 
-        // ===== GIỮ LOGIC CAST CŨ =====
         Vector3 castPos = transform.position + Vector3.up * 2f;
 
         if (castEffectPrefabs[attackIndex].IsValid)
@@ -146,47 +175,98 @@ public class BuffSkillNetwork : NetworkBehaviour
             activeCastEffects[attackIndex] = obj;
         }
     }
+
     void ExecuteAttack(int skillIndex)
     {
+        if (!Object.HasStateAuthority) return;
+
         int attackIndex = skillIndex - BUFF_COUNT;
+        var data = aoeSkills[attackIndex];
 
-        Vector3 hitPos;
-
-        NetworkObject targetNO = pendingTargets[attackIndex];
-
-        if (targetNO != null && targetNO.IsValid)
+        if (data == null)
         {
-            hitPos = targetNO.transform.position + Vector3.up * 1.5f;
-        }
-        else
-        {
-            // fallback nếu target chết
-            hitPos = transform.position + transform.forward * 2f + Vector3.up * 3f;
+            Debug.LogWarning("AOE Skill Data missing!");
+            return;
         }
 
+        // ===== Xác định tâm AOE =====
+        Vector3 center = pendingTargets[attackIndex] != null
+            ? pendingTargets[attackIndex].transform.position
+            : transform.position;
+
+        // ===== Physics 2D =====
+        Collider2D[] hits = Physics2D.OverlapCircleAll(
+            center,
+            data.radius,
+            LayerMask.GetMask("Enemy")
+        );
+
+        Debug.Log("AOE hit count: " + hits.Length);
+
+        List<EnemyCore> validTargets = new List<EnemyCore>();
+
+        foreach (var hit in hits)
+        {
+            var enemy = hit.GetComponentInParent<EnemyCore>();
+            if (enemy == null) continue;
+
+            // ===== Cone check (2D) =====
+            if (data.coneAngle > 0f)
+            {
+                Vector2 dir = (enemy.transform.position - transform.position).normalized;
+
+                // nhân vật 2D thường xoay theo trục X
+                float angle = Vector2.Angle(transform.right, dir);
+
+                if (angle > data.coneAngle * 0.5f)
+                    continue;
+            }
+
+            validTargets.Add(enemy);
+        }
+
+        // ===== Giới hạn số mục tiêu =====
+        if (data.maxTargets > 0)
+        {
+            validTargets = validTargets
+                .OrderBy(e =>
+                    (e.transform.position - center).sqrMagnitude)
+                .Take(data.maxTargets)
+                .ToList();
+        }
+
+        // ===== Gây damage =====
+        foreach (var enemy in validTargets)
+        {
+            int damage = Random.Range(data.minDamage, data.maxDamage);
+            enemy.RPC_RequestHit(damage, Object.InputAuthority);
+        }
+
+        // ===== Spawn hit effect =====
         if (hitEffectPrefabs[attackIndex].IsValid)
         {
             Runner.Spawn(
                 hitEffectPrefabs[attackIndex],
-                hitPos,
+                center,
                 Quaternion.identity,
                 Object.InputAuthority);
         }
 
+        // ===== Reset trạng thái =====
         Cooldowns.Set(skillIndex,
             TickTimer.CreateFromSeconds(Runner, skillCooldownTimes[skillIndex]));
 
         IsCasting.Set(skillIndex, false);
-
         pendingTargets[attackIndex] = null;
     }
+
     // ================= NETWORK LOOP =================
 
     public override void FixedUpdateNetwork()
     {
         for (int i = 0; i < TOTAL_SKILL_COUNT; i++)
         {
-            // ===== BUFF EXPIRE =====
+            // Buff expire
             if (i < BUFF_COUNT &&
                 IsActive[i] &&
                 BuffTimers[i].Expired(Runner))
@@ -200,12 +280,13 @@ public class BuffSkillNetwork : NetworkBehaviour
                 }
             }
 
-            // ===== ATTACK CAST FINISH =====
+            // Attack finish cast
             if (i >= BUFF_COUNT && i < BUFF_COUNT + ATTACK_COUNT &&
-     IsCasting[i] &&
-     BuffTimers[i].Expired(Runner))
+                IsCasting[i] &&
+                BuffTimers[i].Expired(Runner))
             {
                 int attackIndex = i - BUFF_COUNT;
+
                 if (activeCastEffects[attackIndex] != null)
                 {
                     Runner.Despawn(activeCastEffects[attackIndex]);
@@ -217,71 +298,42 @@ public class BuffSkillNetwork : NetworkBehaviour
         }
     }
 
-    // ================= HELPER =================
+    // ================= BASE ATTACK =================
 
-    Vector3 GetGroundPointInFront(float distance)
-    {
-        Vector3 forwardPoint = transform.position + transform.forward * distance;
-
-        Ray ray = new Ray(forwardPoint + Vector3.up * 5f, Vector3.down);
-        RaycastHit hit;
-
-        if (Physics.Raycast(ray, out hit, 20f))
-        {
-            return hit.point;
-        }
-
-        return forwardPoint;
-    }
-    Vector3 GetCastPosition(float distance, float heightOffset)
-    {
-        Vector3 forwardPoint = transform.position + transform.forward * distance;
-
-        Ray ray = new Ray(forwardPoint + Vector3.up * 5f, Vector3.down);
-        RaycastHit hit;
-
-        Vector3 groundPoint = forwardPoint;
-
-        if (Physics.Raycast(ray, out hit, 20f))
-        {
-            groundPoint = hit.point;
-        }
-
-        //  thêm độ cao tùy chỉnh
-        groundPoint.y += heightOffset;
-
-        return groundPoint;
-    }
-    //skil basic 
-    public void TryUseBaseSkill()
-    {
-        if (!HasInputAuthority) return;
-
-        RPC_RequestUseBaseSkill();
-    }
-    void ActivateBaseSkill(int index)
-    {
-        if (index < 0 || index >= TOTAL_SKILL_COUNT)
-            return;
-
-        var attacker = GetComponent<Assets.HeroEditor.Common.ExampleScripts.AttackingExample>();
-        if (attacker != null)
-        {
-            attacker.UseSkill(0);
-        }
-
-        Cooldowns.Set(index,
-            TickTimer.CreateFromSeconds(Runner, skillCooldownTimes[index]));
-    }
     [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
     void RPC_RequestUseBaseSkill()
     {
-        if (BASE_INDEX < 0 || BASE_INDEX >= TOTAL_SKILL_COUNT)
-            return;
-
         if (Cooldowns[BASE_INDEX].RemainingTime(Runner) > 0)
             return;
 
         ActivateBaseSkill(BASE_INDEX);
+    }
+
+    void ActivateBaseSkill(int index)
+    {
+        var attacker = GetComponent<AttackingExample>();
+        if (attacker != null)
+            attacker.UseSkill(0);
+
+        ExecuteBaseAttack();
+
+        Cooldowns.Set(index,
+            TickTimer.CreateFromSeconds(Runner, skillCooldownTimes[index]));
+    }
+    void ExecuteBaseAttack()
+    {
+        if (!Object.HasStateAuthority) return;
+        if (!Runner.TryFindObject(CurrentTargetId, out NetworkObject targetNO)) return;
+
+        var enemy = targetNO.GetComponent<EnemyCore>();
+        if (enemy == null) return;
+
+        int damage = Random.Range(80, 110);
+
+        // 🔥 Phải gọi RPC để đúng authority enemy
+        enemy.RPC_RequestHit(damage, Object.InputAuthority);
+
+        Cooldowns.Set(BASE_INDEX,
+            TickTimer.CreateFromSeconds(Runner, skillCooldownTimes[BASE_INDEX]));
     }
 }

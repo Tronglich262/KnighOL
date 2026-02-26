@@ -567,6 +567,7 @@ MonoBehaviour:
   Stats: {fileID: 3734981255714171301}
   Aggro: {fileID: 90279194176241076}
   AI: {fileID: 4603624849760815438}
+  damageTextPrefab: {fileID: 6557669984623422128, guid: 7dd96740f0ed95146a1e5c86af7ecbb9, type: 3}
 --- !u!114 &3734981255714171301
 MonoBehaviour:
   m_ObjectHideFlags: 0

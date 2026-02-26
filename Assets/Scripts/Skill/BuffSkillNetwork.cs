@@ -5,11 +5,12 @@ public class BuffSkillNetwork : NetworkBehaviour
 {
     private const int BUFF_COUNT = 6;
     private const int ATTACK_COUNT = 6;
-    private const int TOTAL_SKILL_COUNT = 12;
+    private const int TOTAL_SKILL_COUNT = 13;
+    private const int BASE_INDEX = 12;
     public float[] skillCooldownTimes =
 {
     10f, 10f, 10f, 10f, 10f, 10f, // 6 buff
-    5f, 10f, 5f,10f,5f,10f                      // 6 attack
+    5f, 10f, 5f,10f,5f,10f   ,3f                  // 6 attack
 };
     // ================= NETWORK DATA =================
     private NetworkObject[] pendingTargets = new NetworkObject[ATTACK_COUNT];
@@ -200,12 +201,11 @@ public class BuffSkillNetwork : NetworkBehaviour
             }
 
             // ===== ATTACK CAST FINISH =====
-            if (i >= 6 &&
-                IsCasting[i] &&
-                BuffTimers[i].Expired(Runner))
+            if (i >= BUFF_COUNT && i < BUFF_COUNT + ATTACK_COUNT &&
+     IsCasting[i] &&
+     BuffTimers[i].Expired(Runner))
             {
-                int attackIndex = i - 6;
-
+                int attackIndex = i - BUFF_COUNT;
                 if (activeCastEffects[attackIndex] != null)
                 {
                     Runner.Despawn(activeCastEffects[attackIndex]);
@@ -247,9 +247,41 @@ public class BuffSkillNetwork : NetworkBehaviour
             groundPoint = hit.point;
         }
 
-        // 👇 thêm độ cao tùy chỉnh
+        //  thêm độ cao tùy chỉnh
         groundPoint.y += heightOffset;
 
         return groundPoint;
+    }
+    //skil basic 
+    public void TryUseBaseSkill()
+    {
+        if (!HasInputAuthority) return;
+
+        RPC_RequestUseBaseSkill();
+    }
+    void ActivateBaseSkill(int index)
+    {
+        if (index < 0 || index >= TOTAL_SKILL_COUNT)
+            return;
+
+        var attacker = GetComponent<Assets.HeroEditor.Common.ExampleScripts.AttackingExample>();
+        if (attacker != null)
+        {
+            attacker.UseSkill(0);
+        }
+
+        Cooldowns.Set(index,
+            TickTimer.CreateFromSeconds(Runner, skillCooldownTimes[index]));
+    }
+    [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
+    void RPC_RequestUseBaseSkill()
+    {
+        if (BASE_INDEX < 0 || BASE_INDEX >= TOTAL_SKILL_COUNT)
+            return;
+
+        if (Cooldowns[BASE_INDEX].RemainingTime(Runner) > 0)
+            return;
+
+        ActivateBaseSkill(BASE_INDEX);
     }
 }

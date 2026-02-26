@@ -47,9 +47,9 @@ public class EnemyCore : NetworkBehaviour
     {
         if (!HasStateAuthority) return;
 
-        Stats.HP -= damage;
+        int finalDamage = Stats.TakeDamage(damage);
 
-        RPC_ShowDamage(damage);
+        RPC_ShowDamage(finalDamage);
 
         if (Stats.HP <= 0)
             Die();
@@ -69,9 +69,9 @@ public class EnemyCore : NetworkBehaviour
     {
         if (!HasStateAuthority) return;
 
-        Stats.HP -= damage;
+        int finalDamage = Stats.TakeDamage(damage);
 
-        RPC_ShowDamage(damage);
+        RPC_ShowDamage(finalDamage);
 
         if (Stats.HP <= 0)
             Die();

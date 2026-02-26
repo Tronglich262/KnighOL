@@ -36,7 +36,7 @@ public class PlayerSpawner : SimulationBehaviour, INetworkRunnerCallbacks
 
             // Truyền vào runner.Spawn
             NetworkObject obj = runner.Spawn(playerPrefab, spawnPosition, spawnRotation, player);
-          
+
 
             // Clone handling
             var clone = GameObject.Find("CloneUI");

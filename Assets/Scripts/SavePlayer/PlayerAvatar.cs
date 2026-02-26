@@ -227,6 +227,6 @@ public class PlayerAvatar : NetworkBehaviour
             SceneManager.LoadScene("Login");
         }
     }
-   
+
 
 }

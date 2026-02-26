@@ -130,6 +130,10 @@ public class BuffSkillNetwork : NetworkBehaviour
                 Quaternion.identity,
                 Object.InputAuthority);
 
+            var follow = obj.GetComponent<NetworkBuffFollow>();
+            if (follow != null)
+                follow.SetTarget(Object, Vector3.zero);
+
             activeBuffEffects[index] = obj;
         }
     }
@@ -168,15 +172,20 @@ public class BuffSkillNetwork : NetworkBehaviour
 
         pendingTargets[attackIndex] = targetNO;
 
-        Vector3 castPos = transform.position + Vector3.up * 2f;
+        Vector3 castOffset = Vector3.up * 2f;
 
         if (castEffectPrefabs[attackIndex].IsValid)
         {
             var obj = Runner.Spawn(
                 castEffectPrefabs[attackIndex],
-                castPos,
+                transform.position + castOffset,
                 Quaternion.identity,
                 Object.InputAuthority);
+
+            // 🔥 FIX: cho cast follow player
+            var follow = obj.GetComponent<NetworkBuffFollow>();
+            if (follow != null)
+                follow.SetTarget(Object, castOffset);
 
             activeCastEffects[attackIndex] = obj;
         }

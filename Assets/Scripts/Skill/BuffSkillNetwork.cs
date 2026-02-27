@@ -251,11 +251,13 @@ public class BuffSkillNetwork : NetworkBehaviour
 
     void ActivateBaseSkill(int index)
     {
+        if (!Runner.TryFindObject(CurrentTargetId, out NetworkObject targetNO))
+            return;
+
         var attacker = GetComponent<AttackingExample>();
         if (attacker != null)
-            attacker.UseSkill(0);
+            attacker.UseSkill(targetNO);   // ✅ truyền target thật
 
-        ExecuteBaseAttack();
 
         Cooldowns.Set(index,
             TickTimer.CreateFromSeconds(Runner, skillCooldownTimes[index]));

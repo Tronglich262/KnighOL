@@ -107,7 +107,7 @@ namespace Assets.HeroEditor.Common.ExampleScripts
             ArrowDamage dmg = arrow.GetComponent<ArrowDamage>();
             if (dmg != null)
             {
-                dmg.Init(Object.InputAuthority);
+                dmg.Init(Object.InputAuthority, Object);
             }
 
             // ignore collision

@@ -18,7 +18,16 @@ namespace Assets.HeroEditor.Common.ExampleScripts
         [Networked] public NetworkBool LockFacing { get; set; }
         public float CurrentScaleX => NetworkedScaleX;
         PlayerMapState mapState;
+        //
+        [Header("Movement Settings")]
+        public float baseMoveSpeed = 6f;   // đổi số này để tăng tốc
+        public float jumpForce = 12f;
 
+        private CharacterStats stats;
+
+        // dùng cho buff tốc độ sau này
+        [Networked] private float SpeedMultiplier { get; set; }
+        //
         public static MovementExample Instante;
         public bool checktoggle = false;
         public void Awake()
@@ -29,6 +38,12 @@ namespace Assets.HeroEditor.Common.ExampleScripts
         }
         public override void Spawned()
         {
+            stats = GetComponent<CharacterStats>();
+
+            if (HasStateAuthority)
+            {
+                SpeedMultiplier = 1f; // mặc định không buff
+            }
             if (Controller == null)
             {
                 Controller = Character.gameObject.AddComponent<CharacterController>();
@@ -117,8 +132,10 @@ namespace Assets.HeroEditor.Common.ExampleScripts
 
             if (Controller.isGrounded)
             {
-                _velocity = new Vector3(5 * direction.x, 12 * direction.y);
-
+                _velocity = new Vector3(
+                    GetFinalMoveSpeed() * direction.x,
+                    jumpForce * direction.y
+                );
                 if (HasInputAuthority)
                 {
                     if (direction != Vector2.zero)
@@ -188,6 +205,20 @@ namespace Assets.HeroEditor.Common.ExampleScripts
             Rpc_UpdateState(CharacterState.Idle);
         }
 
+        float GetFinalMoveSpeed()
+        {
+            float speed = baseMoveSpeed;
 
+            // 1️⃣ Agility cộng thẳng (tăng chậm, ổn định)
+            speed += stats.finalAgility * 0.1f;
+
+            // 2️⃣ Speed stat nhân %
+            speed *= 1f + (stats.speed * 0.01f);
+
+            // 3️⃣ Buff / debuff nhân sau cùng
+            speed *= SpeedMultiplier;
+
+            return Mathf.Clamp(speed, 3f, 15f);
+        }
     }
 }

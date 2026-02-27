@@ -869,10 +869,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Character: {fileID: 114665035860700710}
-  BowExample: {fileID: 6115010359866230793}
   Movement: {fileID: 0}
+  Bow: {fileID: 0}
   AttackRange: 2
-  ChaseSpeed: 4
 --- !u!114 &-4778966891055361141
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -926,6 +925,8 @@ MonoBehaviour:
   Controller: {fileID: 0}
   _LockFacing:
     _value: 0
+  baseMoveSpeed: 6
+  jumpForce: 12
   checktoggle: 0
 --- !u!114 &6267084907877005911
 MonoBehaviour:

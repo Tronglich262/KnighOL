@@ -1,4 +1,4 @@
-﻿using Assets.HeroEditor.Common.CharacterScripts;
+using Assets.HeroEditor.Common.CharacterScripts;
 using Fusion;
 using Fusion.Sockets;
 using System;
@@ -37,6 +37,8 @@ public class PlayerSpawner : SimulationBehaviour, INetworkRunnerCallbacks
             // Truyền vào runner.Spawn
             NetworkObject obj = runner.Spawn(playerPrefab, spawnPosition, spawnRotation, player);
 
+            // Local player object để ThongTin/StartInventory/BuffSkillNetwork luôn init đúng nhân vật mình
+            LocalPlayerObject = obj;
 
             // Clone handling
             var clone = GameObject.Find("CloneUI");

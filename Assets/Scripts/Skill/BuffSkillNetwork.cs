@@ -1,4 +1,4 @@
-﻿using Assets.HeroEditor.Common.ExampleScripts;
+using Assets.HeroEditor.Common.ExampleScripts;
 using Fusion;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,6 +23,12 @@ public class BuffSkillNetwork : NetworkBehaviour
     // ================= NETWORK DATA =================
 
     private NetworkObject[] pendingTargets = new NetworkObject[ATTACK_COUNT];
+    /// <summary>
+    /// Phần damage từ chỉ số (strength+finalStrength) do CLIENT gửi lên.
+    /// Server dùng thay vì đọc CharacterStats (vì trên server bản copy của client khác chưa có stat).
+    /// </summary>
+    private int[] pendingAttackStatParts = new int[ATTACK_COUNT];
+    private int pendingBaseStatPart;
 
     [Networked, Capacity(TOTAL_SKILL_COUNT)]
     public NetworkArray<TickTimer> BuffTimers => default;
@@ -78,7 +84,8 @@ public class BuffSkillNetwork : NetworkBehaviour
                 targetId = no.Id;
         }
 
-        RPC_RequestUseAttack(skillIndex, targetId);
+        int statPart = GetAttackStatPart();
+        RPC_RequestUseAttack(skillIndex, targetId, statPart);
     }
 
     public void TryUseBaseSkill()
@@ -91,7 +98,8 @@ public class BuffSkillNetwork : NetworkBehaviour
         var no = ts.CurrentVisualTarget.GetComponent<NetworkObject>();
         if (no == null) return;
 
-        RPC_RequestUseBaseSkill(no.Id);
+        int statPart = GetAttackStatPart();
+        RPC_RequestUseBaseSkill(no.Id, statPart);
     }
 
     // =================================================
@@ -143,7 +151,7 @@ public class BuffSkillNetwork : NetworkBehaviour
     // =================================================
 
     [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
-    void RPC_RequestUseAttack(int skillIndex, NetworkId targetId)
+    void RPC_RequestUseAttack(int skillIndex, NetworkId targetId, int statPart)
     {
         if (skillIndex < BUFF_COUNT || skillIndex >= BUFF_COUNT + ATTACK_COUNT)
             return;
@@ -158,10 +166,10 @@ public class BuffSkillNetwork : NetworkBehaviour
         if (Runner.TryFindObject(targetId, out NetworkObject found))
             targetNO = found;
 
-        StartCast(skillIndex, targetNO);
+        StartCast(skillIndex, targetNO, statPart);
     }
 
-    void StartCast(int skillIndex, NetworkObject targetNO)
+    void StartCast(int skillIndex, NetworkObject targetNO, int statPart)
     {
         int attackIndex = skillIndex - BUFF_COUNT;
 
@@ -171,6 +179,7 @@ public class BuffSkillNetwork : NetworkBehaviour
             TickTimer.CreateFromSeconds(Runner, 1f));
 
         pendingTargets[attackIndex] = targetNO;
+        pendingAttackStatParts[attackIndex] = statPart;
 
         Vector3 castOffset = Vector3.up * 2f;
 
@@ -209,12 +218,13 @@ public class BuffSkillNetwork : NetworkBehaviour
             LayerMask.GetMask("Enemy")
         );
 
+        int statPart = pendingAttackStatParts[attackIndex];
         foreach (var hit in hits)
         {
             var enemy = hit.GetComponentInParent<EnemyCore>();
             if (enemy == null) continue;
 
-            int damage = CalculateSkillDamage(data);
+            int damage = CalculateSkillDamage(data, statPart);
             enemy.RPC_RequestHit(damage, Object.InputAuthority);
         }
 
@@ -232,6 +242,7 @@ public class BuffSkillNetwork : NetworkBehaviour
 
         IsCasting.Set(skillIndex, false);
         pendingTargets[attackIndex] = null;
+        pendingAttackStatParts[attackIndex] = 0;
     }
 
     // =================================================
@@ -239,12 +250,13 @@ public class BuffSkillNetwork : NetworkBehaviour
     // =================================================
 
     [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
-    void RPC_RequestUseBaseSkill(NetworkId targetId)
+    void RPC_RequestUseBaseSkill(NetworkId targetId, int statPart)
     {
         if (Cooldowns[BASE_INDEX].RemainingTime(Runner) > 0)
             return;
 
         CurrentTargetId = targetId;
+        pendingBaseStatPart = statPart;
 
         ActivateBaseSkill(BASE_INDEX);
     }
@@ -256,8 +268,9 @@ public class BuffSkillNetwork : NetworkBehaviour
 
         var attacker = GetComponent<AttackingExample>();
         if (attacker != null)
-            attacker.UseSkill(targetNO);   // ✅ truyền target thật
+            attacker.UseSkill(targetNO);
 
+        ExecuteBaseAttack();
 
         Cooldowns.Set(index,
             TickTimer.CreateFromSeconds(Runner, skillCooldownTimes[index]));
@@ -271,9 +284,8 @@ public class BuffSkillNetwork : NetworkBehaviour
         var enemy = targetNO.GetComponent<EnemyCore>();
         if (enemy == null) return;
 
-        int statPart = GetServerStat();
         int baseSkillDamage = Random.Range(80, 110);
-        int damage = statPart + Mathf.RoundToInt(baseSkillDamage * 1.2f);
+        int damage = pendingBaseStatPart + Mathf.RoundToInt(baseSkillDamage * 1.2f);
 
         enemy.RPC_RequestHit(damage, Object.InputAuthority);
     }
@@ -317,18 +329,23 @@ public class BuffSkillNetwork : NetworkBehaviour
     }
 
     // =================================================
-    // DAMAGE CALCULATION (SERVER ONLY)
+    // DAMAGE: CLIENT gửi statPart lên, SERVER dùng (tránh đọc CharacterStats trên server cho client khác = 0)
     // =================================================
 
-    int GetServerStat()
+    /// <summary>
+    /// Chỉ gọi trên CLIENT (khi HasInputAuthority). Lấy strength+finalStrength từ CharacterStats của chính object này (local player).
+    /// ThongTin/StartInventory phải init đúng LocalPlayerObject thì stat mới có giá trị.
+    /// </summary>
+    int GetAttackStatPart()
     {
+        if (stats == null)
+            stats = GetComponent<CharacterStats>();
         if (stats == null) return 0;
         return stats.strength + stats.finalStrength;
     }
 
-    int CalculateSkillDamage(AOESkillData data)
+    int CalculateSkillDamage(AOESkillData data, int statPart)
     {
-        int statPart = GetServerStat();
         int skillDamage = Random.Range(data.minDamage, data.maxDamage);
         int scaledSkill = Mathf.RoundToInt(skillDamage * 1.2f);
         return statPart + scaledSkill;

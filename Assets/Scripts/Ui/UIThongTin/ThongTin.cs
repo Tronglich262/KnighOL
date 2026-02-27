@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using TMPro;
 using UnityEngine;
 
@@ -41,14 +41,12 @@ public class ThongTin : MonoBehaviour
 
     IEnumerator WaitForPlayerStats()
     {
-        GameObject player = null;
-
-        // 1️⃣ Chờ player spawn
-        while (player == null)
+        // 1️⃣ Chờ LOCAL player spawn (tránh lấy nhầm player của host khi client join sau)
+        while (PlayerSpawner.LocalPlayerObject == null)
         {
-            player = GameObject.FindWithTag("Player");
             yield return null;
         }
+        GameObject player = PlayerSpawner.LocalPlayerObject.gameObject;
 
         // 2️⃣ Lấy base stats từ server
         yield return StartCoroutine(AuthManager.Instance.GetPlayerStats(result =>
@@ -81,8 +79,8 @@ public class ThongTin : MonoBehaviour
 
     public void UpdateStatsUI()
     {
-        GameObject player = GameObject.FindWithTag("Player");
-        if (player == null) return;
+        if (PlayerSpawner.LocalPlayerObject == null) return;
+        GameObject player = PlayerSpawner.LocalPlayerObject.gameObject;
 
         var stats = player.GetComponent<CharacterStats>();
         if (stats == null) return;
@@ -112,15 +110,13 @@ public class ThongTin : MonoBehaviour
 
     public void UpdateCharacterStatsFromServer(PlayerStats serverStats)
     {
-        GameObject player = GameObject.FindWithTag("Player");
-        if (player != null)
+        if (PlayerSpawner.LocalPlayerObject != null)
         {
+            GameObject player = PlayerSpawner.LocalPlayerObject.gameObject;
             var charStats = player.GetComponent<CharacterStats>();
             if (charStats != null)
             {
                 charStats.InitFromPlayerStats(serverStats);
-                // Nếu có hệ thống trang bị:
-                // charStats.RecalculateStatsFromEquipment(currentEquipList);
             }
         }
     }

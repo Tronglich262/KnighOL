@@ -1,4 +1,4 @@
-﻿using Assets.HeroEditor.Common.CharacterScripts;
+using Assets.HeroEditor.Common.CharacterScripts;
 using Assets.HeroEditor.Common.CommonScripts;
 using HeroEditor.Common.Enums;
 using Newtonsoft.Json;
@@ -123,14 +123,11 @@ public class CharacterUIManager1 : MonoBehaviour
         DisplayItem1(Maskslot, characterData.Mask);
         DisplayItem1(Glassesslot, characterData.Glasses);
         DisplayItem1(Shieldslot, characterData.Shield);
-        GameObject player = GameObject.FindWithTag("Player");
-        if (player != null)
+        if (PlayerSpawner.LocalPlayerObject != null)
         {
-            var statComp = player.GetComponent<CharacterStats>();
+            var statComp = PlayerSpawner.LocalPlayerObject.GetComponent<CharacterStats>();
             if (statComp != null)
-            {
                 statComp.RecalculateStatsFromEquipment(equippedItems);
-            }
         }
     }
     public void LoadCharacterFromJson(string json)
@@ -174,15 +171,12 @@ public class CharacterUIManager1 : MonoBehaviour
         DisplayItem1(Glassesslot, characterData.Glasses, "Glasses");
         DisplayItem1(Shieldslot, characterData.Shield, "Shield");
 
-        // Cập nhật chỉ số
-        var player = GameObject.FindWithTag("Player");
-        if (player != null)
+        // Cập nhật chỉ số (local player)
+        if (PlayerSpawner.LocalPlayerObject != null)
         {
-            var statComp = player.GetComponent<CharacterStats>();
+            var statComp = PlayerSpawner.LocalPlayerObject.GetComponent<CharacterStats>();
             if (statComp != null)
-            {
                 statComp.RecalculateStatsFromEquipment(equippedItems);
-            }
         }
     }
 
@@ -563,13 +557,12 @@ public class CharacterUIManager1 : MonoBehaviour
         if (dict.ContainsKey(key)) return dict[key];
         return null;
     }
-    //lấy dữ liệu chỉ số đô
+    //lấy dữ liệu chỉ số đô (local player)
     public void UpdateCharacterStatsAndUI()
     {
-        var player = GameObject.FindWithTag("Player");
-        if (player != null)
+        if (PlayerSpawner.LocalPlayerObject != null)
         {
-            var statComp = player.GetComponent<CharacterStats>();
+            var statComp = PlayerSpawner.LocalPlayerObject.GetComponent<CharacterStats>();
             if (statComp != null)
             {
                 var equipped = GetAllEquippedItems(PlayerDataHolder1.CharacterJson);

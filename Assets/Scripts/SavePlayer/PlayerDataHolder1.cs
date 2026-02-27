@@ -17,29 +17,15 @@ public static class PlayerDataHolder1
         set
         {
             _characterJson = value;
-
             Debug.Log("🟢 CharacterJson đã được gán lại.");
 
-            // Cập nhật nhân vật thật (hiển thị tức thì)
-            if (PlayerAvatar.Instance != null && PlayerAvatar.Instance.Character != null)
-            {
-                PlayerAvatar.Instance.Character.FromJson(_characterJson);
-                Debug.Log("Player updated.");
-
-                // Gửi lại JSON đã gán xuống network
-                if (PlayerAvatar.Instance.HasStateAuthority)
-                {
-                    PlayerAvatar.Instance.UpdateCharacterJson(_characterJson);
-                    Debug.Log(" PlayerAvatar.Instance.UpdateCharacterJson() called.");
-                }
-            }
-            // Cập nhật bảng UI
-            if (CharacterUIManager1.Instance != null && CharacterUIManager1.Instance.character != null)
+            // Chỉ update UI local
+            if (CharacterUIManager1.Instance != null &&
+                CharacterUIManager1.Instance.character != null)
             {
                 CharacterUIManager1.Instance.character.FromJson(_characterJson);
-                Debug.Log(" Character UI updated.");
+                Debug.Log("Character UI updated.");
             }
-          
         }
     }
 

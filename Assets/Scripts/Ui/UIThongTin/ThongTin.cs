@@ -64,9 +64,10 @@ public class ThongTin : MonoBehaviour
         vitalityitem.text = "Sinh lực trang bị: " + (stats.finalVitality - stats.hp);
         Intelligenceitem.text = "trí tuệ trang bị: " + (stats.finalIntelligence - stats.Intelligence);
 
-        maxHP = stats.finalVitality;
-        currentHP = Mathf.Clamp(currentHP, 0, maxHP);
-        healthBar.SetHealth(currentHP, maxHP);
+        maxHP = Mathf.Max(1, stats.finalVitality);
+        currentHP = maxHP;
+        if (healthBar != null)
+            healthBar.SetHealth(currentHP, maxHP);
     }
 
     public void UpdateCharacterStatsFromServer(PlayerStats serverStats)

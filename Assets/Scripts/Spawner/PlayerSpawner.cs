@@ -22,6 +22,8 @@ public class PlayerSpawner : SimulationBehaviour, INetworkRunnerCallbacks
             // UI
             var canvas = Instantiate(characterCanvasPrefab);
             canvas.SetActive(true);
+            if (canvas.GetComponent<LocalPlayerStatsLoader>() == null)
+                canvas.AddComponent<LocalPlayerStatsLoader>();
             InventoryManager.Instance.uiManager = canvas.GetComponentInChildren<InventoryUIManager>();
 
             // Spawn

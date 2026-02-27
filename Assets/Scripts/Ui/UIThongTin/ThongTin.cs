@@ -1,4 +1,3 @@
-using System.Collections;
 using TMPro;
 using UnityEngine;
 
@@ -34,48 +33,10 @@ public class ThongTin : MonoBehaviour
         instance = this;
     }
 
-    private void Start()
+    private void OnEnable()
     {
-        StartCoroutine(WaitForPlayerStats());
-    }
-
-    IEnumerator WaitForPlayerStats()
-    {
-        // 1️⃣ Chờ LOCAL player spawn (tránh lấy nhầm player của host khi client join sau)
-        while (PlayerSpawner.LocalPlayerObject == null)
-        {
-            yield return null;
-        }
-        GameObject player = PlayerSpawner.LocalPlayerObject.gameObject;
-
-        // 2️⃣ Lấy base stats từ server
-        yield return StartCoroutine(AuthManager.Instance.GetPlayerStats(result =>
-        {
-            stats1 = result;
-        }));
-
-        // 3️⃣ Init base stats
-        var charStats = player.GetComponent<CharacterStats>();
-        if (charStats != null)
-        {
-            charStats.InitFromPlayerStats(stats1);
-        }
-
-        // 4️⃣ Load trang bị từ CharacterJson
-        var equipMgr = player.GetComponent<EquipmentStatManager>();
-        if (equipMgr != null)
-        {
-            equipMgr.LoadFromCharacterJson(PlayerDataHolder1.CharacterJson);
-        }
-        else
-        {
-            Debug.LogError("❌ Player thiếu EquipmentStatManager");
-        }
-
-        // 5️⃣ Update UI (FINAL stats)
         UpdateStatsUI();
     }
-
 
     public void UpdateStatsUI()
     {

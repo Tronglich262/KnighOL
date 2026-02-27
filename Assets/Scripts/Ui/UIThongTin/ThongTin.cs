@@ -67,7 +67,10 @@ public class ThongTin : MonoBehaviour
         maxHP = Mathf.Max(1, stats.finalVitality);
         currentHP = maxHP;
         if (healthBar != null)
+        {
             healthBar.SetHealth(currentHP, maxHP);
+            healthBar.SetMana(stats.currentMana, Mathf.Max(1, stats.maxMana));
+        }
     }
 
     public void UpdateCharacterStatsFromServer(PlayerStats serverStats)

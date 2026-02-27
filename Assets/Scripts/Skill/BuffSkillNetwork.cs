@@ -13,6 +13,11 @@ public class BuffSkillNetwork : NetworkBehaviour
 
     private CharacterStats stats;
 
+    [Header("Mana cost (% max mana)")]
+    [SerializeField] float manaCostBuff = 0.12f;
+    [SerializeField] float manaCostAttack = 0.08f;
+    [SerializeField] float manaCostBase = 0.03f;
+
     public float[] skillCooldownTimes =
     {
         10f, 10f, 10f, 10f, 10f, 10f,
@@ -67,12 +72,15 @@ public class BuffSkillNetwork : NetworkBehaviour
     public void TryUseBuff(int skillIndex)
     {
         if (!HasInputAuthority) return;
+        if (!HasEnoughMana(manaCostBuff)) return;
+        ConsumeManaAndRefreshUI(manaCostBuff);
         RPC_RequestUseBuff(skillIndex);
     }
 
     public void TryUseAttack(int skillIndex)
     {
         if (!HasInputAuthority) return;
+        if (!HasEnoughMana(manaCostAttack)) return;
 
         var ts = GetComponent<TargetingSystem>();
         NetworkId targetId = default;
@@ -84,6 +92,7 @@ public class BuffSkillNetwork : NetworkBehaviour
                 targetId = no.Id;
         }
 
+        ConsumeManaAndRefreshUI(manaCostAttack);
         int statPart = GetAttackStatPart();
         RPC_RequestUseAttack(skillIndex, targetId, statPart);
     }
@@ -91,6 +100,7 @@ public class BuffSkillNetwork : NetworkBehaviour
     public void TryUseBaseSkill()
     {
         if (!HasInputAuthority) return;
+        if (!HasEnoughMana(manaCostBase)) return;
 
         var ts = GetComponent<TargetingSystem>();
         if (ts == null || ts.CurrentVisualTarget == null) return;
@@ -98,6 +108,7 @@ public class BuffSkillNetwork : NetworkBehaviour
         var no = ts.CurrentVisualTarget.GetComponent<NetworkObject>();
         if (no == null) return;
 
+        ConsumeManaAndRefreshUI(manaCostBase);
         int statPart = GetAttackStatPart();
         RPC_RequestUseBaseSkill(no.Id, statPart);
     }
@@ -342,6 +353,21 @@ public class BuffSkillNetwork : NetworkBehaviour
             stats = GetComponent<CharacterStats>();
         if (stats == null) return 0;
         return stats.strength + stats.finalStrength;
+    }
+
+    bool HasEnoughMana(float percentOfMax)
+    {
+        if (stats == null) stats = GetComponent<CharacterStats>();
+        return stats != null && stats.HasEnoughMana(percentOfMax);
+    }
+
+    void ConsumeManaAndRefreshUI(float percentOfMax)
+    {
+        if (stats == null) stats = GetComponent<CharacterStats>();
+        if (stats == null) return;
+        stats.ConsumeMana(percentOfMax);
+        if (ThongTin.instance != null)
+            ThongTin.instance.UpdateStatsUI();
     }
 
     int CalculateSkillDamage(AOESkillData data, int statPart)

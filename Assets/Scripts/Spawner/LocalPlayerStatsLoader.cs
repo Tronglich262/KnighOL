@@ -49,6 +49,8 @@ public class LocalPlayerStatsLoader : MonoBehaviour
         else
             Debug.LogWarning("[LocalPlayerStatsLoader] Player thiếu EquipmentStatManager.");
 
+        charStats.currentMana = charStats.maxMana;
+
         StatsLoaded = true;
 
         if (ThongTin.instance != null)

@@ -472,11 +472,11 @@ MonoBehaviour:
     Eyes: {fileID: 21300000, guid: 919ab049f42f490e94fc46adfc0f854d, type: 3}
     EyesColor: {r: 0, g: 0.78431374, b: 1, a: 1}
     Mouth: {fileID: 21300000, guid: fea9ed3a6bb54b03925cf963d316123c, type: 3}
-  Helmet: {fileID: 21300000, guid: eb6f96aaf0a519840945cfdad12d38d2, type: 3}
+  Helmet: {fileID: 0}
   Earrings: {fileID: 0}
   Glasses: {fileID: 0}
   Mask: {fileID: 0}
-  PrimaryMeleeWeapon: {fileID: 21300000, guid: 9b6a3c367f1e158488c475923799640e, type: 3}
+  PrimaryMeleeWeapon: {fileID: 0}
   SecondaryMeleeWeapon: {fileID: 0}
   Armor: []
   Cape: {fileID: 0}
@@ -5209,7 +5209,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 275
-  m_Sprite: {fileID: 21300000, guid: eb6f96aaf0a519840945cfdad12d38d2, type: 3}
+  m_Sprite: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -5217,7 +5217,7 @@ SpriteRenderer:
   m_Size: {x: 5.12, y: 5.12}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &1786495811150326
@@ -8168,7 +8168,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 320
-  m_Sprite: {fileID: 21300000, guid: 9b6a3c367f1e158488c475923799640e, type: 3}
+  m_Sprite: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -8176,7 +8176,7 @@ SpriteRenderer:
   m_Size: {x: 5.12, y: 5.12}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!114 &4167466494603059574

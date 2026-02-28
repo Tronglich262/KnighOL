@@ -135,7 +135,26 @@ public class EnemyDebuffManager : NetworkBehaviour
     {
         // Chỉ StateAuthority mới vào đây
         ApplyDebuffInternal(type, duration, burnDamagePerTick);
+        
+        // Sau khi apply trên server, broadcast cho TẤT CẢ các client
+        RPC_BroadcastDebuff(type, duration, burnDamagePerTick);
     }
+
+    [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+    private void RPC_BroadcastDebuff(DebuffEffect type, float duration, int burnDamagePerTick)
+    {
+        // Client nhận broadcast - hiển thị local preview
+        float end = Time.time + duration;
+        switch (type)
+        {
+            case DebuffEffect.Stun: _localStunEnd = end; break;
+            case DebuffEffect.Burn: _localBurnEnd = end; break;
+            case DebuffEffect.Dizzy: _localDizzyEnd = end; break;
+        }
+        Debug.Log($"[RPC_BroadcastDebuff] Client received: type={type}, duration={duration}");
+        RefreshIconDisplay();
+    }
+
     private void ApplyDebuffInternal(DebuffEffect type, float duration, int burnDamagePerTick)
     {
         if (duration <= 0f || Runner == null || !Runner.IsRunning) return;

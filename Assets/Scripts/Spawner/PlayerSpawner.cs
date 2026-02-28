@@ -3,6 +3,7 @@ using Fusion;
 using Fusion.Sockets;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -12,8 +13,14 @@ public class PlayerSpawner : SimulationBehaviour, INetworkRunnerCallbacks
     public GameObject characterCanvasPrefab;
     public static NetworkObject LocalPlayerObject;
 
+    // Danh sách vị trí spawn có thể có
+    public Transform[] spawnPoints;
+
     public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
     {
+        // Debug: Log số lượng player đang có
+        // Debug.Log($"[PlayerSpawner] Player joined: {player}, Total players: {runner.ActivePlayers.Count()}");
+
         var sync = FindFirstObjectByType<NicknameSyncManager>();
         if (sync != null) sync.OnPlayerJoined(runner, player);
 
@@ -26,9 +33,27 @@ public class PlayerSpawner : SimulationBehaviour, INetworkRunnerCallbacks
                 canvas.AddComponent<LocalPlayerStatsLoader>();
             InventoryManager.Instance.uiManager = canvas.GetComponentInChildren<InventoryUIManager>();
 
-            // Spawn
-            Vector3 spawnPosition = new Vector3(0, -7.02f, 0);
+            // Tính vị trí spawn dựa trên số thứ tự player
+            int playerIndex = runner.ActivePlayers.Count() - 1;
+            Vector3 spawnPosition;
             Quaternion spawnRotation = Quaternion.identity;
+
+            // Nếu có spawnPoints array, sử dụng chúng
+            if (spawnPoints != null && spawnPoints.Length > 0)
+            {
+                // Lấy vị trí spawn theo index (loop nếu vượt quá số điểm)
+                int spawnIndex = playerIndex % spawnPoints.Length;
+                spawnPosition = spawnPoints[spawnIndex].position;
+                Debug.Log($"[PlayerSpawner] Using spawn point {spawnIndex} for player {playerIndex}");
+            }
+            else
+            {
+                // Fallback: Spawn lệch nhau theo khoảng cách ngẫu nhiên
+                float offsetX = (playerIndex % 4) * 3f; // Mỗi player lệch 3 đơn vị
+                float offsetY = (playerIndex / 4) * 3f;
+                spawnPosition = new Vector3(offsetX, -7.02f + offsetY, 0);
+                Debug.Log($"[PlayerSpawner] Using offset spawn: {spawnPosition} for player {playerIndex}");
+            }
 
             // Tạo dữ liệu spawn từ thông tin người chơi hiện tại
             PlayerSpawnData spawnData = new PlayerSpawnData

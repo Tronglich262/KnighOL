@@ -213,9 +213,22 @@ public class BuffSkillNetwork : NetworkBehaviour
 
     void ExecuteAttack(int skillIndex)
     {
-        if (!HasStateAuthority) return;
+        // Chỉ chạy trên Server/Host
+        if (!HasStateAuthority) 
+        {
+            Debug.LogWarning($"[ExecuteAttack] Client tried to execute attack - blocked!");
+            return;
+        }
 
         int attackIndex = skillIndex - BUFF_COUNT;
+        
+        // Safety check for array bounds
+        if (attackIndex < 0 || attackIndex >= aoeSkills.Length)
+        {
+            Debug.LogWarning($"[ExecuteAttack] Invalid attackIndex: {attackIndex}");
+            return;
+        }
+        
         var data = aoeSkills[attackIndex];
         if (data == null) return;
 
@@ -230,6 +243,26 @@ public class BuffSkillNetwork : NetworkBehaviour
         );
 
         int statPart = pendingAttackStatParts[attackIndex];
+        
+        // DEBUG: Log để kiểm tra
+        Debug.Log($"[ExecuteAttack] skillIndex={skillIndex}, attackIndex={attackIndex}, targets found={hits.Length}, aoeSkills null={data == null}");
+        
+        // Nếu data null, tạo dummy data để debug và đảm bảo debuff vẫn hoạt động
+        if (data == null)
+        {
+            Debug.LogWarning($"[ExecuteAttack] AOE Skill data is NULL! Using default. This should be fixed in Inspector!");
+            data = new AOESkillData
+            {
+                radius = 2f,
+                minDamage = 50,
+                maxDamage = 100,
+                debuffType = DebuffEffect.Stun, // Debug: luôn có stun
+                debuffChance = 1f, // 100% để test
+                debuffDuration = 2f,
+                burnDamagePerTick = 10
+            };
+        }
+        
         foreach (var hit in hits)
         {
             var enemy = hit.GetComponentInParent<EnemyCore>();
@@ -238,11 +271,21 @@ public class BuffSkillNetwork : NetworkBehaviour
             int damage = CalculateSkillDamage(data, statPart);
             enemy.RPC_RequestHit(damage, Object.InputAuthority);
 
+            // DEBUG: Log debuff
+            Debug.Log($"[ExecuteAttack] Debuff check: type={data.debuffType}, chance={data.debuffChance}, random={Random.value}");
+            
             if (data.debuffType != DebuffEffect.None && Random.value < data.debuffChance)
             {
                 var debuff = enemy.GetComponent<EnemyDebuffManager>();
                 if (debuff != null)
-                    debuff.RPC_ApplyDebuff(data.debuffType, data.debuffDuration, data.burnDamagePerTick);
+                {
+                    Debug.Log($"[ExecuteAttack] Calling RPC_ApplyDebuff: type={data.debuffType}, duration={data.debuffDuration}");
+                    debuff.RPC_RequestApplyDebuff(data.debuffType, data.debuffDuration, data.burnDamagePerTick);
+                }
+                else
+                {
+                    Debug.LogWarning($"[ExecuteAttack] EnemyDebuffManager not found on enemy!");
+                }
             }
         }
 

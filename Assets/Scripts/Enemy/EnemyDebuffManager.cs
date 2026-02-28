@@ -130,43 +130,35 @@ public class EnemyDebuffManager : NetworkBehaviour
         IconDisplay.SetRemainingTimes(stunRem, burnRem, dizzyRem);
     }
 
-    [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
-    public void RPC_ApplyDebuff(DebuffEffect type, float duration, int burnDamagePerTick)
+    [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+    public void RPC_RequestApplyDebuff(DebuffEffect type, float duration, int burnDamagePerTick)
     {
-        if (duration <= 0f) return;
-
-        if (Object.HasStateAuthority && Runner != null && Runner.IsRunning)
-        {
-            var timer = TickTimer.CreateFromSeconds(Runner, duration);
-            switch (type)
-            {
-                case DebuffEffect.Stun:
-                    StunTimer = timer;
-                    break;
-                case DebuffEffect.Burn:
-                    BurnTimer = timer;
-                    BurnDamagePerTick = Mathf.Max(1, burnDamagePerTick);
-                    BurnNextTickTimer = TickTimer.CreateFromSeconds(Runner, BurnTickInterval);
-                    break;
-                case DebuffEffect.Dizzy:
-                    DizzyTimer = timer;
-                    break;
-            }
-        }
-        else
-        {
-            float end = Time.time + duration;
-            switch (type)
-            {
-                case DebuffEffect.Stun: _localStunEnd = end; break;
-                case DebuffEffect.Burn: _localBurnEnd = end; break;
-                case DebuffEffect.Dizzy: _localDizzyEnd = end; break;
-            }
-        }
-
-        RefreshIconDisplay();
+        // Chỉ StateAuthority mới vào đây
+        ApplyDebuffInternal(type, duration, burnDamagePerTick);
     }
+    private void ApplyDebuffInternal(DebuffEffect type, float duration, int burnDamagePerTick)
+    {
+        if (duration <= 0f || Runner == null || !Runner.IsRunning) return;
 
+        var timer = TickTimer.CreateFromSeconds(Runner, duration);
+
+        switch (type)
+        {
+            case DebuffEffect.Stun:
+                StunTimer = timer;
+                break;
+
+            case DebuffEffect.Burn:
+                BurnTimer = timer;
+                BurnDamagePerTick = Mathf.Max(1, burnDamagePerTick);
+                BurnNextTickTimer = TickTimer.CreateFromSeconds(Runner, BurnTickInterval);
+                break;
+
+            case DebuffEffect.Dizzy:
+                DizzyTimer = timer;
+                break;
+        }
+    }
     public bool IsStunned => !StunTimer.ExpiredOrNotRunning(Runner);
     public bool IsBurning => !BurnTimer.ExpiredOrNotRunning(Runner);
     public bool IsDizzy => !DizzyTimer.ExpiredOrNotRunning(Runner);

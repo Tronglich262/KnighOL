@@ -909,6 +909,9 @@ MonoBehaviour:
   finalAgility: 0
   finalVitality: 0
   finalIntelligence: 0
+  finalSpirit: 0
+  maxMana: 100
+  currentMana: 100
 --- !u!114 &8462416670710693349
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1096,6 +1099,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9db1cd2bb2d99334594504f70197886a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  manaCostBuff: 0.12
+  manaCostAttack: 0.08
+  manaCostBase: 0.03
   skillCooldownTimes:
   - 10
   - 10

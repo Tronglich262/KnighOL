@@ -1,4 +1,4 @@
-﻿using Assets.HeroEditor.Common.CharacterScripts;
+using Assets.HeroEditor.Common.CharacterScripts;
 using Fusion;
 using HeroEditor.Common.Enums;
 using UnityEngine;
@@ -27,11 +27,15 @@ namespace Assets.HeroEditor.Common.ExampleScripts
         // =========================
         // USE SKILL (CALLED FROM BUFF SYSTEM)
         // =========================
-        public void UseSkill(NetworkObject target)
+        BuffSkillNetwork _buffSkill;
+
+        public void UseSkill(NetworkObject target, BuffSkillNetwork buffSkill)
         {
             if (!Object.HasInputAuthority) return;
             if (IsAttacking) return;
             if (target == null) return;
+
+            _buffSkill = buffSkill;
 
             // 🏹 Nếu là cung → bắn luôn
             if (Character.WeaponType == WeaponType.Bow)
@@ -55,6 +59,9 @@ namespace Assets.HeroEditor.Common.ExampleScripts
 
             IsAttacking = true;
             TargetEnemy = target;
+
+            var buff = GetComponent<BuffSkillNetwork>();
+            if (buff != null) buff.SetBaseAttackCooldown();
 
             RPC_PlayBow(target);
         }
@@ -125,17 +132,20 @@ namespace Assets.HeroEditor.Common.ExampleScripts
             if (!Object.HasStateAuthority) return;
             if (TargetEnemy == null) return;
 
-            var enemy = TargetEnemy.GetComponent<EnemyCore>();
-            if (enemy == null) return;
-
-            var stats = GetComponent<CharacterStats>();
-
-            int statPart = stats.strength + stats.finalStrength;
-            int baseDamage = UnityEngine.Random.Range(80, 110);
-
-            int damage = statPart + Mathf.RoundToInt(baseDamage * 1.2f);
-
-            enemy.RPC_RequestHit(damage, Object.InputAuthority);
+            if (_buffSkill != null)
+            {
+                _buffSkill.OnBaseAttackHit();
+            }
+            else
+            {
+                var enemy = TargetEnemy.GetComponent<EnemyCore>();
+                if (enemy == null) return;
+                var stats = GetComponent<CharacterStats>();
+                int statPart = stats != null ? stats.strength + stats.finalStrength : 0;
+                int baseDamage = UnityEngine.Random.Range(80, 110);
+                int damage = statPart + Mathf.RoundToInt(baseDamage * 1.2f);
+                enemy.RPC_RequestHit(damage, Object.InputAuthority);
+            }
         }
 
         [Rpc(RpcSources.StateAuthority, RpcTargets.All)]

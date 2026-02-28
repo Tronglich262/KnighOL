@@ -279,15 +279,25 @@ public class BuffSkillNetwork : NetworkBehaviour
 
         var attacker = GetComponent<AttackingExample>();
         if (attacker != null)
-            attacker.UseSkill(targetNO);
-
-        ExecuteBaseAttack();
-
-        Cooldowns.Set(index,
-            TickTimer.CreateFromSeconds(Runner, skillCooldownTimes[index]));
+            attacker.UseSkill(targetNO, this);
+        else
+            ExecuteBaseAttackAndSetCooldown();
     }
 
-    void ExecuteBaseAttack()
+    /// <summary>Gọi khi đòn đánh tay thực sự trúng (từ AttackingExample.ApplyMeleeDamage).</summary>
+    public void OnBaseAttackHit()
+    {
+        ExecuteBaseAttackAndSetCooldown();
+    }
+
+    /// <summary>Chỉ set cooldown, không gây damage (dùng cho cung khi bắn).</summary>
+    public void SetBaseAttackCooldown()
+    {
+        if (!HasStateAuthority) return;
+        Cooldowns.Set(BASE_INDEX, TickTimer.CreateFromSeconds(Runner, skillCooldownTimes[BASE_INDEX]));
+    }
+
+    void ExecuteBaseAttackAndSetCooldown()
     {
         if (!HasStateAuthority) return;
         if (!Runner.TryFindObject(CurrentTargetId, out NetworkObject targetNO)) return;
@@ -299,6 +309,8 @@ public class BuffSkillNetwork : NetworkBehaviour
         int damage = pendingBaseStatPart + Mathf.RoundToInt(baseSkillDamage * 1.2f);
 
         enemy.RPC_RequestHit(damage, Object.InputAuthority);
+
+        Cooldowns.Set(BASE_INDEX, TickTimer.CreateFromSeconds(Runner, skillCooldownTimes[BASE_INDEX]));
     }
 
     // =================================================

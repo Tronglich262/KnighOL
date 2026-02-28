@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using Fusion;
 
 public class EnemyAI : NetworkBehaviour
@@ -28,12 +28,14 @@ public class EnemyAI : NetworkBehaviour
 
     // 🔥 MMO: aggro tách riêng
     private EnemyAggroSystem aggro;
+    private EnemyDebuffManager debuffManager;
 
     // =========================
     public override void Spawned()
     {
         animator = GetComponent<Animator>();
         aggro = GetComponent<EnemyAggroSystem>();
+        debuffManager = GetComponent<EnemyDebuffManager>();
 
         startPos = transform.position;
         movingRight = Random.value > 0.5f;
@@ -43,6 +45,14 @@ public class EnemyAI : NetworkBehaviour
     public override void FixedUpdateNetwork()
     {
         if (!HasStateAuthority) return;
+
+        if (debuffManager != null && debuffManager.CannotAct)
+        {
+            Stop();
+            ApplyMovement();
+            UpdateAnimator();
+            return;
+        }
 
         UpdateDetection();
 

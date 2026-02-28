@@ -55,7 +55,7 @@ public class EnemyCore : NetworkBehaviour
             Die();
     }
     [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
-    void RPC_ShowDamage(int damage)
+    public void RPC_ShowDamage(int damage)
     {
         if (damageTextPrefab == null) return;
 

@@ -1138,31 +1138,55 @@ MonoBehaviour:
     coneAngle: 0
     minDamage: 100
     maxDamage: 200
+    debuffType: 1
+    debuffChance: 0.5
+    debuffDuration: 2
+    burnDamagePerTick: 15
   - radius: 10
     maxTargets: 3
     coneAngle: 0
     minDamage: 100
     maxDamage: 200
+    debuffType: 2
+    debuffChance: 0.5
+    debuffDuration: 2
+    burnDamagePerTick: 15
   - radius: 10
     maxTargets: 3
     coneAngle: 0
     minDamage: 100
     maxDamage: 200
+    debuffType: 2
+    debuffChance: 0.5
+    debuffDuration: 2
+    burnDamagePerTick: 15
   - radius: 10
     maxTargets: 3
     coneAngle: 0
     minDamage: 100
     maxDamage: 200
+    debuffType: 3
+    debuffChance: 0.5
+    debuffDuration: 2
+    burnDamagePerTick: 15
   - radius: 10
     maxTargets: 3
     coneAngle: 0
     minDamage: 100
     maxDamage: 200
+    debuffType: 1
+    debuffChance: 0.5
+    debuffDuration: 2
+    burnDamagePerTick: 15
   - radius: 10
     maxTargets: 3
     coneAngle: 0
     minDamage: 100
     maxDamage: 200
+    debuffType: 2
+    debuffChance: 0.5
+    debuffDuration: 2
+    burnDamagePerTick: 15
   buffEffectPrefabs:
   - RawGuidValue: 97c43495f80a3244fad1301dfafbe252
   - RawGuidValue: a58aa9a78f2b45b45bb0f3e2e1e3ad3c

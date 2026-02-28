@@ -237,6 +237,13 @@ public class BuffSkillNetwork : NetworkBehaviour
 
             int damage = CalculateSkillDamage(data, statPart);
             enemy.RPC_RequestHit(damage, Object.InputAuthority);
+
+            if (data.debuffType != DebuffEffect.None && Random.value < data.debuffChance)
+            {
+                var debuff = enemy.GetComponent<EnemyDebuffManager>();
+                if (debuff != null)
+                    debuff.RPC_ApplyDebuff(data.debuffType, data.debuffDuration, data.burnDamagePerTick);
+            }
         }
 
         if (hitEffectPrefabs[attackIndex].IsValid)

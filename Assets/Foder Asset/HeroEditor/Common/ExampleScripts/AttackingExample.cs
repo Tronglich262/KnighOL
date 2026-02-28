@@ -31,7 +31,7 @@ namespace Assets.HeroEditor.Common.ExampleScripts
 
         public void UseSkill(NetworkObject target, BuffSkillNetwork buffSkill)
         {
-            if (!Object.HasInputAuthority) return;
+            if (!Object.HasStateAuthority) return;
             if (IsAttacking) return;
             if (target == null) return;
 
@@ -40,12 +40,18 @@ namespace Assets.HeroEditor.Common.ExampleScripts
             // 🏹 Nếu là cung → bắn luôn
             if (Character.WeaponType == WeaponType.Bow)
             {
-                RPC_BowAttack(target);
+                IsAttacking = true;
+                TargetEnemy = target;
+
+                if (_buffSkill != null) _buffSkill.SetBaseAttackCooldown();
+
+                RPC_PlayBow(target);
             }
             else
             {
                 // 🗡 Melee → chase
-                RPC_StartChase(target);
+                TargetEnemy = target;
+                IsChasing = true;
             }
         }
 

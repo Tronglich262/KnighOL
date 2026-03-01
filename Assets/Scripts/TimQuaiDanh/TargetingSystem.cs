@@ -7,15 +7,18 @@ public class TargetingSystem : MonoBehaviour
     [Header("Layers (2D)")]
     public LayerMask enemyLayer;
     public LayerMask npcLayer;
+    public LayerMask playerLayer; // Layer cho player khác
 
     [Header("Ranges")]
     public float enemyRadius = 12f;
     public float npcRadius = 8f;
+    public float playerRadius = 15f; // Range cho việc target player
     public float loseTargetDistance = 15f;
 
     [Header("Tab Target")]
     public KeyCode tabKey = KeyCode.Tab;
     public bool includeNPCInTab = false;          // MMO thường Tab chỉ chọn enemy
+    public bool includePlayerInTab = true;       // Tab cũng chọn được player khác
     public bool requireLineOfSight = false;       // nếu muốn check raycast
     public float tabCooldown = 0.10f;
 
@@ -130,7 +133,7 @@ public class TargetingSystem : MonoBehaviour
     }
 
     // =========================================================
-    // SOFT TARGET (AUTO HIGHLIGHT GẦN NHẤT, KHÔNG “CỨNG”)
+    // SOFT TARGET (AUTO HIGHLIGHT GẦN NHẤT, KHÔNG "CỨNG")
     // =========================================================
     private void UpdateSoftTarget()
     {
@@ -164,7 +167,15 @@ public class TargetingSystem : MonoBehaviour
             return;
         }
 
-        // nếu không có enemy -> soft npc
+        // nếu không có enemy -> soft player
+        PlayerInfo nearestPlayer = GetNearestPlayer(pos);
+        if (nearestPlayer != null)
+        {
+            SetSoftPlayer(nearestPlayer);
+            return;
+        }
+
+        // nếu không có player -> soft npc
         Transform nearestNpc = GetNearestNPC(pos);
         if (nearestNpc != null)
         {
@@ -211,6 +222,7 @@ public class TargetingSystem : MonoBehaviour
 
         // set manual
         if (next.enemy != null) SetManualEnemy(next.enemy);
+        else if (next.player != null) SetManualPlayer(next.player);
         else SetManualVisual(next.t);
     }
 
@@ -218,6 +230,7 @@ public class TargetingSystem : MonoBehaviour
     {
         Vector3 pos = transform.position;
         var list = new List<TabCandidate>(32);
+        var localPlayer = GetComponent<NetworkObject>();
 
         // 1) enemy
         var enemies = Physics2D.OverlapCircleAll(pos, enemyRadius, enemyLayer);
@@ -231,11 +244,40 @@ public class TargetingSystem : MonoBehaviour
             list.Add(new TabCandidate
             {
                 t = e.transform,
-                enemy = e
+                enemy = e,
+                player = null
             });
         }
 
-        // 2) npc (tuỳ chọn)
+        // 2) player (tuỳ chọn)
+        if (includePlayerInTab)
+        {
+            var players = Physics2D.OverlapCircleAll(pos, playerRadius, playerLayer);
+            foreach (var col in players)
+            {
+                var playerInfo = col.GetComponent<PlayerInfo>();
+                if (playerInfo == null) continue;
+
+                // Không target chính mình
+                if (localPlayer != null && localPlayer.HasInputAuthority)
+                {
+                    var playerNetObj = playerInfo.GetComponent<NetworkObject>();
+                    if (playerNetObj != null && playerNetObj.HasInputAuthority)
+                        continue;
+                }
+
+                if (requireLineOfSight && !HasLOS(playerInfo.transform)) continue;
+
+                list.Add(new TabCandidate
+                {
+                    t = playerInfo.transform,
+                    enemy = null,
+                    player = playerInfo
+                });
+            }
+        }
+
+        // 3) npc (tuỳ chọn)
         if (includeNPCInTab)
         {
             var npcs = Physics2D.OverlapCircleAll(pos, npcRadius, npcLayer);
@@ -248,12 +290,13 @@ public class TargetingSystem : MonoBehaviour
                 list.Add(new TabCandidate
                 {
                     t = t,
-                    enemy = null
+                    enemy = null,
+                    player = null
                 });
             }
         }
 
-        // sort: MMO thường sort theo “góc phía trước” rồi distance
+        // sort: MMO thường sort theo "góc phía trước" rồi distance
         list.Sort((a, b) =>
         {
             float sa = ScoreCandidate(a.t);
@@ -268,6 +311,7 @@ public class TargetingSystem : MonoBehaviour
     {
         public Transform t;
         public Enemy enemy;
+        public PlayerInfo player;
     }
 
     // Score càng nhỏ càng ưu tiên
@@ -341,8 +385,17 @@ public class TargetingSystem : MonoBehaviour
     private void SetSoftVisual(Transform t)
     {
         CurrentEnemy = null;
+        CurrentPlayer = null;
         mode = TargetMode.Soft;
         SetVisual(t);
+    }
+
+    private void SetSoftPlayer(PlayerInfo player)
+    {
+        CurrentEnemy = null;
+        CurrentPlayer = player;
+        mode = TargetMode.Soft;
+        SetVisual(player.transform);
     }
 
     private void SetVisual(Transform t)
@@ -433,6 +486,37 @@ public class TargetingSystem : MonoBehaviour
             {
                 minDist = d;
                 nearest = t;
+            }
+        }
+        return nearest;
+    }
+
+    private PlayerInfo GetNearestPlayer(Vector3 from)
+    {
+        var hits = Physics2D.OverlapCircleAll(from, playerRadius, playerLayer);
+
+        PlayerInfo nearest = null;
+        float minDist = float.MaxValue;
+        var localPlayer = GetComponent<NetworkObject>();
+
+        foreach (var h in hits)
+        {
+            var playerInfo = h.GetComponent<PlayerInfo>();
+            if (playerInfo == null) continue;
+
+            // Không target chính mình
+            if (localPlayer != null && localPlayer.HasInputAuthority)
+            {
+                var playerNetObj = playerInfo.GetComponent<NetworkObject>();
+                if (playerNetObj != null && playerNetObj.HasInputAuthority)
+                    continue;
+            }
+
+            float d = Vector2.Distance(from, playerInfo.transform.position);
+            if (d < minDist)
+            {
+                minDist = d;
+                nearest = playerInfo;
             }
         }
         return nearest;

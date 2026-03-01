@@ -41,21 +41,20 @@ public class ClickToTarget2D : MonoBehaviour
                     return;
 
                 // Transform player được click
-                Transform playerTransform = playerInfo.transform;
+                Transform playerTransform = playerInfo.GetComponent<Transform>();
 
-                // 🔹 NẾU CHƯA CÓ MŨI TÊN → SET TARGET
+                // 🔹 LUÔN SET TARGET TRƯỚC
                 if (ts.CurrentVisualTarget != playerTransform)
                 {
                     ts.SetManualPlayer(playerInfo);
-                    return;
                 }
 
-                // 🔹 CHỈ KHI MŨI TÊN ĐANG Ở TRÊN ĐẦU PLAYER → MỚI SHOW INFO
+                // 🔹 HIỆN THÔNG TIN PLAYER NGAY LẬP TỨC (1 CLICK)
                 var avatar = playerInfo.GetComponent<PlayerAvatar>();
                 var nameTag = playerInfo.GetComponentInChildren<NameTagManager>();
                 string nick = nameTag != null ? nameTag.Nickname : null;
 
-                if (avatar != null)
+                if (avatar != null && CharacterQuickInfoPanel.Instance != null)
                 {
                     CharacterQuickInfoPanel.Instance.Show(avatar, nick);
                 }

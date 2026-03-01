@@ -1009,11 +1009,16 @@ MonoBehaviour:
   npcLayer:
     serializedVersion: 2
     m_Bits: 8192
+  playerLayer:
+    serializedVersion: 2
+    m_Bits: 128
   enemyRadius: 40
   npcRadius: 15
+  playerRadius: 15
   loseTargetDistance: 40
   tabKey: 9
   includeNPCInTab: 1
+  includePlayerInTab: 1
   requireLineOfSight: 1
   tabCooldown: 0.1
   enableSoftTarget: 1

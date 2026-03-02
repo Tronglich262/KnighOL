@@ -52,13 +52,12 @@ public class SkillButtonManager : MonoBehaviour
         }
 
         var attacker = character.GetComponent<Assets.HeroEditor.Common.ExampleScripts.AttackingExample>();
+        var buff = character.GetComponent<BuffSkillNetwork>();   
 
-        melee1HActions[0] = () => attacker.UseSkill(0);
-        melee2HActions[0] = () => attacker.UseSkill(0);
-        bowActions[0] = () => attacker.UseSkill(0);
-        //them skill buff
-        var buffSkill = character.GetComponent<BuffSkillNetwork>();
-        var buff = character.GetComponent<BuffSkillNetwork>();
+        // Base Skill
+        melee1HActions[0] = () => buff.TryUseBaseSkill();
+        melee2HActions[0] = () => buff.TryUseBaseSkill();
+        bowActions[0] = () => buff.TryUseBaseSkill();
 
         // Melee1H
         melee1HActions[1] = () => buff.TryUseBuff(0);
@@ -69,7 +68,7 @@ public class SkillButtonManager : MonoBehaviour
         // Melee2H
         melee2HActions[1] = () => buff.TryUseBuff(2);
         melee2HActions[2] = () => buff.TryUseBuff(3);
-       melee2HActions[3] = () => buff.TryUseAttack(10);
+        melee2HActions[3] = () => buff.TryUseAttack(10);
         melee2HActions[4] = () => buff.TryUseAttack(11);
 
         // Bow
@@ -77,6 +76,7 @@ public class SkillButtonManager : MonoBehaviour
         bowActions[2] = () => buff.TryUseBuff(5);
         bowActions[3] = () => buff.TryUseAttack(8);
         bowActions[4] = () => buff.TryUseAttack(9);
+
         lastWeaponType = character.WeaponType;
         UpdateSkillButtons(lastWeaponType);
         isReady = true;
@@ -135,24 +135,27 @@ public class SkillButtonManager : MonoBehaviour
         switch (weaponType)
         {
             case WeaponType.Melee1H:
-                cooldownManager.SetSkillIndex(0, 0); // Buff 0
-                cooldownManager.SetSkillIndex(1, 1); // Buff 1
-                cooldownManager.SetSkillIndex(2, 6); // Attack 1
-                cooldownManager.SetSkillIndex(3, 7); // Attack 2
+                cooldownManager.SetSkillIndex(0, 12);
+                cooldownManager.SetSkillIndex(1, 0); // Buff 0
+                cooldownManager.SetSkillIndex(2, 1); // Buff 1
+                cooldownManager.SetSkillIndex(3, 6); // Attack 1
+                cooldownManager.SetSkillIndex(4, 7); // Attack 2
                 break;
 
             case WeaponType.Melee2H:
-                cooldownManager.SetSkillIndex(0, 2); // Buff 2
-                cooldownManager.SetSkillIndex(1, 3); // Buff 3
-                cooldownManager.SetSkillIndex(2, 10);
-                cooldownManager.SetSkillIndex(3, 11);
+                cooldownManager.SetSkillIndex(0, 12);
+                cooldownManager.SetSkillIndex(1, 2); // Buff 2
+                cooldownManager.SetSkillIndex(2, 3); // Buff 3
+                cooldownManager.SetSkillIndex(3, 10);
+                cooldownManager.SetSkillIndex(4, 11);
                 break;
 
             case WeaponType.Bow:
-                cooldownManager.SetSkillIndex(0, 4); // Buff 4
-                cooldownManager.SetSkillIndex(1, 5); // Buff 5
-                cooldownManager.SetSkillIndex(2, 8);
-                cooldownManager.SetSkillIndex(3, 9);
+                cooldownManager.SetSkillIndex(0, 12);
+                cooldownManager.SetSkillIndex(1, 4); // Buff 4
+                cooldownManager.SetSkillIndex(2, 5); // Buff 5
+                cooldownManager.SetSkillIndex(3, 8);
+                cooldownManager.SetSkillIndex(4, 9);
                 break;
         }
     }

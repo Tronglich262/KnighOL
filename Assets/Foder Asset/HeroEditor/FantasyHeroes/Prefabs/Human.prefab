@@ -440,6 +440,7 @@ Transform:
   - {fileID: 7170973751513476242}
   - {fileID: 9193664419314160223}
   - {fileID: 9086222040624620166}
+  - {fileID: 8430671247636901286}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &114665035860700710
@@ -868,10 +869,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Character: {fileID: 114665035860700710}
-  BowExample: {fileID: 6115010359866230793}
   Movement: {fileID: 0}
+  Bow: {fileID: 0}
   AttackRange: 2
-  ChaseSpeed: 4
 --- !u!114 &-4778966891055361141
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -909,6 +909,9 @@ MonoBehaviour:
   finalAgility: 0
   finalVitality: 0
   finalIntelligence: 0
+  finalSpirit: 0
+  maxMana: 100
+  currentMana: 100
 --- !u!114 &8462416670710693349
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -925,6 +928,8 @@ MonoBehaviour:
   Controller: {fileID: 0}
   _LockFacing:
     _value: 0
+  baseMoveSpeed: 6
+  jumpForce: 12
   checktoggle: 0
 --- !u!114 &6267084907877005911
 MonoBehaviour:
@@ -1004,11 +1009,16 @@ MonoBehaviour:
   npcLayer:
     serializedVersion: 2
     m_Bits: 8192
-  enemyRadius: 12
-  npcRadius: 8
-  loseTargetDistance: 15
+  playerLayer:
+    serializedVersion: 2
+    m_Bits: 128
+  enemyRadius: 40
+  npcRadius: 15
+  playerRadius: 15
+  loseTargetDistance: 40
   tabKey: 9
   includeNPCInTab: 1
+  includePlayerInTab: 1
   requireLineOfSight: 1
   tabCooldown: 0.1
   enableSoftTarget: 1
@@ -1094,6 +1104,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9db1cd2bb2d99334594504f70197886a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  manaCostBuff: 0.12
+  manaCostAttack: 0.08
+  manaCostBase: 0.03
   skillCooldownTimes:
   - 10
   - 10
@@ -1107,6 +1120,78 @@ MonoBehaviour:
   - 5
   - 5
   - 5
+  - 1.5
+  _IsActive:
+  - _value: 0
+  - _value: 0
+  - _value: 0
+  - _value: 0
+  - _value: 0
+  - _value: 0
+  _IsCasting:
+  - _value: 0
+  - _value: 0
+  - _value: 0
+  - _value: 0
+  - _value: 0
+  - _value: 0
+  _CurrentTargetId:
+    Raw: 0
+  aoeSkills:
+  - radius: 10
+    maxTargets: 3
+    coneAngle: 0
+    minDamage: 100
+    maxDamage: 200
+    debuffType: 1
+    debuffChance: 0.5
+    debuffDuration: 2
+    burnDamagePerTick: 15
+  - radius: 10
+    maxTargets: 3
+    coneAngle: 0
+    minDamage: 100
+    maxDamage: 200
+    debuffType: 2
+    debuffChance: 0.5
+    debuffDuration: 2
+    burnDamagePerTick: 15
+  - radius: 10
+    maxTargets: 3
+    coneAngle: 0
+    minDamage: 100
+    maxDamage: 200
+    debuffType: 2
+    debuffChance: 0.5
+    debuffDuration: 2
+    burnDamagePerTick: 15
+  - radius: 10
+    maxTargets: 3
+    coneAngle: 0
+    minDamage: 100
+    maxDamage: 200
+    debuffType: 3
+    debuffChance: 0.5
+    debuffDuration: 2
+    burnDamagePerTick: 15
+  - radius: 10
+    maxTargets: 3
+    coneAngle: 0
+    minDamage: 100
+    maxDamage: 200
+    debuffType: 1
+    debuffChance: 0.5
+    debuffDuration: 2
+    burnDamagePerTick: 15
+  - radius: 10
+    maxTargets: 3
+    coneAngle: 0
+    minDamage: 100
+    maxDamage: 200
+    debuffType: 2
+    debuffChance: 0.5
+    debuffDuration: 2
+    burnDamagePerTick: 15
   buffEffectPrefabs:
   - RawGuidValue: 97c43495f80a3244fad1301dfafbe252
   - RawGuidValue: a58aa9a78f2b45b45bb0f3e2e1e3ad3c
@@ -1128,20 +1213,6 @@ MonoBehaviour:
   - RawGuidValue: 37ab7e60d7b792c4ead4feb01381c6cc
   - RawGuidValue: 653866134638b354ca265558d783dd1d
   - RawGuidValue: 3bdca15d736d48f409ccf70e68bf79de
-  _IsActive:
-  - _value: 0
-  - _value: 0
-  - _value: 0
-  - _value: 0
-  - _value: 0
-  - _value: 0
-  _IsCasting:
-  - _value: 0
-  - _value: 0
-  - _value: 0
-  - _value: 0
-  - _value: 0
-  - _value: 0
 --- !u!1 &1148429461579488
 GameObject:
   m_ObjectHideFlags: 0
@@ -6258,7 +6329,7 @@ Transform:
   m_GameObject: {fileID: 1319511366436662113}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 5.69, z: 0}
+  m_LocalPosition: {x: 0, y: 6.55, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -9200,7 +9271,7 @@ Transform:
   m_GameObject: {fileID: 6568864374812491165}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 5.69, z: 0}
+  m_LocalPosition: {x: 0, y: 6.55, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -9765,4 +9836,66 @@ ParticleSystem:
 Transform:
   m_CorrespondingSourceObject: {fileID: 4558475463343806, guid: 1f94dbec0c84cc94e9d9fc9b93e7dc44, type: 3}
   m_PrefabInstance: {fileID: 1310038419336487480}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &4190054099197184500
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 4305108561794920}
+    m_Modifications:
+    - target: {fileID: 5681804220818154578, guid: 0d6919e42cc6fb24996726d9a8ed21e8, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -3.79
+      objectReference: {fileID: 0}
+    - target: {fileID: 5681804220818154578, guid: 0d6919e42cc6fb24996726d9a8ed21e8, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 2.26
+      objectReference: {fileID: 0}
+    - target: {fileID: 5681804220818154578, guid: 0d6919e42cc6fb24996726d9a8ed21e8, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5681804220818154578, guid: 0d6919e42cc6fb24996726d9a8ed21e8, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5681804220818154578, guid: 0d6919e42cc6fb24996726d9a8ed21e8, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5681804220818154578, guid: 0d6919e42cc6fb24996726d9a8ed21e8, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5681804220818154578, guid: 0d6919e42cc6fb24996726d9a8ed21e8, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5681804220818154578, guid: 0d6919e42cc6fb24996726d9a8ed21e8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5681804220818154578, guid: 0d6919e42cc6fb24996726d9a8ed21e8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5681804220818154578, guid: 0d6919e42cc6fb24996726d9a8ed21e8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6132690263601805111, guid: 0d6919e42cc6fb24996726d9a8ed21e8, type: 3}
+      propertyPath: m_Name
+      value: Bat_01
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 0d6919e42cc6fb24996726d9a8ed21e8, type: 3}
+--- !u!4 &8430671247636901286 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5681804220818154578, guid: 0d6919e42cc6fb24996726d9a8ed21e8, type: 3}
+  m_PrefabInstance: {fileID: 4190054099197184500}
   m_PrefabAsset: {fileID: 0}

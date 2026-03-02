@@ -79,10 +79,10 @@ public class PlayerAvatar : NetworkBehaviour
         {
             var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
 
-            // 1️⃣ Base
+            // Base
             Character.FromJson(json);
 
-            // 2️⃣ Weapon
+            // Weapon
             if (dict.TryGetValue("WeaponType", out var weaponType))
             {
                 if (weaponType == "Melee2H" &&
@@ -103,7 +103,7 @@ public class PlayerAvatar : NetworkBehaviour
                 }
             }
 
-            // 3️⃣ Armor mix
+            // Armor mix
             string[] mixTypes = { "Boots", "Gloves", "Belt", "Pauldrons", "Vest" };
             foreach (var t in mixTypes)
             {
@@ -111,18 +111,18 @@ public class PlayerAvatar : NetworkBehaviour
                     CharacterEquipHandler.EquipPartialArmorFromEntry(Character, partId, t);
             }
 
-            // 4️⃣ Full armor
+            // Full armor
             if (dict.TryGetValue("Armor", out var armorId) && !string.IsNullOrEmpty(armorId))
                 CharacterEquipHandler.TestEquipArmor(Character, armorId);
 
-            // 5️⃣ FINAL BUILD
+            // FINAL BUILD
             Character.Initialize();
 
-            Debug.Log("✅ PlayerAvatar ApplyCharacter OK");
+            Debug.Log("[PlayerAvatar] ApplyCharacter OK");
         }
         catch (Exception e)
         {
-            Debug.LogError($"❌ ApplyCharacter failed: {e}");
+            Debug.LogError($"[PlayerAvatar] ApplyCharacter failed: {e}");
         }
 
 
@@ -134,7 +134,7 @@ public class PlayerAvatar : NetworkBehaviour
         var entry = Character.SpriteCollection.MeleeWeapon2H.FirstOrDefault(e => e.Id == id);
         if (entry == null)
         {
-            Debug.LogError($"❌ Melee2H not found: {id}");
+            Debug.LogError($"[PlayerAvatar] Melee2H not found: {id}");
             return;
         }
 
@@ -227,6 +227,6 @@ public class PlayerAvatar : NetworkBehaviour
             SceneManager.LoadScene("Login");
         }
     }
-   
+
 
 }

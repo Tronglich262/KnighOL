@@ -41,24 +41,17 @@ public class CharacterPreviewPanel : MonoBehaviour
     {
         Instance = this;
 
-        // LUÔN tìm GameObject tên "ClonePreview" ở trong scene (dù panel là prefab)
         GameObject clonePreviewObj = GameObject.Find("ClonePreview");
         if (clonePreviewObj != null)
         {
             characterPreview = clonePreviewObj.GetComponent<Character>();
-            Debug.Log("[PREVIEW] Đã gán ClonePreview từ scene: " + characterPreview.gameObject.name);
         }
-        else
-        {
-            Debug.LogError("[PREVIEW] Không tìm thấy ClonePreview trong scene!");
-        }
+
+        gameObject.SetActive(false); // đặt ở đây
     }
 
 
-    void Start()
-    {
-        gameObject.SetActive(false);
-    }
+  
 
     /// <summary>
     /// Hàm này được gọi khi bạn click vào một player bất kỳ để show preview!

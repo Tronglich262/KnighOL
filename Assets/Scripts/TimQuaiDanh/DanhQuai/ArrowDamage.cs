@@ -3,46 +3,59 @@ using Fusion;
 
 public class ArrowDamage : NetworkBehaviour
 {
-    [Header("Damage")]
-    public int baseDamage = 50;
     public LayerMask enemyLayer;
 
-    private PlayerRef owner;      // ai bắn mũi tên
-    private bool hasHit = false;  // tránh hit nhiều lần
+    private PlayerRef owner;
+    private NetworkObject attackerObject;
+    private bool hasHit = false;
 
-    // =========================
-    // INIT TỪ BOW (SERVER)
-    // =========================
-    public void Init(PlayerRef ownerRef)
+    public void Init(PlayerRef ownerRef, NetworkObject attacker)
     {
         owner = ownerRef;
+        attackerObject = attacker;
     }
 
-    // =========================
-    // COLLISION
-    // =========================
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (!Object.HasStateAuthority) return;
         if (hasHit) return;
 
-        // chỉ va chạm enemy
         if (((1 << other.gameObject.layer) & enemyLayer) == 0)
             return;
 
-        EnemyDamageHandler enemy = other.GetComponent<EnemyDamageHandler>();
+        var enemy = other.GetComponentInParent<EnemyCore>();
         if (enemy == null) return;
+
 
         hasHit = true;
 
-        // gây damage
-        enemy.RPC_TakeDamage(
-            baseDamage,
-            owner,
-            null // arrow không cần NetworkObject attacker
+        // Tinh damage giong mele
+        int damage = CalculateBowDamage();
+
+        enemy.RPC_RequestHit(damage, owner);
+        Runner.Despawn(Object);
+    }
+
+    int CalculateBowDamage()
+    {
+        if (attackerObject == null) return 0;
+
+        var stats = attackerObject.GetComponent<CharacterStats>();
+        if (stats == null) return 0;
+
+        // Bow scale theo AGI nhieu hon
+        int agi = stats.agility + stats.finalAgility;
+        int str = stats.strength + stats.finalStrength;
+
+        int baseRandom = Random.Range(70, 110);
+
+        // Bow formula
+        int damage = Mathf.RoundToInt(
+            agi * 1.4f +       // chính
+            str * 0.3f +       // phụ
+            baseRandom
         );
 
-        // huỷ mũi tên
-        Runner.Despawn(Object);
+        return damage;
     }
 }

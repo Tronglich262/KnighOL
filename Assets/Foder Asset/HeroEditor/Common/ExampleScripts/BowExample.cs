@@ -15,6 +15,9 @@ namespace Assets.HeroEditor.Common.ExampleScripts
         public NetworkPrefabRef ArrowPrefab;
         public float ArrowSpeed = 18f;
 
+        //
+        [Networked] private NetworkObject TargetEnemy { get; set; }
+        //
         [Header("Aim")]
         [Networked] public float AimAngle { get; private set; }
 
@@ -35,25 +38,27 @@ namespace Assets.HeroEditor.Common.ExampleScripts
             if (!Object.HasInputAuthority) return;
             if (enemy == null) return;
 
-            Vector3 dir = enemy.transform.position - FireTransform.position;
-            float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
-            angle = Mathf.Clamp(angle, MinAngle, MaxAngle);
+            // quay người
+            var movement = GetComponent<MovementExample>();
+            if (movement != null)
+            {
+                float dirX = enemy.transform.position.x - transform.position.x;
+                movement.ForceFaceX(dirX);
+            }
 
-            RPC_StartBowAttack(angle);
+            RPC_StartBowAttack(enemy.Object);
         }
 
         // =========================
         // INPUT → STATE AUTHORITY
         // =========================
         [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
-        private void RPC_StartBowAttack(float angle)
+        private void RPC_StartBowAttack(NetworkObject enemyObj)
         {
-            AimAngle = angle;
+            TargetEnemy = enemyObj;
 
-            // Kéo cung
             RPC_SetCharge(1);
 
-            // Nhả sau delay giống HeroEditor
             Invoke(nameof(ReleaseBow), 0.35f);
         }
 
@@ -69,12 +74,13 @@ namespace Assets.HeroEditor.Common.ExampleScripts
         private void SpawnArrow()
         {
             if (!Object.HasStateAuthority) return;
+            if (TargetEnemy == null) return;
 
-            // ===== hướng chính xác =====
-            Vector2 dir = Quaternion.Euler(0, 0, AimAngle) * Vector2.right;
+            Vector3 targetPos = TargetEnemy.transform.position;
+
+            Vector2 dir = (targetPos - FireTransform.position).normalized;
             float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
 
-            // ===== spawn + xoay =====
             NetworkObject arrowObj = Runner.Spawn(
                 ArrowPrefab,
                 FireTransform.position,
@@ -83,29 +89,28 @@ namespace Assets.HeroEditor.Common.ExampleScripts
 
             GameObject arrow = arrowObj.gameObject;
 
-            // ===== velocity =====
+            // velocity
             Rigidbody2D rb = arrow.GetComponent<Rigidbody2D>();
             if (rb != null)
             {
-                rb.linearVelocity = arrow.transform.right * ArrowSpeed;
+                rb.linearVelocity = dir * ArrowSpeed;
             }
 
-
-            // ===== sprite =====
+            // sprite
             SpriteRenderer sr = arrow.GetComponent<SpriteRenderer>();
             if (sr != null && Character.Bow != null)
             {
                 sr.sprite = Character.Bow.Find(s => s.name.ToLower().Contains("arrow"));
             }
 
-            // ===== damage owner =====
+            // damage owner
             ArrowDamage dmg = arrow.GetComponent<ArrowDamage>();
             if (dmg != null)
             {
-                dmg.Init(Object.InputAuthority);
+                dmg.Init(Object.InputAuthority, Object);
             }
 
-            // ===== ignore collision =====
+            // ignore collision
             Collider arrowCol = arrow.GetComponent<Collider>();
             Collider charCol = Character.GetComponent<Collider>();
             if (arrowCol && charCol)
@@ -141,8 +146,14 @@ namespace Assets.HeroEditor.Common.ExampleScripts
 
             if (armL == null || bow == null) return;
 
-            Vector2 dir = Quaternion.Euler(0, 0, AimAngle) * Vector2.right;
-            Vector2 target = (Vector2)armL.position + dir * 1000f;
+            float fixedAngle = AimAngle;
+
+            if (transform.localScale.x < 0)
+            {
+                fixedAngle = 180f - AimAngle;
+            }
+
+            Vector2 dir = Quaternion.Euler(0, 0, fixedAngle) * Vector2.right; Vector2 target = (Vector2)armL.position + dir * 1000f;
 
             RotateArm(armL, bow, target, MinAngle, MaxAngle);
         }

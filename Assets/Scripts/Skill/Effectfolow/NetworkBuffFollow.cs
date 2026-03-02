@@ -4,7 +4,7 @@ using Fusion;
 public class NetworkBuffFollow : NetworkBehaviour
 {
     [Networked] private NetworkId TargetId { get; set; }
-    [Networked] private Vector3 Offset { get; set; }   // 👈 offset sync qua network
+    [Networked] private Vector3 Offset { get; set; }   // Offset sync qua network
 
     private Transform target;
 

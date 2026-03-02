@@ -244,7 +244,7 @@ public class ItemDetailsPanel : MonoBehaviour
         Hide();
     }
   
-    // ✅ THÊM TỪ CODE B  tuấn anh
+    // THEM TU CODE B
     public bool IsVisible()
     {
         return panel != null && panel.activeSelf;

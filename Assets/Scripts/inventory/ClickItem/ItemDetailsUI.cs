@@ -78,7 +78,7 @@ public class ItemDetailsUI : MonoBehaviour
     public void Show(InventoryItem1 item)
     {
         currentItem = item;
-        Debug.Log($"🟢 Show panel: {item.itemId} / {item.quantity}");
+        Debug.Log($"[ItemDetailsUI] Show panel: {item.itemId} / {item.quantity}");
 
         icon.sprite = item.stats?.Icon;
         nameText.text = item.stats?.Name ?? "Không rõ";
@@ -389,14 +389,14 @@ public class ItemDetailsUI : MonoBehaviour
 
                 break;
             case "MeleeWeapon2H":
-                dict["PrimaryMeleeWeapon"] = currentItem.itemId; // 🔥 BẮT BUỘC
-                dict.Remove("SecondaryMeleeWeapon");              // 🔥 DỌN DẸP
+                dict["PrimaryMeleeWeapon"] = currentItem.itemId; 
+                dict.Remove("SecondaryMeleeWeapon");              
                 dict["WeaponType"] = "Melee2H";
                 break;
 
 
             default:
-                Debug.LogWarning($"❌ Loại chưa hỗ trợ: {currentItem.stats.Type}");
+                Debug.LogWarning($"[ItemDetailsUI] Loai chua ho tro: {currentItem.stats.Type}");
                 return;
         }
         // Serialize lại JSON
@@ -422,12 +422,12 @@ public class ItemDetailsUI : MonoBehaviour
             }
             else
             {
-                Debug.LogError("❌ Không tìm thấy PlayerCloneController.");
+                Debug.LogError("[ItemDetailsUI] Khong tim thay PlayerCloneController.");
             }
         }
         else
         {
-            Debug.LogWarning("⚠️ playerClone chưa được gán.");
+            Debug.LogWarning("[ItemDetailsUI] playerClone chua duoc gan.");
         }
 
         // 🟠 Đồng bộ với UI trung tâm (chỉ hiển thị preview)
@@ -475,12 +475,12 @@ public class ItemDetailsUI : MonoBehaviour
         // Thay vì check HasStateAuthority của PlayerAvatar.Instance, check theo account hiện tại
         if (AuthManager.Instance != null)
         {
-            Debug.Log("🟢 Gửi JSON lên server để lưu theo account của client hiện tại.");
+            Debug.Log("[ItemDetailsUI] Gui JSON len server de luu theo account cua client hien tai.");
             AuthManager.Instance.StartCoroutine(AuthManager.Instance.SaveCharacterToServer(updatedJson));
         }
         else
         {
-            Debug.LogError("❌ Không tìm thấy AuthManager.");
+            Debug.LogError("[ItemDetailsUI] Khong tim thay AuthManager.");
         }
 
 
@@ -617,7 +617,7 @@ public class ItemDetailsUI : MonoBehaviour
 
                     if (entry == null)
                     {
-                        Debug.LogError($"❌ Không tìm thấy MeleeWeapon2H entry: {stats.itemId}");
+                        Debug.LogError($"[ItemDetailsUI] Khong tim thay MeleeWeapon2H entry: {stats.itemId}");
                         return;
                     }
 
@@ -750,7 +750,7 @@ public class ItemDetailsUI : MonoBehaviour
 
         // Bước này chỉ để check nhanh UI, không đảm bảo hoàn toàn (chủ yếu UX).
         // Server sẽ kiểm tra lại!
-        int expectedPrice = currentShopItem.price; // ✅
+        int expectedPrice = currentShopItem.price;
         if (currentGold < expectedPrice)
         {
             ShowEquipMessage("Không đủ vàng!");

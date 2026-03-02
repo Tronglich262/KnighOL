@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using UnityEngine;
 
 public class StartInventory : MonoBehaviour
@@ -34,18 +34,21 @@ public class StartInventory : MonoBehaviour
             }
         }));
 
-        // ----> Tại đây: Load PlayerStats từ server, gán vào player!
+        // Chờ LOCAL player spawn (client join sau phải init đúng object của mình)
+        yield return new WaitUntil(() => PlayerSpawner.LocalPlayerObject != null);
+
+        // ----> Load PlayerStats từ server, gán vào LOCAL player
         yield return StartCoroutine(AuthManager.Instance.GetPlayerStats(stats =>
         {
             if (stats != null)
             {
-                GameObject player = GameObject.FindWithTag("Player");
+                GameObject player = PlayerSpawner.LocalPlayerObject != null ? PlayerSpawner.LocalPlayerObject.gameObject : null;
                 if (player != null)
                 {
                     var cs = player.GetComponent<CharacterStats>();
                     if (cs != null)
                     {
-                        cs.InitFromPlayerStats(stats);  // <- Gán chỉ số gốc từ server vào player!
+                        cs.InitFromPlayerStats(stats);
                         Debug.Log("[StartInventory] Gán PlayerStats vào CharacterStats thành công.");
                     }
                     else
@@ -55,7 +58,7 @@ public class StartInventory : MonoBehaviour
                 }
                 else
                 {
-                    Debug.LogError("[StartInventory] Không tìm thấy object Player để gán stats!");
+                    Debug.LogError("[StartInventory] LocalPlayerObject chưa có.");
                 }
             }
             else

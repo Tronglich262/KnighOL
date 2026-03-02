@@ -26,7 +26,7 @@ public class TestMapSwitch : NetworkBehaviour
 
     void TeleToMap(MapId targetMap)
     {
-        // 🔥 TÌM PORTAL TRONG SCENE
+        // TIM PORTAL TRONG SCENE
         MapPortal[] portals = FindObjectsOfType<MapPortal>();
         foreach (var portal in portals)
         {
@@ -39,7 +39,7 @@ public class TestMapSwitch : NetworkBehaviour
                 return;
             }
 
-            // ✅ TELE GIỐNG HỆT CODE CŨ
+            // TELE GIONG HE T CODE CU
             map.RPC_ChangeMap(
                 portal.targetMap,
                 portal.targetSpawn.transform.position,

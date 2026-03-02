@@ -1,6 +1,5 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using UnityEngine;
-
 public class CharacterStats : MonoBehaviour
 {
     // BASE (server)
@@ -18,6 +17,11 @@ public class CharacterStats : MonoBehaviour
     public int finalAgility;
     public int finalVitality;
     public int finalIntelligence;
+    public int finalSpirit;
+
+    // MANA (max = 80 + finalSpirit * 3, dùng chiêu trừ theo %)
+    public int maxMana = 100;
+    public int currentMana = 100;
 
     public void InitFromPlayerStats(PlayerStats stats)
     {
@@ -28,6 +32,9 @@ public class CharacterStats : MonoBehaviour
         speed = stats.speed;
         spirit = stats.spirit;
         Intelligence = stats.intelligence;
+        finalSpirit = spirit;
+        RecalculateMana();
+        currentMana = maxMana;
     }
 
     public void RecalculateStatsFromEquipment(List<ItemStats> equippedItems)
@@ -38,6 +45,7 @@ public class CharacterStats : MonoBehaviour
         finalVitality = hp;
         finalIntelligence = Intelligence;
         finalIntelligence = 0;
+        finalSpirit = spirit;
 
         foreach (var item in equippedItems)
         {
@@ -47,5 +55,27 @@ public class CharacterStats : MonoBehaviour
             finalVitality += item.Vitality;
             finalIntelligence += item.Intelligence;
         }
+
+        RecalculateMana();
+    }
+
+    void RecalculateMana()
+    {
+        maxMana = Mathf.Max(50, 80 + finalSpirit * 3);
+        currentMana = Mathf.Clamp(currentMana, 0, maxMana);
+    }
+
+    /// <summary>Trả về true nếu đủ mana để trả cost (percent 0f–1f).</summary>
+    public bool HasEnoughMana(float percentOfMax)
+    {
+        int cost = Mathf.Max(1, Mathf.RoundToInt(maxMana * percentOfMax));
+        return currentMana >= cost;
+    }
+
+    /// <summary>Trừ mana theo % max. Gọi trên client trước khi gửi RPC.</summary>
+    public void ConsumeMana(float percentOfMax)
+    {
+        int cost = Mathf.Max(1, Mathf.RoundToInt(maxMana * percentOfMax));
+        currentMana = Mathf.Max(0, currentMana - cost);
     }
 }

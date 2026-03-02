@@ -2,26 +2,32 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Hệ thống targeting cho game MMO - quản lý việc chọn mục tiêu (enemy, NPC, player khác)
+/// </summary>
 public class TargetingSystem : MonoBehaviour
 {
     [Header("Layers (2D)")]
     public LayerMask enemyLayer;
     public LayerMask npcLayer;
+    public LayerMask playerLayer;
 
     [Header("Ranges")]
     public float enemyRadius = 12f;
     public float npcRadius = 8f;
+    public float playerRadius = 15f;
     public float loseTargetDistance = 15f;
 
     [Header("Tab Target")]
     public KeyCode tabKey = KeyCode.Tab;
-    public bool includeNPCInTab = false;          // MMO thường Tab chỉ chọn enemy
-    public bool requireLineOfSight = false;       // nếu muốn check raycast
+    public bool includeNPCInTab = false;
+    public bool includePlayerInTab = true;
+    public bool requireLineOfSight = false;
     public float tabCooldown = 0.10f;
 
     [Header("Soft Target")]
-    public bool enableSoftTarget = true;          // auto highlight khi chưa có manual
-    public float softTargetHysteresis = 1.5f;     // chống nhảy target liên tục
+    public bool enableSoftTarget = true;
+    public float softTargetHysteresis = 1.5f;
 
     [Header("Indicator")]
     public TargetIndicator indicatorPrefab;
@@ -31,8 +37,8 @@ public class TargetingSystem : MonoBehaviour
     public TargetInfoPanel targetInfoPanel;
 
     // ===== Runtime =====
-    public Enemy CurrentEnemy { get; private set; }             // combat target
-    public Transform CurrentVisualTarget { get; private set; }  // enemy hoặc npc
+    public Enemy CurrentEnemy { get; private set; }
+    public Transform CurrentVisualTarget { get; private set; }
     public bool HasManualTarget => mode == TargetMode.Manual;
     public PlayerInfo CurrentPlayer { get; private set; }
 
@@ -47,7 +53,7 @@ public class TargetingSystem : MonoBehaviour
     {
         var netObj = GetComponent<NetworkObject>();
 
-        // ❗ CHỈ LOCAL PLAYER
+        // Chi cho phep local player
         if (netObj == null || !netObj.HasInputAuthority)
         {
             enabled = false;
@@ -57,32 +63,30 @@ public class TargetingSystem : MonoBehaviour
         indicatorInstance = Instantiate(indicatorPrefab);
         indicatorInstance.SetTarget(null);
 
-        // ✅ BIND UI TỰ ĐỘNG
         targetInfoPanel = TargetInfoPanel.Instance;
     }
 
-
     private void Update()
     {
-        // 0) Safety: target object bị despawn / destroy -> clear ngay
+        // Kiem tra target hien tai con hop le khong
         ValidateTarget();
 
-        // 1) TAB cycle (manual)
+        // TAB cycle (manual target)
         if (Input.GetKeyDown(tabKey))
             TryTabTarget();
 
-        // 2) Nếu đang manual -> giữ cứng cho tới khi mất điều kiện
+        // Neu dang manual -> giu cung cho den khi mat dieu kien
         if (mode == TargetMode.Manual)
             return;
 
-        // 3) Soft target (auto highlight) nếu bật
+        // Soft target (auto highlight) neu bat
         if (enableSoftTarget)
             UpdateSoftTarget();
     }
 
-    // =========================================================
-    // VALIDATION (CỰC QUAN TRỌNG CHO FUSION)
-    // =========================================================
+    /// <summary>
+    /// Kiem tra target hien tai con hop le khong (bi despawn, chet, hay qua xa)
+    /// </summary>
     private void ValidateTarget()
     {
         if (CurrentVisualTarget == null)
@@ -98,17 +102,16 @@ public class TargetingSystem : MonoBehaviour
             return;
         }
 
-        // Enemy chết / despawn -> clear
+        // Enemy chet / despawn -> clear
         if (CurrentEnemy != null)
         {
-            // Enemy script của bạn có IsAlive => chuẩn
             if (!CurrentEnemy.IsAlive)
             {
                 ClearTarget();
                 return;
             }
 
-            // Nếu enemy có NetworkObject bị despawn trên client => Object invalid
+            // Neu enemy co NetworkObject bi despawn tren client => Object invalid
             var no = CurrentEnemy.GetComponent<NetworkObject>();
             if (no == null || !no || !no.IsValid)
             {
@@ -116,6 +119,7 @@ public class TargetingSystem : MonoBehaviour
                 return;
             }
         }
+
         // PLAYER despawn
         if (CurrentPlayer != null)
         {
@@ -126,23 +130,23 @@ public class TargetingSystem : MonoBehaviour
                 return;
             }
         }
-
     }
 
-    // =========================================================
-    // SOFT TARGET (AUTO HIGHLIGHT GẦN NHẤT, KHÔNG “CỨNG”)
-    // =========================================================
+    /// <summary>
+    /// Cap nhat soft target - tu dong highlight gan nhat nhung khong "cung"
+    /// Uu tien: Enemy -> Player -> NPC
+    /// </summary>
     private void UpdateSoftTarget()
     {
         Vector3 pos = transform.position;
 
-        // ưu tiên enemy soft trước
+        // Uu tien enemy soft truoc
         Enemy nearestEnemy = GetNearestEnemy(pos);
         if (nearestEnemy != null)
         {
             float d = Vector2.Distance(pos, nearestEnemy.transform.position);
 
-            // hysteresis: chỉ đổi soft khi cái mới gần hơn đủ nhiều
+            // Hysteresis: chi doi soft khi cai moi gan hon du nhieu
             if (CurrentVisualTarget == null || mode == TargetMode.None)
             {
                 SetSoftEnemy(nearestEnemy);
@@ -164,7 +168,15 @@ public class TargetingSystem : MonoBehaviour
             return;
         }
 
-        // nếu không có enemy -> soft npc
+        // Neu khong co enemy -> soft player
+        PlayerInfo nearestPlayer = GetNearestPlayer(pos);
+        if (nearestPlayer != null)
+        {
+            SetSoftPlayer(nearestPlayer);
+            return;
+        }
+
+        // Neu khong co player -> soft npc
         Transform nearestNpc = GetNearestNPC(pos);
         if (nearestNpc != null)
         {
@@ -172,13 +184,13 @@ public class TargetingSystem : MonoBehaviour
             return;
         }
 
-        // không có gì -> clear
+        // Khong co gi -> clear
         ClearTarget();
     }
 
-    // =========================================================
-    // TAB TARGET (MANUAL)
-    // =========================================================
+    /// <summary>
+    /// Xu ly Tab target - chon manual target tiep theo trong danh sach
+    /// </summary>
     private void TryTabTarget()
     {
         if (Time.time - lastTabTime < tabCooldown) return;
@@ -192,7 +204,7 @@ public class TargetingSystem : MonoBehaviour
             return;
         }
 
-        // tìm index hiện tại
+        // Tim index hien tai
         int currentIndex = -1;
         if (CurrentVisualTarget != null)
         {
@@ -209,17 +221,22 @@ public class TargetingSystem : MonoBehaviour
         int nextIndex = (currentIndex + 1) % candidates.Count;
         var next = candidates[nextIndex];
 
-        // set manual
+        // Set manual
         if (next.enemy != null) SetManualEnemy(next.enemy);
+        else if (next.player != null) SetManualPlayer(next.player);
         else SetManualVisual(next.t);
     }
 
+    /// <summary>
+    /// Thu thap danh sach cac target kha dung cho Tab
+    /// </summary>
     private List<TabCandidate> CollectTabCandidates()
     {
         Vector3 pos = transform.position;
         var list = new List<TabCandidate>(32);
+        var localPlayer = GetComponent<NetworkObject>();
 
-        // 1) enemy
+        // 1) Enemy
         var enemies = Physics2D.OverlapCircleAll(pos, enemyRadius, enemyLayer);
         foreach (var col in enemies)
         {
@@ -231,11 +248,40 @@ public class TargetingSystem : MonoBehaviour
             list.Add(new TabCandidate
             {
                 t = e.transform,
-                enemy = e
+                enemy = e,
+                player = null
             });
         }
 
-        // 2) npc (tuỳ chọn)
+        // 2) Player (tuy chon)
+        if (includePlayerInTab)
+        {
+            var players = Physics2D.OverlapCircleAll(pos, playerRadius, playerLayer);
+            foreach (var col in players)
+            {
+                var playerInfo = col.GetComponent<PlayerInfo>();
+                if (playerInfo == null) continue;
+
+                // Khong target chinh minh
+                if (localPlayer != null && localPlayer.HasInputAuthority)
+                {
+                    var playerNetObj = playerInfo.GetComponent<NetworkObject>();
+                    if (playerNetObj != null && playerNetObj.HasInputAuthority)
+                        continue;
+                }
+
+                if (requireLineOfSight && !HasLOS(playerInfo.transform)) continue;
+
+                list.Add(new TabCandidate
+                {
+                    t = playerInfo.transform,
+                    enemy = null,
+                    player = playerInfo
+                });
+            }
+        }
+
+        // 3) NPC (tuy chon)
         if (includeNPCInTab)
         {
             var npcs = Physics2D.OverlapCircleAll(pos, npcRadius, npcLayer);
@@ -248,12 +294,13 @@ public class TargetingSystem : MonoBehaviour
                 list.Add(new TabCandidate
                 {
                     t = t,
-                    enemy = null
+                    enemy = null,
+                    player = null
                 });
             }
         }
 
-        // sort: MMO thường sort theo “góc phía trước” rồi distance
+        // Sort: uu tien theo goc phia truoc roi khoang cach
         list.Sort((a, b) =>
         {
             float sa = ScoreCandidate(a.t);
@@ -268,34 +315,42 @@ public class TargetingSystem : MonoBehaviour
     {
         public Transform t;
         public Enemy enemy;
+        public PlayerInfo player;
     }
 
-    // Score càng nhỏ càng ưu tiên
-    // Ưu tiên mục tiêu ở “phía trước” (theo hướng nhìn/di chuyển), rồi tới khoảng cách
+    /// <summary>
+    /// Tinh diem uu tien cho target - diem cang nhom uu tien cang cao
+    /// Uu tien muc tieu o "phia truoc" (theo huong nhin/di chuyen), roi toi khoang cach
+    /// </summary>
     private float ScoreCandidate(Transform t)
     {
         Vector2 to = (t.position - transform.position);
         float dist = to.magnitude;
 
-        // hướng “forward” 2D: nếu bạn có script movement thì dùng facing direction,
-        // ở đây fallback: Vector2.right (có thể sửa theo game bạn)
+        // Huong "forward" 2D: mac dinh Vector2.right
         Vector2 forward = Vector2.right;
 
-        float angle = Vector2.Angle(forward, to.normalized); // 0..180
-        // ưu tiên nhỏ angle, rồi dist
+        float angle = Vector2.Angle(forward, to.normalized);
+        // Uu tien nho angle, roi dist
         return angle * 1000f + dist;
     }
 
+    /// <summary>
+    /// Kiem tra line of sight (tam nhin) den target
+    /// </summary>
     private bool HasLOS(Transform target)
     {
-        // LOS đơn giản: raycast không chạm vật cản
-        // bạn có thể thêm obstacleLayer nếu cần
+        // LOS don gian: raycast khong cham vat can
         return true;
     }
 
     // =========================================================
     // API CHO CLICK / UI
     // =========================================================
+
+    /// <summary>
+    /// Dat manual target la enemy (combat target)
+    /// </summary>
     public void SetManualEnemy(Enemy enemy)
     {
         if (enemy == null) { ClearTarget(); return; }
@@ -304,6 +359,9 @@ public class TargetingSystem : MonoBehaviour
         SetVisual(enemy.transform);
     }
 
+    /// <summary>
+    /// Dat manual target la NPC (chi hien thi, khong combat)
+    /// </summary>
     public void SetManualVisual(Transform t)
     {
         if (t == null) { ClearTarget(); return; }
@@ -312,6 +370,26 @@ public class TargetingSystem : MonoBehaviour
         SetVisual(t);
     }
 
+    /// <summary>
+    /// Dat manual target la player khac
+    /// </summary>
+    public void SetManualPlayer(PlayerInfo player)
+    {
+        if (player == null)
+        {
+            ClearTarget();
+            return;
+        }
+
+        CurrentEnemy = null;
+        CurrentPlayer = player;
+        mode = TargetMode.Manual;
+        SetVisual(player.transform);
+    }
+
+    /// <summary>
+    /// Xoa target hien tai
+    /// </summary>
     public void ClearTarget()
     {
         CurrentEnemy = null;
@@ -326,11 +404,10 @@ public class TargetingSystem : MonoBehaviour
             targetInfoPanel.Hide();
     }
 
-
-
     // =========================================================
     // INTERNAL SETTERS
     // =========================================================
+
     private void SetSoftEnemy(Enemy enemy)
     {
         CurrentEnemy = enemy;
@@ -341,10 +418,22 @@ public class TargetingSystem : MonoBehaviour
     private void SetSoftVisual(Transform t)
     {
         CurrentEnemy = null;
+        CurrentPlayer = null;
         mode = TargetMode.Soft;
         SetVisual(t);
     }
 
+    private void SetSoftPlayer(PlayerInfo player)
+    {
+        CurrentEnemy = null;
+        CurrentPlayer = player;
+        mode = TargetMode.Soft;
+        SetVisual(player.transform);
+    }
+
+    /// <summary>
+    /// Cap nhat hien thi visual target (indicator + UI)
+    /// </summary>
     private void SetVisual(Transform t)
     {
         CurrentVisualTarget = t;
@@ -360,7 +449,7 @@ public class TargetingSystem : MonoBehaviour
             }
             else
             {
-                // ENEMY
+                // Enemy
                 EnemyInfo e = t.GetComponent<EnemyInfo>();
                 if (e != null)
                 {
@@ -376,7 +465,7 @@ public class TargetingSystem : MonoBehaviour
                     return;
                 }
 
-                // PLAYER
+                // Player
                 PlayerInfo p = t.GetComponent<PlayerInfo>();
                 if (p != null)
                 {
@@ -389,11 +478,13 @@ public class TargetingSystem : MonoBehaviour
         }
     }
 
-
-
     // =========================================================
     // FIND NEAREST
     // =========================================================
+
+    /// <summary>
+    /// Tim enemy gan nhat trong pham vi
+    /// </summary>
     private Enemy GetNearestEnemy(Vector3 from)
     {
         var hits = Physics2D.OverlapCircleAll(from, enemyRadius, enemyLayer);
@@ -416,6 +507,9 @@ public class TargetingSystem : MonoBehaviour
         return nearest;
     }
 
+    /// <summary>
+    /// Tim NPC gan nhat trong pham vi
+    /// </summary>
     private Transform GetNearestNPC(Vector3 from)
     {
         var hits = Physics2D.OverlapCircleAll(from, npcRadius, npcLayer);
@@ -437,18 +531,39 @@ public class TargetingSystem : MonoBehaviour
         }
         return nearest;
     }
-    public void SetManualPlayer(PlayerInfo player)
-    {
-        if (player == null)
-        {
-            ClearTarget();
-            return;
-        }
 
-        CurrentEnemy = null;
-        CurrentPlayer = player;
-        mode = TargetMode.Manual;
-        SetVisual(player.transform);
+    /// <summary>
+    /// Tim player khac gan nhat trong pham vi
+    /// </summary>
+    private PlayerInfo GetNearestPlayer(Vector3 from)
+    {
+        var hits = Physics2D.OverlapCircleAll(from, playerRadius, playerLayer);
+
+        PlayerInfo nearest = null;
+        float minDist = float.MaxValue;
+        var localPlayer = GetComponent<NetworkObject>();
+
+        foreach (var h in hits)
+        {
+            var playerInfo = h.GetComponent<PlayerInfo>();
+            if (playerInfo == null) continue;
+
+            // Khong target chinh minh
+            if (localPlayer != null && localPlayer.HasInputAuthority)
+            {
+                var playerNetObj = playerInfo.GetComponent<NetworkObject>();
+                if (playerNetObj != null && playerNetObj.HasInputAuthority)
+                    continue;
+            }
+
+            float d = Vector2.Distance(from, playerInfo.transform.position);
+            if (d < minDist)
+            {
+                minDist = d;
+                nearest = playerInfo;
+            }
+        }
+        return nearest;
     }
 
 #if UNITY_EDITOR

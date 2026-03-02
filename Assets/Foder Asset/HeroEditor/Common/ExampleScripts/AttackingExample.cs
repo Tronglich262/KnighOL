@@ -1,4 +1,4 @@
-﻿using Assets.HeroEditor.Common.CharacterScripts;
+using Assets.HeroEditor.Common.CharacterScripts;
 using Fusion;
 using HeroEditor.Common.Enums;
 using UnityEngine;
@@ -7,14 +7,11 @@ namespace Assets.HeroEditor.Common.ExampleScripts
 {
     public class AttackingExample : NetworkBehaviour
     {
-        [Header("Refs")]
         public Character Character;
-        public BowExample BowExample;
-        public MovementExample Movement; // HeroEditor demo movement
+        public MovementExample Movement;
+        public BowExample Bow;
 
-        [Header("Melee Settings")]
         public float AttackRange = 2f;
-        public float ChaseSpeed = 4f;
 
         [Networked] private NetworkObject TargetEnemy { get; set; }
         [Networked] private NetworkBool IsChasing { get; set; }
@@ -23,203 +20,188 @@ namespace Assets.HeroEditor.Common.ExampleScripts
         public override void Spawned()
         {
             if (Character == null) Character = GetComponent<Character>();
-            if (BowExample == null) BowExample = GetComponent<BowExample>();
             if (Movement == null) Movement = GetComponent<MovementExample>();
+            if (Bow == null) Bow = GetComponent<BowExample>();
         }
 
         // =========================
-        // CALLED BY SKILL BUTTON
+        // USE SKILL (CALLED FROM BUFF SYSTEM)
         // =========================
-        public void UseSkill(int skillIndex)
+        BuffSkillNetwork _buffSkill;
+
+        public void UseSkill(NetworkObject target, BuffSkillNetwork buffSkill)
         {
-            if (!Object.HasInputAuthority) return;
+            if (!Object.HasStateAuthority) return;
             if (IsAttacking) return;
+            if (target == null) return;
 
-            var targeting = GetComponent<TargetingSystem>();
-            if (targeting == null) return;
+            _buffSkill = buffSkill;
 
-            Enemy enemy = targeting.CurrentEnemy;
-
-            // ❌ MMO: chưa target thì KHÔNG ĐÁNH
-            if (enemy == null)
-            {
-                Debug.Log("No target selected.");
-                return;
-            }
-
+            // 🏹 Nếu là cung → bắn luôn
             if (Character.WeaponType == WeaponType.Bow)
             {
-                BowExample.AttackTarget(enemy);
+                IsAttacking = true;
+                TargetEnemy = target;
+
+                if (_buffSkill != null) _buffSkill.SetBaseAttackCooldown();
+
+                RPC_PlayBow(target);
             }
             else
             {
-                RPC_StartChase(enemy.Object);
+                // 🗡 Melee → chase
+                TargetEnemy = target;
+                IsChasing = true;
             }
         }
 
+        // =========================
+        // BOW
+        // =========================
+        [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
+        private void RPC_BowAttack(NetworkObject target)
+        {
+            if (IsAttacking) return;
 
+            IsAttacking = true;
+            TargetEnemy = target;
+
+            var buff = GetComponent<BuffSkillNetwork>();
+            if (buff != null) buff.SetBaseAttackCooldown();
+
+            RPC_PlayBow(target);
+        }
+
+        [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+        private void RPC_PlayBow(NetworkObject target)
+        {
+            if (Bow != null)
+            {
+                Bow.AttackTarget(target.GetComponent<Enemy>());
+            }
+
+            Invoke(nameof(EndAttack), 0.5f);
+        }
 
         // =========================
-        // START CHASE (StateAuthority)
+        // MELEE CHASE
         // =========================
         [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
         private void RPC_StartChase(NetworkObject enemyObj)
         {
-            if (IsAttacking) return;
+            if (enemyObj == null) return;
 
             TargetEnemy = enemyObj;
             IsChasing = true;
-
-            // khóa xoay + quay mặt
-            if (Movement != null)
-            {
-                Movement.LockFacing = true;
-                float dirX = enemyObj.transform.position.x - transform.position.x;
-                Movement.ForceFaceX(dirX);
-            }
-
-            // 🔥 QUAN TRỌNG: set animation RUN
-            SetRunState();
-
-            RPC_SetMovementEnabled(false);
         }
 
-
-        // Disable/enable MovementExample everywhere to stop it overriding state/anim/move
-        [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
-        private void RPC_SetMovementEnabled(bool enabled)
-        {
-            if (Movement != null) Movement.enabled = enabled;
-        }
-
-        // =========================
-        // MOVE (StateAuthority only)
-        // =========================
         public override void FixedUpdateNetwork()
         {
             if (!Object.HasStateAuthority) return;
-            if (!IsChasing || TargetEnemy == null || IsAttacking) return;
+            if (TargetEnemy == null) return;
+            if (IsAttacking) return;
 
-            Vector3 targetPos = TargetEnemy.transform.position;
+            if (!IsChasing) return;
+
             Vector3 pos = transform.position;
+            Vector3 targetPos = TargetEnemy.transform.position;
 
             float dist = Vector3.Distance(pos, targetPos);
 
             if (dist > AttackRange)
             {
                 Vector3 dir = (targetPos - pos).normalized;
-                dir.y = 0; // 🔥 KHÓA TRỤC Y
-                dir.Normalize();
-                // MOVE
-                transform.position = pos + dir * ChaseSpeed * Runner.DeltaTime;
-
-                // 🔥 GIỮ RUN TRONG SUỐT QUÁ TRÌNH CHASE
-                SetRunState();
+                dir.y = 0;
+                Movement.AutoMove(dir);
             }
             else
             {
-                // tới tầm → dừng chase
                 IsChasing = false;
+                Movement.ForceStop();
+                StartMeleeAttack();
             }
         }
 
+        void StartMeleeAttack()
+        {
+            if (IsAttacking) return;
+
+            IsAttacking = true;
+
+            RPC_PlayMelee();
+
+            // Delay đúng frame chém
+            Invoke(nameof(ApplyMeleeDamage), 0.3f);
+        }
+        void ApplyMeleeDamage()
+        {
+            if (!Object.HasStateAuthority) return;
+            if (TargetEnemy == null) return;
+
+            if (_buffSkill != null)
+            {
+                _buffSkill.OnBaseAttackHit();
+            }
+            else
+            {
+                var enemy = TargetEnemy.GetComponent<EnemyCore>();
+                if (enemy == null) return;
+                var stats = GetComponent<CharacterStats>();
+                int statPart = stats != null ? stats.strength + stats.finalStrength : 0;
+                int baseDamage = UnityEngine.Random.Range(80, 110);
+                int damage = statPart + Mathf.RoundToInt(baseDamage * 1.2f);
+                enemy.RPC_RequestHit(damage, Object.InputAuthority);
+            }
+        }
+
+        [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+        void RPC_PlayMelee()
+        {
+            Character.GetReady();
+            Character.Slash();
+
+            Invoke(nameof(EndAttack), 0.6f);
+        }
 
         // =========================
-        // REQUEST ATTACK (InputAuthority side)
-        // This replicates the "press T" style: input authority asks to attack.
+        // CANCEL WHEN MOVE
         // =========================
         private void Update()
         {
             if (!Object.HasInputAuthority) return;
-            if (IsAttacking) return;
-            if (TargetEnemy == null) return;
 
-            // Only for melee
-            if (Character != null && Character.WeaponType == WeaponType.Bow) return;
-
-            // If we already stopped chasing on host and we are in range -> request attack once
-            float dist = Vector3.Distance(transform.position, TargetEnemy.transform.position);
-            if (!IsChasing && dist <= AttackRange)
+            if (IsChasing || IsAttacking)
             {
-                RPC_RequestAttack();
+                if (Input.GetKey(KeyCode.LeftArrow) ||
+                    Input.GetKey(KeyCode.RightArrow) ||
+                    Input.GetKey(KeyCode.UpArrow))
+                {
+                    RPC_Cancel();
+                }
             }
         }
 
         [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
-        private void RPC_RequestAttack()
+        private void RPC_Cancel()
         {
-            if (IsAttacking) return;
-            if (TargetEnemy == null) return;
-
-            IsAttacking = true;
-
-            // dừng run → idle trước khi đánh
-            RPC_SetState(CharacterState.Idle);
-
-            RPC_PlayMeleeAttack();
+            CancelAll();
         }
 
-
-        [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
-        private void RPC_PlayMeleeAttack()
+        void CancelAll()
         {
-            // EXACTLY like your old "press T" feeling:
-            // GetReady then Slash
-            if (Character == null) return;
-
-            Character.GetReady();
-            Character.Slash();
-
-            // unlock after a short time (tune to your anim length)
-            Invoke(nameof(UnlockAfterAttack), 0.7f);
-        }
-
-        private void UnlockAfterAttack()
-        {
+            IsChasing = false;
             IsAttacking = false;
+            TargetEnemy = null;
 
-            if (Object.HasStateAuthority)
-            {
-                RPC_SetMovementEnabled(true);
-                TargetEnemy = null;
-
-                // về idle
-                RPC_SetState(CharacterState.Idle);
-            }
-
-            if (Movement != null)
-            {
-                Movement.LockFacing = false;
-            }
+            Movement.ForceStop();
         }
 
-        [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
-        private void RPC_LockFacingAndFace(NetworkObject enemyObj)
+        void EndAttack()
         {
-            if (enemyObj == null || Movement == null) return;
+            if (!Object.HasStateAuthority) return;
 
-            Movement.LockFacing = true;
-
-            float dirX = enemyObj.transform.position.x - transform.position.x;
-            if (Mathf.Abs(dirX) < 0.01f) return;
-            Movement.ForceFaceX(dirX);
+            IsAttacking = false;
+            TargetEnemy = null;
         }
-
-        private void SetRunState()
-        {
-            if (Character == null) return;
-
-            if (Character.Animator.GetInteger("State") != (int)CharacterState.Run)
-            {
-                RPC_SetState(CharacterState.Run);
-            }
-        }
-
-        [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
-        private void RPC_SetState(CharacterState state)
-        {
-            Character.Animator.SetInteger("State", (int)state);
-        }
-
     }
 }

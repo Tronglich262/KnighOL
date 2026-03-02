@@ -1,4 +1,3 @@
-﻿using System.Collections;
 using TMPro;
 using UnityEngine;
 
@@ -34,55 +33,15 @@ public class ThongTin : MonoBehaviour
         instance = this;
     }
 
-    private void Start()
+    private void OnEnable()
     {
-        StartCoroutine(WaitForPlayerStats());
-    }
-
-    IEnumerator WaitForPlayerStats()
-    {
-        GameObject player = null;
-
-        // 1️⃣ Chờ player spawn
-        while (player == null)
-        {
-            player = GameObject.FindWithTag("Player");
-            yield return null;
-        }
-
-        // 2️⃣ Lấy base stats từ server
-        yield return StartCoroutine(AuthManager.Instance.GetPlayerStats(result =>
-        {
-            stats1 = result;
-        }));
-
-        // 3️⃣ Init base stats
-        var charStats = player.GetComponent<CharacterStats>();
-        if (charStats != null)
-        {
-            charStats.InitFromPlayerStats(stats1);
-        }
-
-        // 4️⃣ Load trang bị từ CharacterJson
-        var equipMgr = player.GetComponent<EquipmentStatManager>();
-        if (equipMgr != null)
-        {
-            equipMgr.LoadFromCharacterJson(PlayerDataHolder1.CharacterJson);
-        }
-        else
-        {
-            Debug.LogError("❌ Player thiếu EquipmentStatManager");
-        }
-
-        // 5️⃣ Update UI (FINAL stats)
         UpdateStatsUI();
     }
 
-
     public void UpdateStatsUI()
     {
-        GameObject player = GameObject.FindWithTag("Player");
-        if (player == null) return;
+        if (PlayerSpawner.LocalPlayerObject == null) return;
+        GameObject player = PlayerSpawner.LocalPlayerObject.gameObject;
 
         var stats = player.GetComponent<CharacterStats>();
         if (stats == null) return;
@@ -105,22 +64,24 @@ public class ThongTin : MonoBehaviour
         vitalityitem.text = "Sinh lực trang bị: " + (stats.finalVitality - stats.hp);
         Intelligenceitem.text = "trí tuệ trang bị: " + (stats.finalIntelligence - stats.Intelligence);
 
-        maxHP = stats.finalVitality;
-        currentHP = Mathf.Clamp(currentHP, 0, maxHP);
-        healthBar.SetHealth(currentHP, maxHP);
+        maxHP = Mathf.Max(1, stats.finalVitality);
+        currentHP = maxHP;
+        if (healthBar != null)
+        {
+            healthBar.SetHealth(currentHP, maxHP);
+            healthBar.SetMana(stats.currentMana, Mathf.Max(1, stats.maxMana));
+        }
     }
 
     public void UpdateCharacterStatsFromServer(PlayerStats serverStats)
     {
-        GameObject player = GameObject.FindWithTag("Player");
-        if (player != null)
+        if (PlayerSpawner.LocalPlayerObject != null)
         {
+            GameObject player = PlayerSpawner.LocalPlayerObject.gameObject;
             var charStats = player.GetComponent<CharacterStats>();
             if (charStats != null)
             {
                 charStats.InitFromPlayerStats(serverStats);
-                // Nếu có hệ thống trang bị:
-                // charStats.RecalculateStatsFromEquipment(currentEquipList);
             }
         }
     }

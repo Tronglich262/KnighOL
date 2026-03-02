@@ -1,4 +1,4 @@
-﻿using Assets.HeroEditor.Common.CharacterScripts;
+using Assets.HeroEditor.Common.CharacterScripts;
 using Assets.HeroEditor.Common.CommonScripts;
 using HeroEditor.Common.Enums;
 using Newtonsoft.Json;
@@ -123,14 +123,11 @@ public class CharacterUIManager1 : MonoBehaviour
         DisplayItem1(Maskslot, characterData.Mask);
         DisplayItem1(Glassesslot, characterData.Glasses);
         DisplayItem1(Shieldslot, characterData.Shield);
-        GameObject player = GameObject.FindWithTag("Player");
-        if (player != null)
+        if (PlayerSpawner.LocalPlayerObject != null)
         {
-            var statComp = player.GetComponent<CharacterStats>();
+            var statComp = PlayerSpawner.LocalPlayerObject.GetComponent<CharacterStats>();
             if (statComp != null)
-            {
                 statComp.RecalculateStatsFromEquipment(equippedItems);
-            }
         }
     }
     public void LoadCharacterFromJson(string json)
@@ -174,15 +171,12 @@ public class CharacterUIManager1 : MonoBehaviour
         DisplayItem1(Glassesslot, characterData.Glasses, "Glasses");
         DisplayItem1(Shieldslot, characterData.Shield, "Shield");
 
-        // Cập nhật chỉ số
-        var player = GameObject.FindWithTag("Player");
-        if (player != null)
+        // Cập nhật chỉ số (local player)
+        if (PlayerSpawner.LocalPlayerObject != null)
         {
-            var statComp = player.GetComponent<CharacterStats>();
+            var statComp = PlayerSpawner.LocalPlayerObject.GetComponent<CharacterStats>();
             if (statComp != null)
-            {
                 statComp.RecalculateStatsFromEquipment(equippedItems);
-            }
         }
     }
 
@@ -473,7 +467,7 @@ public class CharacterUIManager1 : MonoBehaviour
 
             if (entry == null)
             {
-                Debug.LogError($"❌ Melee2H entry not found: {sprite.name}");
+                Debug.LogError($"[CharacterUIManager1] Melee2H entry not found: {sprite.name}");
                 return;
             }
 
@@ -509,7 +503,7 @@ public class CharacterUIManager1 : MonoBehaviour
         StartCoroutine(EquipAllArmorAfterJson());
 
         //  NEW: Ép lại vũ khí Melee2H nếu đang dùng
-        // 🔥 FIX CHUẨN: Ép lại Melee2H từ PrimaryMeleeWeapon
+        // FIX CHUAN: Ep lai Melee2H tu PrimaryMeleeWeapon
         if (GetItemIdFromJson(PlayerDataHolder1.CharacterJson, "WeaponType") == "Melee2H")
         {
             string melee2HId = GetItemIdFromJson(PlayerDataHolder1.CharacterJson, "PrimaryMeleeWeapon");
@@ -522,11 +516,11 @@ public class CharacterUIManager1 : MonoBehaviour
                 {
                     character.WeaponType = WeaponType.Melee2H;
                     character.Equip(entry, EquipmentPart.MeleeWeapon2H);
-                    Debug.Log("✅ Đã ép lại MeleeWeapon2H từ PrimaryMeleeWeapon");
+                    Debug.Log("[CharacterUIManager1] Da ep lai MeleeWeapon2H tu PrimaryMeleeWeapon");
                 }
                 else
                 {
-                    Debug.LogWarning($"⚠ Không tìm thấy MeleeWeapon2H entry: {melee2HId}");
+                    Debug.LogWarning($"[CharacterUIManager1] Khong tim thay MeleeWeapon2H entry: {melee2HId}");
                 }
             }
         }
@@ -563,13 +557,12 @@ public class CharacterUIManager1 : MonoBehaviour
         if (dict.ContainsKey(key)) return dict[key];
         return null;
     }
-    //lấy dữ liệu chỉ số đô
+    //lấy dữ liệu chỉ số đô (local player)
     public void UpdateCharacterStatsAndUI()
     {
-        var player = GameObject.FindWithTag("Player");
-        if (player != null)
+        if (PlayerSpawner.LocalPlayerObject != null)
         {
-            var statComp = player.GetComponent<CharacterStats>();
+            var statComp = PlayerSpawner.LocalPlayerObject.GetComponent<CharacterStats>();
             if (statComp != null)
             {
                 var equipped = GetAllEquippedItems(PlayerDataHolder1.CharacterJson);

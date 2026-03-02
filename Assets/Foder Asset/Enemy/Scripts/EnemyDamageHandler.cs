@@ -115,7 +115,7 @@ public class EnemyDamageHandler : NetworkBehaviour
         if (AuthManager.Instance == null)
             return;
 
-        var levelManager = FindObjectOfType<PlayerLevelManager>();
+        var levelManager = FindAnyObjectByType<PlayerLevelManager>();
         if (levelManager != null)
             levelManager.AddExp(exp);
 

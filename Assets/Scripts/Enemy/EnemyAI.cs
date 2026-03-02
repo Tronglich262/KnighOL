@@ -209,7 +209,7 @@ public class EnemyAI : NetworkBehaviour
     /// <summary>
     /// Reset trạng thái AI
     /// </summary>
-    public void ResetState()
+    public new void ResetState()
     {
         startPos = transform.position;
         movingRight = Random.value > 0.5f;

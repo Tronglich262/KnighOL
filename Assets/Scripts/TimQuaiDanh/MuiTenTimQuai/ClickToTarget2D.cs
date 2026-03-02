@@ -36,20 +36,20 @@ public class ClickToTarget2D : MonoBehaviour
             // ======================
             if (playerInfo != null)
             {
-                // ❌ không target chính mình
+                // Khong target chinh minh
                 if (!playerInfo.CanBeTargetedBy(localNO))
                     return;
 
                 // Transform player được click
                 Transform playerTransform = playerInfo.GetComponent<Transform>();
 
-                // 🔹 LUÔN SET TARGET TRƯỚC
+                //  LUÔN SET TARGET TRƯỚC
                 if (ts.CurrentVisualTarget != playerTransform)
                 {
                     ts.SetManualPlayer(playerInfo);
                 }
 
-                // 🔹 HIỆN THÔNG TIN PLAYER NGAY LẬP TỨC (1 CLICK)
+                //  HIỆN THÔNG TIN PLAYER NGAY LẬP TỨC (1 CLICK)
                 var avatar = playerInfo.GetComponent<PlayerAvatar>();
                 var nameTag = playerInfo.GetComponentInChildren<NameTagManager>();
                 string nick = nameTag != null ? nameTag.Nickname : null;

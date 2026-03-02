@@ -1,6 +1,9 @@
 using UnityEngine;
 using TMPro;
 
+/// <summary>
+/// Hiển thị damage text trên màn hình khi enemy nhận damage
+/// </summary>
 public class DamageText : MonoBehaviour
 {
     public float moveSpeed = 2f;
@@ -14,6 +17,9 @@ public class DamageText : MonoBehaviour
         text = GetComponent<TextMeshPro>();
     }
 
+    /// <summary>
+    /// Thiết lập giá trị damage hiển thị
+    /// </summary>
     public void Setup(int damage)
     {
         text.text = damage.ToString();

@@ -16,7 +16,7 @@ public class MapPortal : MonoBehaviour
         var mapState = other.GetComponent<PlayerMapState>();
         if (mapState == null) return;
 
-        // 🔥 TRUYỀN VỊ TRÍ + ROTATION SPAWN CỤ THỂ
+        // TRUYEN VI TRI + ROTATION SPAWN CU THE
         mapState.RPC_ChangeMap(
             targetMap,
             targetSpawn.transform.position,

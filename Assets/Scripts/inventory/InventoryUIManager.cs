@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-using TMPro; // ✅ Thêm dòng này nếu bạn dùng TextMeshPro
+using TMPro; 
 using System.Collections.Generic;
 
 public class InventoryUIManager : MonoBehaviour
@@ -38,7 +38,7 @@ public class InventoryUIManager : MonoBehaviour
                 item.stats = LoadStatsById(item.itemId);
                 if (item.stats == null)
                 {
-                    Debug.LogError($"❌ Không tìm thấy ItemStats cho itemId: {item.itemId}");
+                    Debug.LogError($"[InventoryUIManager] Khong tim thay ItemStats cho itemId: {item.itemId}");
                     continue;
                 }
             }

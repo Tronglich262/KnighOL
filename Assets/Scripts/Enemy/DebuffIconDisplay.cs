@@ -4,7 +4,6 @@ using TMPro;
 
 /// <summary>
 /// Hiển thị icon debuff trên đầu enemy. Gắn lên Canvas con của enemy (world space).
-/// Gán Sprite cho mỗi loại debuff trong Inspector; khi xong có thể thêm icon tượng trưng.
 /// </summary>
 public class DebuffIconDisplay : MonoBehaviour
 {
@@ -18,24 +17,36 @@ public class DebuffIconDisplay : MonoBehaviour
     public TextMeshProUGUI burnText;
     public TextMeshProUGUI dizzyText;
 
+    /// <summary>
+    /// Bật/tắt icon Stun
+    /// </summary>
     public void SetStunActive(bool active)
     {
         if (stunIcon != null) stunIcon.gameObject.SetActive(active);
         if (stunText != null) stunText.gameObject.SetActive(active);
     }
 
+    /// <summary>
+    /// Bật/tắt icon Burn
+    /// </summary>
     public void SetBurnActive(bool active)
     {
         if (burnIcon != null) burnIcon.gameObject.SetActive(active);
         if (burnText != null) burnText.gameObject.SetActive(active);
     }
 
+    /// <summary>
+    /// Bật/tắt icon Dizzy
+    /// </summary>
     public void SetDizzyActive(bool active)
     {
         if (dizzyIcon != null) dizzyIcon.gameObject.SetActive(active);
         if (dizzyText != null) dizzyText.gameObject.SetActive(active);
     }
 
+    /// <summary>
+    /// Cập nhật thời gian còn lại của các debuff
+    /// </summary>
     public void SetRemainingTimes(float stunRem, float burnRem, float dizzyRem)
     {
         if (stunText != null && stunText.gameObject.activeInHierarchy)

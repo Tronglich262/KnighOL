@@ -202,7 +202,7 @@ public class BuffSkillNetwork : NetworkBehaviour
                 Quaternion.identity,
                 Object.InputAuthority);
 
-            // 🔥 FIX: cho cast follow player
+            // FIX: cho cast follow player
             var follow = obj.GetComponent<NetworkBuffFollow>();
             if (follow != null)
                 follow.SetTarget(Object, castOffset);

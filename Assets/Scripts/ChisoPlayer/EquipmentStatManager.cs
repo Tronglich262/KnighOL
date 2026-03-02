@@ -12,7 +12,7 @@ public class EquipmentStatManager : MonoBehaviour
         stats = GetComponent<CharacterStats>();
     }
 
-    // 🔥 GỌI KHI LOGIN
+    // GOI KHI LOGIN
     public void LoadFromCharacterJson(string json)
     {
         equippedItems.Clear();
@@ -32,7 +32,7 @@ public class EquipmentStatManager : MonoBehaviour
         Recalculate();
     }
 
-    // 🔥 GỌI KHI MẶC / THÁO ĐỒ
+    // GOI KHI MAT / THAO DO
     public void Equip(ItemStats item)
     {
         equippedItems.RemoveAll(i => i.Type == item.Type);

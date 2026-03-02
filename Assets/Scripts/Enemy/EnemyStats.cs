@@ -1,6 +1,9 @@
 ﻿using Fusion;
 using UnityEngine;
 
+/// <summary>
+/// Stats của enemy - quản lý HP, Attack, giảm damage
+/// </summary>
 public class EnemyStats : NetworkBehaviour
 {
     [Networked] public int MaxHP { get; set; }
@@ -10,6 +13,9 @@ public class EnemyStats : NetworkBehaviour
     // % giảm sát thương (0 -> 1)
     [Networked] public float DamageReduction { get; set; }
 
+    /// <summary>
+    /// Khởi tạo stats cho enemy
+    /// </summary>
     public void Init(int monsterId)
     {
         MaxHP = 500;
@@ -20,6 +26,9 @@ public class EnemyStats : NetworkBehaviour
         DamageReduction = 0.1f;
     }
 
+    /// <summary>
+    /// Nhận damage - tính toán giảm damage và trả về damage thực tế
+    /// </summary>
     public int TakeDamage(int damage)
     {
         if (!Object.HasStateAuthority) return 0;

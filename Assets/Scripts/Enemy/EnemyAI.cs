@@ -1,6 +1,9 @@
-using UnityEngine;
 using Fusion;
+using UnityEngine;
 
+/// <summary>
+/// AI của enemy - quản lý di chuyển, patroll, đuổi theo và tấn công player
+/// </summary>
 public class EnemyAI : NetworkBehaviour
 {
     [Header("Movement")]
@@ -9,8 +12,8 @@ public class EnemyAI : NetworkBehaviour
     public float acceleration = 15f;
 
     [Header("Combat")]
-    public float detectRange = 4f;      // nhìn thấy
-    public float aggroRange = 1.2f;     // vào rất gần → aggro
+    public float detectRange = 4f;
+    public float aggroRange = 1.2f;
     public float attackRange = 0.6f;
     public float attackCooldown = 1f;
     public LayerMask playerLayer;
@@ -26,11 +29,10 @@ public class EnemyAI : NetworkBehaviour
 
     [Networked] private TickTimer attackCooldownTimer { get; set; }
 
-    // 🔥 MMO: aggro tách riêng
+    // MMO: aggro tách riêng
     private EnemyAggroSystem aggro;
     private EnemyDebuffManager debuffManager;
 
-    // =========================
     public override void Spawned()
     {
         animator = GetComponent<Animator>();
@@ -41,11 +43,11 @@ public class EnemyAI : NetworkBehaviour
         movingRight = Random.value > 0.5f;
     }
 
-    // =========================
     public override void FixedUpdateNetwork()
     {
         if (!HasStateAuthority) return;
 
+        // Kiem tra neu bi stunned hoac dizzy
         if (debuffManager != null && debuffManager.CannotAct)
         {
             Stop();
@@ -66,9 +68,9 @@ public class EnemyAI : NetworkBehaviour
         UpdateFacing();
     }
 
-    // =====================================================
-    // DETECT (chỉ để aggro gần – KHÔNG ghi đè threat)
-    // =====================================================
+    /// <summary>
+    /// Cập nhật phát hiện player trong vùng
+    /// </summary>
     private void UpdateDetection()
     {
         detectTimer -= Runner.DeltaTime;
@@ -85,7 +87,7 @@ public class EnemyAI : NetworkBehaviour
             float dist = Vector3.Distance(transform.position, hit.transform.position);
             if (dist <= aggroRange)
             {
-                // aggro nhẹ (MMO-style proximity)
+                // Aggro nhẹ (MMO-style proximity)
                 aggro.AddThreat(
                     hit.GetComponent<NetworkObject>().InputAuthority,
                     1f,
@@ -96,9 +98,9 @@ public class EnemyAI : NetworkBehaviour
         }
     }
 
-    // =====================================================
-    // PATROL (GIỮ NGUYÊN)
-    // =====================================================
+    /// <summary>
+    /// Cập nhật patrolling - di chuyển qua lại trong vùng
+    /// </summary>
     private void UpdatePatrol()
     {
         float patrolX = startPos.x + (movingRight ? patrolDistance : -patrolDistance);
@@ -113,9 +115,9 @@ public class EnemyAI : NetworkBehaviour
         }
     }
 
-    // =====================================================
-    // CHASE + ATTACK (DÙNG AGGRO)
-    // =====================================================
+    /// <summary>
+    /// Cập nhật đuổi theo và tấn công target
+    /// </summary>
     private void UpdateChaseAndAttack()
     {
         Transform target = aggro.CurrentTarget;
@@ -133,6 +135,9 @@ public class EnemyAI : NetworkBehaviour
         }
     }
 
+    /// <summary>
+    /// Thử tấn công target
+    /// </summary>
     private void TryAttack()
     {
         if (!attackCooldownTimer.ExpiredOrNotRunning(Runner)) return;
@@ -141,9 +146,9 @@ public class EnemyAI : NetworkBehaviour
         animator.SetTrigger("AttackTrigger");
     }
 
-    // =====================================================
-    // MOVEMENT (GIỮ NGUYÊN)
-    // =====================================================
+    /// <summary>
+    /// Di chuyển enemy
+    /// </summary>
     private void Move(float dir)
     {
         facing = dir;
@@ -154,6 +159,9 @@ public class EnemyAI : NetworkBehaviour
         );
     }
 
+    /// <summary>
+    /// Dừng di chuyển
+    /// </summary>
     private void Stop()
     {
         currentVelX = Mathf.MoveTowards(
@@ -163,14 +171,17 @@ public class EnemyAI : NetworkBehaviour
         );
     }
 
+    /// <summary>
+    /// Áp dụng di chuyển vật lý
+    /// </summary>
     private void ApplyMovement()
     {
         transform.position += Vector3.right * currentVelX * Runner.DeltaTime;
     }
 
-    // =====================================================
-    // ANIMATION (GIỮ NGUYÊN)
-    // =====================================================
+    /// <summary>
+    /// Cập nhật animation
+    /// </summary>
     private bool wasMoving;
 
     private void UpdateAnimator()
@@ -183,6 +194,9 @@ public class EnemyAI : NetworkBehaviour
         wasMoving = isMovingNow;
     }
 
+    /// <summary>
+    /// Cập nhật hướng nhìn của enemy
+    /// </summary>
     private void UpdateFacing()
     {
         if (Mathf.Abs(currentVelX) < 0.01f) return;
@@ -192,4 +206,14 @@ public class EnemyAI : NetworkBehaviour
         transform.localScale = scale;
     }
 
+    /// <summary>
+    /// Reset trạng thái AI
+    /// </summary>
+    public void ResetState()
+    {
+        startPos = transform.position;
+        movingRight = Random.value > 0.5f;
+        currentVelX = 0;
+        detectTimer = 0;
+    }
 }

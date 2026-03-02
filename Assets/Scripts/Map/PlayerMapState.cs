@@ -52,7 +52,7 @@ public class PlayerMapState : NetworkBehaviour
     {
         if (!HasStateAuthority) return;
 
-        // 🔥 TELEPORT 1 LẦN
+        // TELEPORT 1 LAN
         if (FreezeMovement)
         {
             if (controller != null)

@@ -1,5 +1,8 @@
 using UnityEngine;
 
+/// <summary>
+/// Dữ liệu skill AOE - bán kính, damage, debuff
+/// </summary>
 [System.Serializable]
 public class AOESkillData
 {

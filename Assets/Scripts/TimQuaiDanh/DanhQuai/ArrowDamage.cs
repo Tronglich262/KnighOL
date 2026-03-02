@@ -29,7 +29,7 @@ public class ArrowDamage : NetworkBehaviour
 
         hasHit = true;
 
-        // 🎯 TÍNH DAMAGE GIỐNG MELEE
+        // Tinh damage giong mele
         int damage = CalculateBowDamage();
 
         enemy.RPC_RequestHit(damage, owner);
@@ -43,7 +43,7 @@ public class ArrowDamage : NetworkBehaviour
         var stats = attackerObject.GetComponent<CharacterStats>();
         if (stats == null) return 0;
 
-        // 🎯 Bow scale theo AGI nhiều hơn
+        // Bow scale theo AGI nhieu hon
         int agi = stats.agility + stats.finalAgility;
         int str = stats.strength + stats.finalStrength;
 

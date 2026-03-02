@@ -2,18 +2,22 @@
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// Panel hien thi thong tin cua target (enemy, NPC, player khac)
+/// </summary>
 public class TargetInfoPanel : MonoBehaviour
 {
     [Header("UI")]
     public Image targetIcon;
     public TextMeshProUGUI targetName;
-    public TextMeshProUGUI targetHpText; // ❤️ HP text
+    public TextMeshProUGUI targetHpText;
 
     [Header("Default")]
     public Sprite defaultEnemyIcon;
     public Sprite defaultNpcIcon;
     [Header("Default")]
     public Sprite defaultPlayerIcon;
+
     public static TargetInfoPanel Instance { get; private set; }
 
     private EnemyDamageHandler currentEnemyHp;
@@ -30,19 +34,13 @@ public class TargetInfoPanel : MonoBehaviour
         Hide();
     }
 
-  /*  private void Update()
-    {
-        // realtime update HP text
-        if (currentEnemyHp != null)
-        {
-            targetHpText.text =
-                $"HP: {currentEnemyHp.CurrentHealth} / {currentEnemyHp.MaxHealth}";
-        }
-    }
-*/
     // =========================
     // ENEMY
     // =========================
+
+    /// <summary>
+    /// Hien thi thong tin enemy
+    /// </summary>
     public void ShowEnemy(EnemyInfo enemyInfo)
     {
         if (enemyInfo == null)
@@ -77,6 +75,10 @@ public class TargetInfoPanel : MonoBehaviour
             targetHpText.gameObject.SetActive(false);
         }
     }
+
+    /// <summary>
+    /// Cap nhat HP khi enemy nhan damage
+    /// </summary>
     public void NotifyHPChanged(EnemyStats stats)
     {
         if (currentEnemyHp == null) return;
@@ -88,10 +90,13 @@ public class TargetInfoPanel : MonoBehaviour
         targetHpText.text = $"HP: {stats.HP} / {stats.MaxHP}";
     }
 
-
     // =========================
     // NPC
     // =========================
+
+    /// <summary>
+    /// Hien thi thong tin NPC
+    /// </summary>
     public void ShowNPC(NpcShopId npc)
     {
         if (npc == null)
@@ -109,7 +114,7 @@ public class TargetInfoPanel : MonoBehaviour
         else
             targetIcon.sprite = defaultNpcIcon;
 
-        // ❌ NPC không có HP
+        // NPC không có HP
         currentEnemyHp = null;
         targetHpText.gameObject.SetActive(false);
     }
@@ -117,11 +122,19 @@ public class TargetInfoPanel : MonoBehaviour
     // =========================
     // CLEAR
     // =========================
+
+    /// <summary>
+    /// An panel
+    /// </summary>
     public void Hide()
     {
         currentEnemyHp = null;
         gameObject.SetActive(false);
     }
+
+    /// <summary>
+    /// Hien thi thong tin player khac
+    /// </summary>
     public void ShowPlayer(PlayerInfo player)
     {
         if (player == null)
@@ -132,7 +145,7 @@ public class TargetInfoPanel : MonoBehaviour
 
         gameObject.SetActive(true);
 
-        // 🔥 lấy tên từ NameTagManager
+        // Lay ten tu NameTagManager
         targetName.text = player.PlayerName;
 
         if (player.playerIcon != null)
@@ -140,10 +153,8 @@ public class TargetInfoPanel : MonoBehaviour
         else
             targetIcon.sprite = defaultPlayerIcon;
 
-        // ❌ player không có HP kiểu enemy
+        // Player khong co HP kieu enemy
         currentEnemyHp = null;
         targetHpText.gameObject.SetActive(false);
     }
-
-
 }

@@ -52,7 +52,7 @@ public class SkillButtonManager : MonoBehaviour
         }
 
         var attacker = character.GetComponent<Assets.HeroEditor.Common.ExampleScripts.AttackingExample>();
-        var buff = character.GetComponent<BuffSkillNetwork>();   // 👈 khai báo ở đây
+        var buff = character.GetComponent<BuffSkillNetwork>();   
 
         // Base Skill
         melee1HActions[0] = () => buff.TryUseBaseSkill();

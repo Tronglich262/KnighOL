@@ -467,7 +467,7 @@ public class CharacterUIManager1 : MonoBehaviour
 
             if (entry == null)
             {
-                Debug.LogError($"❌ Melee2H entry not found: {sprite.name}");
+                Debug.LogError($"[CharacterUIManager1] Melee2H entry not found: {sprite.name}");
                 return;
             }
 
@@ -503,7 +503,7 @@ public class CharacterUIManager1 : MonoBehaviour
         StartCoroutine(EquipAllArmorAfterJson());
 
         //  NEW: Ép lại vũ khí Melee2H nếu đang dùng
-        // 🔥 FIX CHUẨN: Ép lại Melee2H từ PrimaryMeleeWeapon
+        // FIX CHUAN: Ep lai Melee2H tu PrimaryMeleeWeapon
         if (GetItemIdFromJson(PlayerDataHolder1.CharacterJson, "WeaponType") == "Melee2H")
         {
             string melee2HId = GetItemIdFromJson(PlayerDataHolder1.CharacterJson, "PrimaryMeleeWeapon");
@@ -516,11 +516,11 @@ public class CharacterUIManager1 : MonoBehaviour
                 {
                     character.WeaponType = WeaponType.Melee2H;
                     character.Equip(entry, EquipmentPart.MeleeWeapon2H);
-                    Debug.Log("✅ Đã ép lại MeleeWeapon2H từ PrimaryMeleeWeapon");
+                    Debug.Log("[CharacterUIManager1] Da ep lai MeleeWeapon2H tu PrimaryMeleeWeapon");
                 }
                 else
                 {
-                    Debug.LogWarning($"⚠ Không tìm thấy MeleeWeapon2H entry: {melee2HId}");
+                    Debug.LogWarning($"[CharacterUIManager1] Khong tim thay MeleeWeapon2H entry: {melee2HId}");
                 }
             }
         }

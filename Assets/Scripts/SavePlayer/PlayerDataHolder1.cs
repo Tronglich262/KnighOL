@@ -17,7 +17,7 @@ public static class PlayerDataHolder1
         set
         {
             _characterJson = value;
-            Debug.Log("🟢 CharacterJson đã được gán lại.");
+            Debug.Log("[PlayerDataHolder1] CharacterJson da duoc gan lai.");
 
             // Chỉ update UI local
             if (CharacterUIManager1.Instance != null &&

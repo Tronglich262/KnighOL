@@ -36,6 +36,7 @@ public class PlayerLevelManager : MonoBehaviour
         Debug.Log($"[PlayerLevelManager] Nhận EXP: {amount} => Tổng: {exp}");
 
         bool levelUp = false;
+        _ = levelUp; // Suppress unused variable warning
         int expMax = PlayerLevelUI.Instante.ExpToNextLevel(level);
 
         while (exp >= expMax)

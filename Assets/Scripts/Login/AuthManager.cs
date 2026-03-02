@@ -542,7 +542,7 @@ public class AuthManager : MonoBehaviour
         {
             // Reload lại quest UI:
 
-            var questDisplay = GameObject.FindObjectOfType<QuestDisplay>();
+            var questDisplay = GameObject.FindAnyObjectByType<QuestDisplay>();
             if (questDisplay != null) questDisplay.ReloadQuests();
 
             // Parse phần thưởng từ response:

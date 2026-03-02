@@ -27,7 +27,7 @@ public class TestMapSwitch : NetworkBehaviour
     void TeleToMap(MapId targetMap)
     {
         // TIM PORTAL TRONG SCENE
-        MapPortal[] portals = FindObjectsOfType<MapPortal>();
+        MapPortal[] portals = FindObjectsByType<MapPortal>(FindObjectsSortMode.None);
         foreach (var portal in portals)
         {
             if (portal.targetMap != targetMap)

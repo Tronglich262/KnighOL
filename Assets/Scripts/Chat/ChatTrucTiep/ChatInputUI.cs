@@ -56,7 +56,7 @@ public class ChatInputUI : MonoBehaviour
     //tìm playerchat trong scene 
     public PlayerChat FindMyPlayerChat()
     {
-        foreach (var pc in FindObjectsOfType<PlayerChat>())
+        foreach (var pc in FindObjectsByType<PlayerChat>(FindObjectsSortMode.None))
         {
             if (pc.Object != null && pc.Object.HasInputAuthority)
                 return pc;

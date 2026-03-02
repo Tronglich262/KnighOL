@@ -107,7 +107,6 @@ public class CharacterPreviewPanel : MonoBehaviour
                 }
             }
                     characterPreview.Initialize(); // Gọi lại để cập nhật hoàn chỉnh visual
-                                           // ---- HẾT BỔ SUNG ----
         }
 
         else

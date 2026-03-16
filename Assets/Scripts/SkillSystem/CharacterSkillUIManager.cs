@@ -7,10 +7,9 @@ using HeroEditor.Common.Enums;
 public class CharacterSkillUIManager : MonoBehaviour
 {
     [Header("UI Elements")]
-    public Transform contentParent;           // SkillContent trong Scroll View
-    public GameObject skillItemPrefab;        // Prefab nút kỹ năng
-    public TextMeshProUGUI descriptionText;   // Text hiển thị mô tả skill
-
+    public Transform contentParent;           
+    public GameObject skillItemPrefab;        
+    public TextMeshProUGUI descriptionText;  
     [Header("Hiển thị kỹ năng theo vũ khí")]
     public WeaponType currentWeaponType = WeaponType.Melee1H;
 
@@ -41,11 +40,6 @@ public class CharacterSkillUIManager : MonoBehaviour
             icon.sprite = skill.icon;
 
             bool match = IsWeaponMatch(skill.weaponType, currentWeaponType);
-
-            // Mờ nếu không khớp
-           // icon.color = match ? Color.white : new Color(1, 1, 1, 0.3f);
-
-            // Click luôn được để hiện mô tả
             btn.onClick.AddListener(() => ShowSkillDescription(skill));
 
             spawnedButtons.Add(btnObj);

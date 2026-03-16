@@ -6,8 +6,7 @@ public class NameTagManager : NetworkBehaviour
 {
     [Networked] public string Nickname { get; set; }
 
-    public TextMeshProUGUI nameText;  // Kéo đúng text vào inspector (Không dùng GetComponentInChildren cho chắc ăn!)
-    public CanvasGroup canvasGroup;
+    public TextMeshProUGUI nameText;      public CanvasGroup canvasGroup;
 
     public override void Spawned()
     {

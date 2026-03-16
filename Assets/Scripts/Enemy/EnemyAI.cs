@@ -47,7 +47,6 @@ public class EnemyAI : NetworkBehaviour
     {
         if (!HasStateAuthority) return;
 
-        // Kiem tra neu bi stunned hoac dizzy
         if (debuffManager != null && debuffManager.CannotAct)
         {
             Stop();

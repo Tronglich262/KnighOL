@@ -17,7 +17,6 @@ public class ShopVKUIManager : MonoBehaviour
         Instance = this;
     }
 
-    // ✅ CHUYỂN THÀNH IEnumerator ĐỂ DÙNG TRONG COROUTINE
     public IEnumerator ShowShop(List<NpcShopItem> items)
     {
         Debug.Log("ShowShop nhận " + (items != null ? items.Count : 0) + " items");
@@ -32,7 +31,7 @@ public class ShopVKUIManager : MonoBehaviour
         foreach (var item in filtered)
         {
             CreateShopItemUI(item);
-            yield return null; // 💡 Tránh lag khi tạo nhiều item
+            yield return null; 
         }
     }
 
@@ -52,7 +51,7 @@ public class ShopVKUIManager : MonoBehaviour
         foreach (var item in filtered)
         {
             CreateShopItemUI(item);
-            yield return null; // 💡 Cho Unity nghỉ 1 frame giữa các item
+            yield return null; 
         }
     }
 

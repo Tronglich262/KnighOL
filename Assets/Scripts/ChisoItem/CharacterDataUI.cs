@@ -6,4 +6,3 @@ public class CharacterDataUI
     public int agility;
     public int vitality;
 }
-//dữ liệu chỉ số player 

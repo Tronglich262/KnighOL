@@ -3,13 +3,12 @@ using Fusion;
 
 public class ItemPickup : MonoBehaviour
 {
-    public string itemId; // ID dạng string, ví dụ "Sword01" hoặc "123"
+    public string itemId; 
     public int quantity = 1;
 
     private static int localItemHCCount = 0;
     private static bool missionCompleted = false;
-    private iteminfo info;  // Component chứa dữ liệu item nếu có
-
+    private iteminfo info;  
     private static UpdateMission _mission;
 
     private void Awake()
@@ -28,7 +27,7 @@ public class ItemPickup : MonoBehaviour
         if (!other.CompareTag("Player")) return;
 
         var netObj = other.GetComponent<NetworkObject>();
-        if (netObj == null || !netObj.HasInputAuthority) return; // Chỉ local player nhặt
+        if (netObj == null || !netObj.HasInputAuthority) return; 
 
         // 1. Thêm item vào inventory (tự lưu lên server nếu InventoryManager đã setup đúng)
         InventoryManager.Instance.AddItem(itemId, quantity);
@@ -41,7 +40,6 @@ public class ItemPickup : MonoBehaviour
         }
         else if (!int.TryParse(itemId, out itemIdInt) && !string.IsNullOrEmpty(itemId))
         {
-            // Nếu itemId là string, tra sang int trong database
             var stat = ItemStatDatabase.Instance.GetStats(itemId);
             if (stat != null) itemIdInt = stat.Item_ID;
             else
@@ -66,12 +64,11 @@ public class ItemPickup : MonoBehaviour
                 if (localItemHCCount >= 5)
                 {
                     missionCompleted = true;
-                    Debug.Log("🎉 [Client] Hoàn thành nhiệm vụ nhặt 5 item HC");
-                    _mission?.slotItemHc(); // Gọi hàm hiện popup/hoàn thành nhiệm vụ
+                    _mission?.slotItemHc();
                 }
             }
         }
 
-        Destroy(gameObject); // Xoá item trên map sau khi nhặt
+        Destroy(gameObject);
     }
 }

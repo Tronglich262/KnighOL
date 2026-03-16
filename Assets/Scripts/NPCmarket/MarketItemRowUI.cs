@@ -20,8 +20,7 @@ public class MarketItemRowUI : MonoBehaviour
     public void SetData(MarketItemDto item, ItemStats stats)
     {
         currentMarketItem = item;
-       // Debug.Log($"SetData: {item}, stats: {stats}");
-        //Debug.Log($"Name: {Name}, SoLuong: {SoLuong}, Price: {Price}, StatsText: {StatsText}, Icon: {Icon}");
+      
 
         if (Name == null) Debug.LogError("Name not assigned!");
         if (SoLuong == null) Debug.LogError("SoLuong not assigned!");
@@ -38,7 +37,6 @@ public class MarketItemRowUI : MonoBehaviour
             ? $" Sức mạnh:{stats.Strength} \n Phòng thủ:{stats.Defense} \n Nhanh nhẹn:{stats.Agility} \n Trí tuệ:{stats.Intelligence} \n Sinh lực:{stats.Vitality}"
             : "Không có dữ liệu";
     }
-
 
     //mua click 
     public void OnClickBuy()
@@ -95,7 +93,6 @@ public class MarketItemRowUI : MonoBehaviour
     private void ShowMessage(string msg)
     {
         Debug.Log(msg);
-        // Hiển thị UI message nếu có
     }
 }
 

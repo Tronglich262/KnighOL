@@ -10,14 +10,13 @@ public class InventoryManager : MonoBehaviour
 {
     public static InventoryManager Instance;
 
-    public InventoryUIManager uiManager; // gán từ scene
+    public InventoryUIManager uiManager; 
     public List<InventoryItem1> playerInventory = new List<InventoryItem1>();
     public List<InventoryItem1> equippedItemsList = new List<InventoryItem1>();
 
     [HideInInspector] public ClientSession session = new ClientSession();
 
     void Awake() => Instance = this;
-    // --- KHI LOGIN THÀNH CÔNG, GỌI HÀM NÀY ---
     public void OnLoginSuccess(int accountId, string token)
     {
         session.AccountId = accountId;
@@ -32,8 +31,7 @@ public class InventoryManager : MonoBehaviour
         if (item != null)
         {
             item.quantity += quantity;
-            // --- LUÔN gọi cập nhật lên server ---
-            SaveSingleItemToServer(itemId, item.quantity);   // <-- ADD dòng này!
+            SaveSingleItemToServer(itemId, item.quantity);  
         }
         else
         {
@@ -48,10 +46,10 @@ public class InventoryManager : MonoBehaviour
                 stats = data
             };
             playerInventory.Add(item);
-            SaveSingleItemToServer(itemId, quantity);    // Đã có rồi
+            SaveSingleItemToServer(itemId, quantity);    
         }
 
-        uiManager.DisplayInventory(playerInventory); // cập nhật UI
+        uiManager.DisplayInventory(playerInventory); 
     }
 
     public List<ItemStats> GetEquippedItems()
@@ -77,7 +75,6 @@ public class InventoryManager : MonoBehaviour
         }
         foreach (var item in equipped)
         {
-            //   Debug.Log($"[InventoryManager] 🧪 Trang bị: {item.Name}, Vitality: {item.Vitality}");
         }
         return equipped;
 
@@ -94,15 +91,13 @@ public class InventoryManager : MonoBehaviour
                 playerInventory.Remove(item);
                 newQuantity = 0;
             }
-            // LUÔN gọi cập nhật lên server với số lượng mới (0 nếu xóa)
             SaveSingleItemToServer(itemId, newQuantity);
         }
         else
         {
             Debug.LogWarning($"Không tìm thấy item {itemId} để remove.");
-            // Không cần gửi lên server trong trường hợp này!
         }
-        uiManager.DisplayInventory(playerInventory); // cập nhật lại UI sau khi remove
+        uiManager.DisplayInventory(playerInventory); 
     }
 
 
@@ -132,9 +127,8 @@ public class InventoryManager : MonoBehaviour
             playerInventory.Clear();
             foreach (var item in items)
             {
-                // item.itemId ở đây là int (DB trả về)
                 // Lookup string itemId tương ứng trong ItemStatDatabase (hoặc 1 mapping riêng)
-                string stringId = ItemStatDatabase.Instance.GetStringIdFromInt(item.itemId); // cần viết hàm này
+                string stringId = ItemStatDatabase.Instance.GetStringIdFromInt(item.itemId); 
                 var so = ItemStatDatabase.Instance.GetStats(stringId);
 
                 if (so != null)
@@ -151,12 +145,7 @@ public class InventoryManager : MonoBehaviour
                     Debug.LogWarning($"Không tìm thấy ItemStats cho DB itemId int: {item.itemId}");
                 }
             }
-
-
-            // Cập nhật UI inventory
             uiManager.DisplayInventory(playerInventory);
-
-            // Callback nếu có
             onLoaded?.Invoke(items);
         }
         else
@@ -176,7 +165,7 @@ public class InventoryManager : MonoBehaviour
             {
                 var invItem = new InventoryItem1
                 {
-                    itemId = itemStatsSO.itemId, // hoặc itemStatsSO.Item_ID nếu dùng int
+                    itemId = itemStatsSO.itemId, 
                     quantity = dto.quantity,
                     stats = itemStatsSO
                 };

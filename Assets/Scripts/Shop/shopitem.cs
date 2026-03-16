@@ -20,9 +20,9 @@ public class shopitem : MonoBehaviour
     private string currentType;
 
     //text
-    public GameObject shopNotifyPanel;      // Toàn bộ panel (cả nền và text)
-    public Image shopNotifyBg;              // Image nền
-    public TextMeshProUGUI shopNotifyText;  // Text để hiện thông báo
+    public GameObject shopNotifyPanel;      
+    public Image shopNotifyBg;            
+    public TextMeshProUGUI shopNotifyText;  
 
     private Coroutine notifyCoroutine;
     private void Awake()
@@ -70,7 +70,6 @@ public class shopitem : MonoBehaviour
     //gỡ ttrang bị 
 
 
-    // ✅ THÊM TỪ CODE B  tuấn anh
     public bool IsVisible()
     {
         return panelshop != null && panelshop.activeSelf;
@@ -98,12 +97,10 @@ public class shopitem : MonoBehaviour
     {
         shopNotifyPanel.SetActive(true);
 
-        // Reset opacity (ẩn panel)
         Color cBg = shopNotifyBg.color; cBg.a = 0; shopNotifyBg.color = cBg;
         Color cText = shopNotifyText.color; cText.a = 0; shopNotifyText.color = cText;
         shopNotifyText.text = "";
 
-        // Fade in nền + text (cùng lúc)
         float t = 0f;
         while (t < fadeTime)
         {
@@ -119,7 +116,6 @@ public class shopitem : MonoBehaviour
         shopNotifyBg.color = cBg;
         shopNotifyText.color = cText;
 
-        // Hiệu ứng chữ chạy
         shopNotifyText.text = "";
         foreach (char ch in message)
         {
@@ -127,7 +123,6 @@ public class shopitem : MonoBehaviour
             yield return new WaitForSeconds(typeSpeed);
         }
 
-        // Chờ text stayTime giây
         yield return new WaitForSeconds(stayTime);
 
         // Fade out

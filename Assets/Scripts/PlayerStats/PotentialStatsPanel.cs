@@ -35,12 +35,12 @@ public class PotentialStatsPanel : MonoBehaviour
         confirmBtn.onClick.AddListener(OnConfirm);
         if (cancelBtn != null) cancelBtn.onClick.AddListener(OnCancel);
 
-        gameObject.SetActive(false); // Mặc định ẩn panel
+        gameObject.SetActive(false); 
     }
 
     public void Show()
     {
-        ReloadStats();                 // Load lại chỉ số mới nhất từ server
+        ReloadStats();                
     }
 
     public void Hide()

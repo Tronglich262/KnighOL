@@ -209,7 +209,6 @@ public static class CharacterEquipHandler
     public static void TestEquipBow(Character character, string bowId)
     {
         EquipFullBow(character, bowId);
-        Debug.Log($"✅ TestEquipBow: Gán Bow '{bowId}' thành công.");
     }
 
     // ====== HÀM CŨ CHỈ ĐỂ DEMO ICON, ĐỪNG DÙNG CHO GAMEPLAY ======

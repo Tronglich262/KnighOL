@@ -1,11 +1,11 @@
 ﻿using UnityEngine;
 using TMPro;
-using UnityEngine.UI; // <-- nhớ import namespace này
+using UnityEngine.UI; 
 
 public class ChatInputUI : MonoBehaviour
 {
     public TMP_InputField inputField;
-    public Button sendButton; // <-- Thêm trường button
+    public Button sendButton; 
     private PlayerChat playerChat;
     public  ChatInputUI Instate;
     public void Awake()
@@ -14,7 +14,6 @@ public class ChatInputUI : MonoBehaviour
     }
     private void Start()
     {
-        // Gắn hàm OnSendButtonClick cho button (nếu quên kéo trong Inspector)
         if (sendButton != null)
             sendButton.onClick.AddListener(OnSendButtonClick);
     }
@@ -53,7 +52,6 @@ public class ChatInputUI : MonoBehaviour
         }
         WorldChatUIManager.Instance.ToggleTatchatlive();
     }
-    //tìm playerchat trong scene 
     public PlayerChat FindMyPlayerChat()
     {
         foreach (var pc in FindObjectsByType<PlayerChat>(FindObjectsSortMode.None))

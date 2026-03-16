@@ -7,7 +7,6 @@ public class PlayerChat : NetworkBehaviour
 
     public override void Spawned()
     {
-        // Chỉ gán cho player do client này điều khiển
         if (Object.HasInputAuthority)
         {
             var chatInputUI = FindFirstObjectByType<ChatInputUI>();

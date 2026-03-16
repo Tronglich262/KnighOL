@@ -10,7 +10,7 @@ public class FollowPreviewTarget : MonoBehaviour
         if (target != null)
         {
             transform.position = target.position + offset;
-            transform.LookAt(target); // đảm bảo nhìn vào nhân vật
+            transform.LookAt(target); 
         }
     }
 }

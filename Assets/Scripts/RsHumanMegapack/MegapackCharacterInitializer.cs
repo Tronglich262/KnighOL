@@ -11,7 +11,7 @@ public class MegapackCharacterInitializer : MonoBehaviour
         if (character == null)
             character = GetComponent<Character>();
 
-        // 👉 MEGAPACK: luôn reset
+        // MEGAPACK: luôn reset
      //  character.ResetCharacterToNaked();
     }
 }

@@ -400,7 +400,6 @@ public class ItemDetailsUI : MonoBehaviour
                 return;
         }
         // Serialize lại JSON
-        // Serialize lại JSON
         string updatedJson = JsonConvert.SerializeObject(dict, Formatting.None);
         PlayerDataHolder1.CharacterJson = updatedJson;
 
@@ -411,8 +410,7 @@ public class ItemDetailsUI : MonoBehaviour
             Debug.Log("Đã gửi JSON mới cho tất cả client.");
         }
 
-        //}
-        // 🟡 Nếu đang test trên clone, gửi JSON về player thật thông qua controller
+        //  Nếu đang test trên clone, gửi JSON về player thật thông qua controller
         if (playerClone != null)
         {
             var cloneCtrl = playerClone.GetComponent<PlayerCloneController>();
@@ -430,7 +428,7 @@ public class ItemDetailsUI : MonoBehaviour
             Debug.LogWarning("[ItemDetailsUI] playerClone chua duoc gan.");
         }
 
-        // 🟠 Đồng bộ với UI trung tâm (chỉ hiển thị preview)
+        // Đồng bộ với UI trung tâm (chỉ hiển thị preview)
         if (CharacterUIManager1.Instance != null)
         {
             //  string type = currentItem.stats.Type;
@@ -724,7 +722,6 @@ public class ItemDetailsUI : MonoBehaviour
             }
         }
     }
-    // Tuấn Anh
     public void SetCurrentItemId(string id, Sprite icon, string type)
     {
         currentItemId = id;

@@ -18,7 +18,7 @@ public class FusionManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject); // nếu muốn giữ qua scene
+            DontDestroyOnLoad(gameObject); 
         }
         else
         {
@@ -47,7 +47,6 @@ public class FusionManager : MonoBehaviour
         runner = runnerGO.GetComponent<NetworkRunner>();
         runner.ProvideInput = true;
 
-        // Tìm PlayerSpawner trong scene mới
         if (playerSpawner == null)
         {
             playerSpawner = FindFirstObjectByType<PlayerSpawner>();

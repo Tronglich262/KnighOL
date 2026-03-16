@@ -3,7 +3,7 @@ using UnityEngine.EventSystems;
 
 public class HidePanelOnClick : MonoBehaviour, IPointerClickHandler
 {
-    public GameObject panelToHide; // Kéo Panel popup vào
+    public GameObject panelToHide; 
 
     public void OnPointerClick(PointerEventData eventData)
     {

@@ -67,11 +67,9 @@ public class StartInventory : MonoBehaviour
             }
         }));
 
-        // Sau khi đã có PlayerState, load inventory như bình thường
         InventoryManager.Instance.LoadInventory(null);
         Debug.Log($"[StartInventory] Đang load inventory cho accountId: {InventoryManager.Instance.session.AccountId}, token: {InventoryManager.Instance.session.Token}");
 
-        // Tùy bạn: Gọi update UI sau khi xong mọi thứ
-        // ThongTin.instance?.UpdateStatsUI();
+      
     }
 }

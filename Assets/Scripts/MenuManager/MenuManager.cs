@@ -21,7 +21,7 @@ public class MenuManager : MonoBehaviour
 
     void Start()
     {
-        accountId = AuthManager.Instance.UserSession.AccountId; // ĐÚNG!
+        accountId = AuthManager.Instance.UserSession.AccountId; 
         if (accountId == 0)
         {
             Debug.LogError("Không có accountId, cần đăng nhập lại.");
@@ -54,8 +54,7 @@ public class MenuManager : MonoBehaviour
                 string.IsNullOrEmpty(raw) ||
                 raw == "null" ||
                 raw == "{}" ||
-                raw == "\"{}\""; // Trường hợp bị bao nháy
-
+                raw == "\"{}\""; 
             if (isEmptyCharacter)
             {
                 Debug.Log("Chưa có nhân vật, hiện Chơi Mới");

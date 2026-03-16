@@ -19,7 +19,6 @@ public class NicknameSyncManager : NetworkBehaviour
     }
     public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
     {
-        // Khi có người mới vào, client này sẽ gửi lại nickname của mình cho tất cả
         RPC_AnnounceNickName(PlayerDataHolder1.PlayerName, runner.LocalPlayer);
         Debug.Log($"[NickSync] Gửi lại nickname: {PlayerDataHolder1.PlayerName} - {runner.LocalPlayer}");
     }

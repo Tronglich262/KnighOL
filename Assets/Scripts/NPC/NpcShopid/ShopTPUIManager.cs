@@ -30,7 +30,7 @@ public class ShopTPUIManager : MonoBehaviour
         foreach (var item in filtered)
         {
             CreateShopItemUI(item);
-            yield return null; // Tránh lag
+            yield return null;
         }
     }
 
@@ -50,7 +50,7 @@ public class ShopTPUIManager : MonoBehaviour
         foreach (var item in filtered)
         {
             CreateShopItemUI(item);
-            yield return null; // 💡 Cho Unity nghỉ 1 frame giữa các item
+            yield return null; 
         }
     }
 

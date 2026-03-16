@@ -12,7 +12,6 @@ public class MarketItemDto
     public string itemType;
     public string itemDescription;
     public string itemRarity;
-    // Nếu backend trả về các trường này thì thêm:
     public int? strength;
     public int? defense;
     public int? agility;

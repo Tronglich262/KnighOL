@@ -112,7 +112,6 @@ public class EnemyDebuffManager : NetworkBehaviour
         }
         else
         {
-            // Proxy: dùng [Networked] timers (replicate tới late joiner) HOẶC _local* (preview ngay khi nhận RPC)
             bool stunLocal = t < _localStunEnd;
             bool burnLocal = t < _localBurnEnd;
             bool dizzyLocal = t < _localDizzyEnd;

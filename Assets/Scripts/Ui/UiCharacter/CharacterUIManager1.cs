@@ -38,7 +38,7 @@ public class CharacterUIManager1 : MonoBehaviour
     //load chỉ số
     private List<ItemStats> equippedItems = new List<ItemStats>();
     public static CharacterUIManager1 Instance;
-    public Character character; // ← nhân vật trong UI
+    public Character character; 
 
     public Text gold;
     public Text diamond;
@@ -351,12 +351,10 @@ public class CharacterUIManager1 : MonoBehaviour
 
             if (icon != null)
             {
-                // Debug.Log($" Đã tìm thấy icon với ID: {id}");
                 return icon;
             }
         }
 
-        //    Debug.LogWarning($" Không tìm thấy icon: {type}.{name} trong bất kỳ bộ nào.");
         return null;
     }
 

@@ -13,7 +13,7 @@ public class IconManager : MonoBehaviour
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
-            LoadAllIcons(); // Tự load toàn bộ icon 1 lần
+            LoadAllIcons(); 
         }
         else
         {
@@ -23,7 +23,7 @@ public class IconManager : MonoBehaviour
 
     void LoadAllIcons()
     {
-        Sprite[] allSprites = Resources.LoadAll<Sprite>(""); // Duyệt tất cả Resources
+        Sprite[] allSprites = Resources.LoadAll<Sprite>("");
         foreach (Sprite sprite in allSprites)
         {
             if (!iconDict.ContainsKey(sprite.name))

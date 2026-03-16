@@ -6,14 +6,14 @@ public class PlayerMapState : NetworkBehaviour
 {
     [Networked] public int CurrentMapRaw { get; set; }
 
-    // 🔒 khoá cứng input + movement
+    // khoá cứng input + movement
     [Networked] public NetworkBool FreezeMovement { get; set; }
 
     // spawn pending
     [Networked] public Vector3 PendingTeleportPos { get; set; }
     [Networked] public Quaternion PendingTeleportRot { get; set; }
 
-    // ⏱ unlock theo tick (Fusion cũ hỗ trợ)
+    //unlock theo tick (Fusion cũ hỗ trợ)
     [Networked] public TickTimer FreezeTimer { get; set; }
 
     private MovementExample movement;
@@ -42,7 +42,7 @@ public class PlayerMapState : NetworkBehaviour
         PendingTeleportPos = spawnPos;
         PendingTeleportRot = spawnRot;
 
-        // 🔒 khoá 0.3s (~6 tick)
+        // khoá 0.3s (~6 tick)
         FreezeTimer = TickTimer.CreateFromSeconds(Runner, 0.3f);
 
         movement?.ForceStop();
@@ -69,7 +69,7 @@ public class PlayerMapState : NetworkBehaviour
             movement?.ForceStop();
         }
 
-        // ⏱ mở khoá SAU khi timer hết
+        //mở khoá SAU khi timer hết
         if (FreezeMovement && FreezeTimer.Expired(Runner))
         {
             FreezeMovement = false;

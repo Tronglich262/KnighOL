@@ -10,7 +10,6 @@ using UnityEngine.UI;
 
 public class WorldChatUIManager : NetworkBehaviour
 {
-    // Dictionary lưu avatar theo tên player
     private Dictionary<string, Sprite> playerAvatars = new();
     [Header("Avatar mặc định (khi chưa có)")]
     public Sprite defaultAvatarSprite;
@@ -60,7 +59,6 @@ public class WorldChatUIManager : NetworkBehaviour
     private const int maxBarLines = 2;
     private const int maxPanelLines = 50;
 
-    // Key: partnerName, Value: List<(sender, message)>
     private readonly Dictionary<string, List<(string sender, string message)>> privateChatLogs = new();
     private string currentPrivateTargetName = null;
     private HashSet<string> privatePartners = new();
@@ -104,7 +102,6 @@ public class WorldChatUIManager : NetworkBehaviour
 
     void ShowChatPanel()
     {
-        //check  nếu đang bật thì k cho mở chát , chặn click
         bool isPreviewPanelActive = CharacterPreviewPanel.Instance != null && CharacterPreviewPanel.Instance.gameObject.activeSelf;
         bool isCharacterUIActive = CharacterUIManager1.Instance != null && CharacterUIManager1.Instance.gameObject.activeSelf;
         bool isthongtinUI = CharacterUIManager.Instance.Kynang != null && CharacterUIManager.Instance.Kynang.gameObject.activeSelf;
@@ -193,7 +190,6 @@ public class WorldChatUIManager : NetworkBehaviour
 
     void TrySendChat()
     {
-        //StartCoroutine(DelayAndBroadcastAvatarThenSendChat()); // Sử dụng Coroutine
         StartCoroutine(DelayAndBroadcastAvatarThenSendChat());
     }
 
@@ -218,7 +214,6 @@ public class WorldChatUIManager : NetworkBehaviour
 
     private void UpdateChatBar()
     {
-        // Luôn lấy dòng chat cuối cùng
         TMP_Text barLineText = barLines[0];
         var avatarImg = chatBar.transform.Find("AvatarImage")?.GetComponent<Image>();
         if (chatHistory.Count > 0)

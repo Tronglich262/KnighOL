@@ -33,11 +33,11 @@ public class PlayerAttackHit : NetworkBehaviour
 
             enemy.RPC_TakeDamage(
                 damage,
-                Object.InputAuthority, // ❗ đúng PlayerRef
+                Object.InputAuthority, 
                 Object
             );
 
-            break; // melee đánh 1 target
+            break; 
         }
     }
 

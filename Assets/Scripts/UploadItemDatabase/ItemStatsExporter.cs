@@ -33,7 +33,7 @@ public class ItemStatsExporter : MonoBehaviour
 
     IEnumerator UploadToServer(string json)
     {
-        string apiUrl = "https://localhost:7124/api/item/upload"; // ← Thay bằng URL thật của bạn
+        string apiUrl = "https://localhost:7124/api/item/upload"; 
 
         UnityWebRequest request = new UnityWebRequest(apiUrl, "POST");
         byte[] jsonBytes = System.Text.Encoding.UTF8.GetBytes(json);
@@ -45,11 +45,11 @@ public class ItemStatsExporter : MonoBehaviour
 
         if (request.result == UnityWebRequest.Result.Success)
         {
-            Debug.Log("🎉 Upload thành công!");
+            Debug.Log(" Upload thành công!");
         }
         else
         {
-            Debug.LogError("❌ Upload thất bại: " + request.error + "\n" + request.downloadHandler.text);
+            Debug.LogError("Upload thất bại: " + request.error + "\n" + request.downloadHandler.text);
         }
     }
 }

@@ -21,9 +21,9 @@ public class ShopTP : MonoBehaviour
     private string currentType;
     public TMP_Text Price;
     //text
-    public GameObject shopNotifyPanel;      // Toàn bộ panel (cả nền và text)
-    public Image shopNotifyBg;              // Image nền
-    public TextMeshProUGUI shopNotifyText;  // Text để hiện thông báo
+    public GameObject shopNotifyPanel;      
+    public Image shopNotifyBg;             
+    public TextMeshProUGUI shopNotifyText;  
     private Coroutine notifyCoroutine;
     private void Awake()
     {

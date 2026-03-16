@@ -111,7 +111,7 @@ public class CharacterUIManager : MonoBehaviour
                 Closebtn.SetActive(true);
                 codecharacterui1.SetActive(true);
                 Vien.SetActive(true);
-                CharacterButton.SetActive(false); // Ẩn nút CharacterButton khi mở panel
+                CharacterButton.SetActive(false); 
                 WorldChatUIManager.Instance.ToggleTatCharbarAndChatPrivateList();
                 QuestDisplay.Instance.TatactiveallQuestDisplay();               
               //  bool checktoggle = MovementExample.Instante.checktoggle = true;
@@ -209,7 +209,7 @@ public class CharacterUIManager : MonoBehaviour
     //====phần thêm thông tin account khác======
     public void ShowPanelOnlyThongTin()
     {
-        characterpreviewpanel.SetActive(true);   // Bật panel chính
+        characterpreviewpanel.SetActive(true);   
 
     }
     public void ToggleTat()
@@ -250,7 +250,6 @@ public class CharacterUIManager : MonoBehaviour
         SkillButtonManager.Instance.ToggleSkills(true);
 
     }
-    //hàm tắt bật characterButton gọi qua các srcip ( cấm động )
     public void ToggleTatCharacterButton()
     {
         CharacterButton.SetActive(false);

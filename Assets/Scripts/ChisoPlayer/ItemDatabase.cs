@@ -13,7 +13,6 @@ public class ItemDatabase : MonoBehaviour
     private void Awake()
     {
         Instance = this;
-       // LoadAllItemStats(); // <--- thêm dòng này
 
         itemDict = new Dictionary<string, List<ItemStats>>();
 
@@ -22,14 +21,12 @@ public class ItemDatabase : MonoBehaviour
             string fullId = item.itemId.Trim();
             string shortId = fullId.Split('.').Last();
 
-            // Thêm fullId
             if (!itemDict.ContainsKey(fullId))
             {
                 itemDict[fullId] = new List<ItemStats>();
             }
             itemDict[fullId].Add(item);
 
-            // Thêm shortId (phần tên item)
             if (!itemDict.ContainsKey(shortId))
             {
                 itemDict[shortId] = new List<ItemStats>();
@@ -38,11 +35,7 @@ public class ItemDatabase : MonoBehaviour
         }
     }
 
-    //private void LoadAllItemStats()
-    //{
-    //    items = Resources.LoadAll<ItemStats>("ItemStats").ToList();
-    //    Debug.Log($"[ItemDatabase] Đã load {items.Count} item từ Resources/ItemStats");
-    //}
+   
 
     public ItemStats GetItemStatsById(string id, string expectedType = null)
     {
@@ -56,7 +49,6 @@ public class ItemDatabase : MonoBehaviour
             return statsList.FirstOrDefault();
         }
 
-        //  Debug.LogWarning($"[ItemDatabase] Không tìm thấy itemId: {id} Type:  {expectedType}");
         return null;
     }
 }

@@ -34,9 +34,7 @@ public class TargetInfoPanel : MonoBehaviour
         Hide();
     }
 
-    // =========================
-    // ENEMY
-    // =========================
+   
 
     /// <summary>
     /// Hien thi thong tin enemy

@@ -15,7 +15,6 @@ public class InventorySlotUI : MonoBehaviour
 
         if (data.stats == null)
         {
-            Debug.LogError("❌ ItemStats (stats) bị null.");
             return;
         }
 

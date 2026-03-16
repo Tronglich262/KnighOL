@@ -7,7 +7,6 @@ public class PlayerLevelManager : MonoBehaviour
 
     void Start()
     {
-        // Lấy giá trị từ PlayerState đã load từ server (PlayerDataHolder1.CurrentPlayerState)
         var state = PlayerDataHolder1.CurrentPlayerState;
         if (state != null)
         {
@@ -19,7 +18,6 @@ public class PlayerLevelManager : MonoBehaviour
 
     public void AddExp(int amount)
     {
-        // Lấy lại state mới nhất từ backend đã lưu ở PlayerDataHolder1
         var state = PlayerDataHolder1.CurrentPlayerState;
         if (state != null)
         {
@@ -48,11 +46,8 @@ public class PlayerLevelManager : MonoBehaviour
             expMax = PlayerLevelUI.Instante.ExpToNextLevel(level);
         }
 
-        // Cập nhật lại PlayerState local
         PlayerDataHolder1.CurrentPlayerState.exp = exp;
         PlayerDataHolder1.CurrentPlayerState.level = level;
-
-        // Đẩy lên server mỗi lần thay đổi
         SyncToServer();
     }
 

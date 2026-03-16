@@ -36,7 +36,6 @@ public class ItemStatDatabase : MonoBehaviour
         dict.TryGetValue(id, out var stats);
         return stats;
     }
-    //code cua tuấn anh
     public List<ItemStats> GetAll()
     {
         return new List<ItemStats>(dictById.Values);
@@ -45,7 +44,7 @@ public class ItemStatDatabase : MonoBehaviour
     {
         if (dictById.TryGetValue(itemId, out var stats))
         {
-            return stats.itemId; // trả về chuỗi chuẩn để dùng lookup
+            return stats.itemId; 
         }
         return null;
     }

@@ -47,7 +47,7 @@ public class CharacterPreviewPanel : MonoBehaviour
             characterPreview = clonePreviewObj.GetComponent<Character>();
         }
 
-        gameObject.SetActive(false); // đặt ở đây
+        gameObject.SetActive(false); 
     }
 
 
@@ -82,7 +82,6 @@ public class CharacterPreviewPanel : MonoBehaviour
             characterPreview.FromJson(json);
             characterPreview.Initialize();
 
-            // ---- BỔ SUNG ĐÚNG CHUẨN PHẦN NÀY ----
             string[] mixTypes = { "Boots", "Gloves", "Belt", "Pauldrons", "Vest" };
             var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
 
@@ -106,7 +105,7 @@ public class CharacterPreviewPanel : MonoBehaviour
                     }
                 }
             }
-                    characterPreview.Initialize(); // Gọi lại để cập nhật hoàn chỉnh visual
+                    characterPreview.Initialize(); 
         }
 
         else
@@ -117,7 +116,7 @@ public class CharacterPreviewPanel : MonoBehaviour
 
 
 
-        LoadCharacterToUI(); // Update UI luôn!
+        LoadCharacterToUI();
     }
 
     /// <summary>

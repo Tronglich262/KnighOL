@@ -13,11 +13,11 @@ public class EquipmentSlotUI : MonoBehaviour, IPointerClickHandler
     public Image iconImage;
     public string itemType;
     public int itemPrice;
-    public NpcShopItem npcShopItemData; // <-- Thêm biến này vào slot (gán khi tạo slot)
+    public NpcShopItem npcShopItemData; 
     public static EquipmentSlotUI Instante; 
    
     [Header("Check nếu là slot của Character UI")]
-    public bool isCharacterSlot; // Gán đúng ở Inspector!
+    public bool isCharacterSlot; 
 
     public enum ShopPanelType { None, ShopTP, ShopVK, ShopPK, Daily }
     [Header("Phân biệt panel shop (nếu dùng chung prefab slot)")]
@@ -31,7 +31,7 @@ public class EquipmentSlotUI : MonoBehaviour, IPointerClickHandler
     {
         itemId = id;
         itemType = type;
-        itemPrice = price; // <-- Lưu giá ở đây
+        itemPrice = price; 
         if (iconImage != null)
         {
             iconImage.sprite = icon;
@@ -113,11 +113,6 @@ public class EquipmentSlotUI : MonoBehaviour, IPointerClickHandler
 
         // LUÔN show, không toggle hide nữa!
         shopPanel.Show(id, icon, type, itemPrice);
-        //var buyButton = FindFirstObjectByType<BuyButton>();
-        //if (buyButton != null)
-        //{
-        //    buyButton.SetSelectedSlot(this);
-        //}
         var itemDetailsUI = ItemDetailsUI.Instance;
         if (itemDetailsUI != null)
         {
@@ -138,11 +133,6 @@ public class EquipmentSlotUI : MonoBehaviour, IPointerClickHandler
 
         // LUÔN show, không toggle hide nữa!
         shopPanel.Show(id, icon, type, itemPrice);
-        //var buyButton = FindFirstObjectByType<BuyButton>();
-        //if (buyButton != null)
-        //{
-        //    buyButton.SetSelectedSlot(this);
-        //}
         var itemDetailsUI = ItemDetailsUI.Instance;
         if (itemDetailsUI != null)
         {
@@ -164,11 +154,6 @@ public class EquipmentSlotUI : MonoBehaviour, IPointerClickHandler
 
         // LUÔN show, không toggle hide nữa!
         shopPanel.Show(id, icon, type, itemPrice);
-        //var buyButton = FindFirstObjectByType<BuyButton>();
-        //if (buyButton != null)
-        //{
-        //    buyButton.SetSelectedSlot(this);
-        //}
         var itemDetailsUI = ItemDetailsUI.Instance;
         if (itemDetailsUI != null)
         {
@@ -181,7 +166,7 @@ public class EquipmentSlotUI : MonoBehaviour, IPointerClickHandler
         if (dailyPanel == null) return;
 
         if (!dailyPanel.activeSelf)
-            dailyPanel.SetActive(true); // Chỉ mở panel nếu đang tắt
+            dailyPanel.SetActive(true); 
 
         // Khi panel đã mở, chỉ cập nhật thông tin item
         var itemDetailsUI = ItemDetailsUI.Instance;

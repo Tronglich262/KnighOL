@@ -37,10 +37,10 @@ public class AuthManager : MonoBehaviour
 
     //ẩn hiện mk
     [Header("Toggle mật khẩu đăng nhập")]
-    public Button loginPasswordToggleBtn;      // Button mắt bên cạnh ô mật khẩu đăng nhập
-    public Image loginPasswordEyeIcon;         // Optional: Image icon trong button (nếu có)
-    public Sprite eyeOpen;                     // Optional
-    public Sprite eyeClosed;                   // Optional
+    public Button loginPasswordToggleBtn;      
+    public Image loginPasswordEyeIcon;         
+    public Sprite eyeOpen;                     
+    public Sprite eyeClosed;                
 
     private bool isLoginPasswordShown = false;
     public ClientSession UserSession = new ClientSession();
@@ -88,7 +88,6 @@ public class AuthManager : MonoBehaviour
     }
     IEnumerator ClearLoginMessageAfterDelay(string msg, float delay)
     {
-        // UI không tồn tại → bỏ
         if (loginMessageText == null)
             yield break;
 
@@ -96,7 +95,6 @@ public class AuthManager : MonoBehaviour
 
         yield return new WaitForSeconds(delay);
 
-        // Scene khác rồi → UI bị destroy
         if (loginMessageText != null)
             loginMessageText.text = "";
     }

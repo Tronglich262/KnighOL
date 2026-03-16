@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 public class Nhiemvuinfo : MonoBehaviour
 {
-    public Text nhiemVuText;  // Kéo text ở Inspector vào
+    public Text nhiemVuText;  
     public static Nhiemvuinfo Instance;
     public void Awake()
     {

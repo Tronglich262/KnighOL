@@ -72,17 +72,12 @@ public class CharacterQuickInfoPanel : MonoBehaviour
     public void OnClickXemThongTin()
     {
         if (_currentTarget == null) return;
-
-        // Ẩn panel nhanh
         gameObject.SetActive(false);
-
-        // Gọi qua PreviewPanel như trước đây
         string json = _currentTarget.GetFullCharacterJson();
         CharacterPreviewPanel.Instance.ClearPreviewData();
         CharacterPreviewPanel.Instance.gameObject.SetActive(true);
         if (CharacterPreviewPanel.Instance.characterPreview != null)
         {
-            // SkillButtonManager.Instance.Skillbutton.SetActive(false);
             WorldChatUIManager.Instance.Chat.SetActive(false);
             QuestDisplay.Instance.TatactiveallQuestDisplay();
             WorldChatUIManager.Instance.chatBar.SetActive(false);

@@ -14,7 +14,7 @@ public class PlayerInfo : MonoBehaviour
         nameTag = GetComponentInChildren<NameTagManager>();
     }
 
-    // tên player lấy trực tiếp từ NameTagManager
+    // lấy tên từ NameTagManager 
     public string PlayerName
     {
         get
@@ -26,7 +26,6 @@ public class PlayerInfo : MonoBehaviour
         }
     }
 
-    // ❌ không cho target chính mình
     public bool CanBeTargetedBy(NetworkObject requester)
     {
         if (netObj == null || requester == null) return false;

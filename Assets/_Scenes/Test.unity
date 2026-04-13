@@ -4789,6 +4789,57 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1150905580}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &82484312
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 82484313}
+  - component: {fileID: 82484314}
+  m_Layer: 5
+  m_Name: WorldChatPool
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &82484313
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 82484312}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1604881043}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &82484314
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 82484312}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3ac5731d8b2b5c942b37d24ff3979eda, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  prefab: {fileID: 2905567940831128894, guid: f633020eaa021644e864a617ce9a049f, type: 3}
+  parent: {fileID: 1581148808}
+  preloadCount: 10
 --- !u!1 &83132740
 GameObject:
   m_ObjectHideFlags: 0
@@ -59575,6 +59626,57 @@ Transform:
   - {fileID: 2070730023}
   m_Father: {fileID: 66159973}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1101988741
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1101988742}
+  - component: {fileID: 1101988743}
+  m_Layer: 5
+  m_Name: PrivateChatPool
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1101988742
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1101988741}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1604881043}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1101988743
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1101988741}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3ac5731d8b2b5c942b37d24ff3979eda, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  prefab: {fileID: 5864203434711195980, guid: 4f047c2b11061fe48b9cc73c87b54c26, type: 3}
+  parent: {fileID: 534543112}
+  preloadCount: 10
 --- !u!1 &1103303609
 GameObject:
   m_ObjectHideFlags: 0
@@ -67303,6 +67405,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 50cbbf00088427f42bb3c6fe1a49b44e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  resourcesPath: ItemStats
 --- !u!4 &1236207409
 Transform:
   m_ObjectHideFlags: 0
@@ -86875,6 +86978,8 @@ RectTransform:
   - {fileID: 1607905400}
   - {fileID: 1099077277}
   - {fileID: 295905257}
+  - {fileID: 82484313}
+  - {fileID: 1101988742}
   m_Father: {fileID: 714426352}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -86918,6 +87023,8 @@ MonoBehaviour:
   barLines:
   - {fileID: 1997876893}
   chatBarButton: {fileID: 954754114}
+  worldChatPool: {fileID: 82484314}
+  privateChatPool: {fileID: 1101988743}
   chatPanel: {fileID: 957400496}
   chatContent: {fileID: 1581148808}
   chatMessagePrefab: {fileID: 2905567940831128894, guid: f633020eaa021644e864a617ce9a049f, type: 3}
@@ -92949,6 +93056,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 50cbbf00088427f42bb3c6fe1a49b44e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  resourcesPath: ItemStats
 --- !u!4 &1695511508
 Transform:
   m_ObjectHideFlags: 0

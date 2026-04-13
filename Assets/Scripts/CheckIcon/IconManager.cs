@@ -3,70 +3,63 @@ using UnityEngine;
 
 public class IconManager : MonoBehaviour
 {
-    public static IconManager Instance;
+    public static IconManager Instance { get; private set; }
 
-    private Dictionary<string, Sprite> iconDict = new Dictionary<string, Sprite>();
+    private readonly Dictionary<string, Sprite> iconDict = new();
 
-    void Awake()
+    [SerializeField] private string iconFolder = "Icons";
+
+    private void Awake()
     {
-        if (Instance == null)
-        {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
-            LoadAllIcons(); 
-        }
-        else
+        if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
+            return;
         }
+
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
+        LoadAllIcons();
     }
 
-    void LoadAllIcons()
+    private void LoadAllIcons()
     {
-        Sprite[] allSprites = Resources.LoadAll<Sprite>("");
+        iconDict.Clear();
+
+        Sprite[] allSprites = Resources.LoadAll<Sprite>(iconFolder);
         foreach (Sprite sprite in allSprites)
         {
+            if (sprite == null) continue;
+
             if (!iconDict.ContainsKey(sprite.name))
-            {
                 iconDict.Add(sprite.name, sprite);
-            }
         }
 
-        Debug.Log(" Loaded " + iconDict.Count + " icon từ Resources.");
+        Debug.Log($"[IconManager] Loaded {iconDict.Count} icons from Resources/{iconFolder}");
     }
 
     public Sprite LoadSpriteFromTexture(string fullName)
     {
-        // Tự động thử:
-        // 1. fullName gốc
-        // 2. fullName sau khi bỏ màu #...
-        // 3. Tên cuối
-        // 4. Tên sau khi bỏ tag [Paint]
+        if (string.IsNullOrWhiteSpace(fullName))
+            return null;
 
-        List<string> tryNames = new List<string>();
+        if (iconDict.TryGetValue(fullName, out var found))
+            return found;
 
-        tryNames.Add(fullName); // Gốc
-
-        // Bỏ mã màu
         string noColor = fullName.Split('#')[0];
-        tryNames.Add(noColor);
+        if (iconDict.TryGetValue(noColor, out found))
+            return found;
 
-        // Lấy tên cuối
         string[] parts = noColor.Split('.');
         string lastPart = parts.Length > 0 ? parts[^1] : noColor;
-        tryNames.Add(lastPart);
+        if (iconDict.TryGetValue(lastPart, out found))
+            return found;
 
-        // Bỏ tag [Paint] nếu có
-        if (lastPart.Contains("["))
+        int bracketIndex = lastPart.IndexOf('[');
+        if (bracketIndex >= 0)
         {
-            string clean = lastPart.Substring(0, lastPart.IndexOf('[')).Trim();
-            tryNames.Add(clean);
-        }
-
-        // Thử lần lượt từng cách
-        foreach (var name in tryNames)
-        {
-            if (iconDict.TryGetValue(name, out Sprite found))
+            string clean = lastPart.Substring(0, bracketIndex).Trim();
+            if (iconDict.TryGetValue(clean, out found))
                 return found;
         }
 

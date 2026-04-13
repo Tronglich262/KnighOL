@@ -7,31 +7,38 @@ public class ChatBubble : MonoBehaviour
     public CanvasGroup canvasGroup;
     public float displayTime = 3f;
 
+    private Camera mainCam;
+
     private void Awake()
     {
+        mainCam = Camera.main;
         Hide();
     }
 
     public void Show(string message)
     {
         chatText.text = message;
-        canvasGroup.alpha = 1;
+        canvasGroup.alpha = 1f;
         CancelInvoke();
         Invoke(nameof(Hide), displayTime);
     }
 
     public void Hide()
     {
-        canvasGroup.alpha = 0;
+        canvasGroup.alpha = 0f;
     }
 
-    // Bubble luôn hướng về camera
     private void LateUpdate()
     {
-        if (canvasGroup.alpha > 0 && Camera.main != null)
+        if (canvasGroup.alpha > 0f)
         {
-            transform.forward = Camera.main.transform.forward;
+            if (mainCam == null)
+                mainCam = Camera.main;
+
+            if (mainCam != null)
+                transform.forward = mainCam.transform.forward;
         }
+
         if (transform.parent != null)
         {
             Vector3 parentScale = transform.parent.lossyScale;

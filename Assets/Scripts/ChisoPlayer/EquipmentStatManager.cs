@@ -5,20 +5,30 @@ using Newtonsoft.Json;
 public class EquipmentStatManager : MonoBehaviour
 {
     public List<ItemStats> equippedItems = new();
+
     private CharacterStats stats;
 
-    void Awake()
+    private void Awake()
     {
         stats = GetComponent<CharacterStats>();
     }
 
-    // GOI KHI LOGIN
     public void LoadFromCharacterJson(string json)
     {
         equippedItems.Clear();
-        if (string.IsNullOrEmpty(json)) return;
+
+        if (string.IsNullOrEmpty(json))
+        {
+            Recalculate();
+            return;
+        }
 
         var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
+        if (dict == null)
+        {
+            Recalculate();
+            return;
+        }
 
         foreach (var pair in dict)
         {
@@ -32,32 +42,39 @@ public class EquipmentStatManager : MonoBehaviour
         Recalculate();
     }
 
-    // GOI KHI MAT / THAO DO
     public void Equip(ItemStats item)
     {
-        equippedItems.RemoveAll(i => i.Type == item.Type);
+        if (item == null) return;
+
+        equippedItems.RemoveAll(i => i != null && i.Type == item.Type);
         equippedItems.Add(item);
         Recalculate();
     }
 
     public void Unequip(string type)
     {
-        equippedItems.RemoveAll(i => i.Type == type);
+        if (string.IsNullOrEmpty(type)) return;
+
+        equippedItems.RemoveAll(i => i != null && i.Type == type);
         Recalculate();
     }
 
-    void Recalculate()
+    private void Recalculate()
     {
-        stats.RecalculateStatsFromEquipment(equippedItems);
+        if (stats != null)
+            stats.RecalculateStatsFromEquipment(equippedItems);
+
         ThongTin.instance?.UpdateStatsUI();
     }
 
-    ItemStats FindItemStats(string itemId)
+    private ItemStats FindItemStats(string itemId)
     {
-        var all = Resources.LoadAll<ItemStats>("ItemStats");
-        foreach (var i in all)
-            if (i.itemId == itemId || i.Item_ID.ToString() == itemId)
-                return i;
-        return null;
+        if (ItemStatDatabase.Instance == null || string.IsNullOrWhiteSpace(itemId))
+            return null;
+
+        if (int.TryParse(itemId, out int intId))
+            return ItemStatDatabase.Instance.GetStatsByIntId(intId);
+
+        return ItemStatDatabase.Instance.GetStatsByStringId(itemId);
     }
 }

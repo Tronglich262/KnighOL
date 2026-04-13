@@ -17,18 +17,18 @@ public class PlayerChat : NetworkBehaviour
 
     public void SendChat(string message)
     {
-        if (!string.IsNullOrWhiteSpace(message))
-        {
-            RPC_ShowChat(message);
-        }
+        if (!Object.HasInputAuthority) return;
+
+        message = message?.Trim();
+        if (string.IsNullOrEmpty(message)) return;
+
+        RPC_ShowChat(message);
     }
 
-    [Rpc(RpcSources.All, RpcTargets.All)]
+    [Rpc(RpcSources.InputAuthority, RpcTargets.All)]
     public void RPC_ShowChat(string message)
     {
         if (chatBubble != null)
-        {
             chatBubble.Show(message);
-        }
     }
 }

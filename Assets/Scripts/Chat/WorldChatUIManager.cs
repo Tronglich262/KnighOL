@@ -23,6 +23,10 @@ public class WorldChatUIManager : NetworkBehaviour
     public TMP_Text[] barLines;
     public Button chatBarButton;
 
+    [Header("Pool")]
+    [SerializeField] private UIItemPool worldChatPool;
+    [SerializeField] private UIItemPool privateChatPool;
+
     [Header("ChatPanel (bảng lớn)")]
     public GameObject chatPanel;
     public Transform chatContent;
@@ -127,8 +131,14 @@ public class WorldChatUIManager : NetworkBehaviour
         privateChatListPanel.SetActive(false);
         QuestDisplay.Instance.TatactiveallQuestDisplay();
         ToggleTatCharbarAndChatPrivateList();
-        foreach (Transform child in chatContent) Destroy(child.gameObject);
-        foreach (var (sender, message) in chatHistory) AddMessageToPanel(sender, message);
+        worldChatPool.ReleaseAll();
+
+        foreach (var (sender, message) in chatHistory)
+            AddMessageToPanel(sender, message);
+
+        Canvas.ForceUpdateCanvases();
+        scrollRect.verticalNormalizedPosition = 0f;
+
         inputField.ActivateInputField();
         currentPrivateTargetName = null;
 
@@ -190,7 +200,15 @@ public class WorldChatUIManager : NetworkBehaviour
 
     void TrySendChat()
     {
-        StartCoroutine(DelayAndBroadcastAvatarThenSendChat());
+        string msg = inputField.text.Trim();
+        if (string.IsNullOrEmpty(msg))
+            return;
+
+        string sender = PlayerDataHolder1.PlayerName;
+        RPC_SendChat(sender, msg);
+
+        inputField.text = "";
+        inputField.ActivateInputField();
     }
 
     [Rpc(RpcSources.All, RpcTargets.All)]
@@ -255,7 +273,8 @@ public class WorldChatUIManager : NetworkBehaviour
     {
         bool isMine = sender == PlayerDataHolder1.PlayerName;
 
-        var go = Instantiate(chatMessagePrefab, chatContent);
+        var go = worldChatPool.Get();
+        go.transform.SetParent(chatContent, false); 
         var avatarImg = go.transform.Find("AvatarImage")?.GetComponent<Image>();
         var nickBtn = go.transform.Find("NickNameButton")?.GetComponent<Button>();
         var nickText = go.transform.Find("NickNameButton/NickNameText")?.GetComponent<TMP_Text>();
@@ -294,9 +313,6 @@ public class WorldChatUIManager : NetworkBehaviour
             nickBtn.onClick.RemoveAllListeners();
             nickBtn.onClick.AddListener(() => ShowPrivateChat(sender));
         }
-
-        Canvas.ForceUpdateCanvases();
-        scrollRect.verticalNormalizedPosition = 0f;
     }
 
     // ==== CHAT RIÊNG ====
@@ -358,14 +374,14 @@ public class WorldChatUIManager : NetworkBehaviour
     {
         if (privateContent == null) return;
 
-        foreach (Transform child in privateContent)
-            Destroy(child.gameObject);
+        privateChatPool.ReleaseAll();
 
         if (privateChatLogs.TryGetValue(otherName, out var log))
         {
             foreach (var (sender, message) in log)
             {
-                var go = Instantiate(privateMsgPrefab, privateContent);
+                var go = privateChatPool.Get();
+                go.transform.SetParent(privateContent, false);
                 var text = go.GetComponentInChildren<TMP_Text>();
                 if (text == null) continue;
                 text.text = (sender == PlayerDataHolder1.PlayerName ? $"Me: {message}" : $"{sender}: {message}");
@@ -494,35 +510,18 @@ public class WorldChatUIManager : NetworkBehaviour
         var sprite = GetPlayerAvatarSprite();
         playerAvatars[PlayerDataHolder1.PlayerName] = sprite;
     }
-    //deley gửi hình ảnh
-    private IEnumerator DelayAndBroadcastAvatarThenSendChat()
-    {
-        // Nếu vừa đổi đồ, phải đợi ít nhất 1 frame để RenderTexture update
-        yield return null; // Delay 1 frame
-        UpdateMyAvatar();
 
-        string msg = inputField.text.Trim();
-        if (!string.IsNullOrEmpty(msg))
-        {
-            string sender = PlayerDataHolder1.PlayerName;
-            RPC_SendChat(sender, msg);
-            inputField.text = "";
-            inputField.ActivateInputField();
-        }
-    }
 
     public void ToggleTatChat()
     {
         chatlive.SetActive(!chatlive.activeSelf);
-        // Nếu vừa bật chat lên (từ false thành true)
-        if (chatlive.activeSelf)
+
+        if (chatlive.activeSelf && chatInputUI != null)
         {
-            // Gọi đúng qua instance, KHÔNG dùng tên class!
-            var myPlayerChat = chatInputUI.FindMyPlayerChat();
-            chatInputUI.SetPlayerChat(myPlayerChat);
+            // Chỉ fallback khi cần
+            chatInputUI.FindMyPlayerChat();
         }
     }
-
 
     //hàm tắt bật characterButton gọi qua các srcip ( cấm động )
     public void ToggleTatCharbarAndChatPrivateList()

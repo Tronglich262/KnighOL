@@ -1,47 +1,33 @@
 ﻿using UnityEngine;
 using TMPro;
-using UnityEngine.UI; 
+using UnityEngine.UI;
 
 public class ChatInputUI : MonoBehaviour
 {
     public TMP_InputField inputField;
-    public Button sendButton; 
+    public Button sendButton;
+
     private PlayerChat playerChat;
-    public  ChatInputUI Instate;
-    public void Awake()
-    {
-        Instate = this;
-    }
+
     private void Start()
     {
         if (sendButton != null)
             sendButton.onClick.AddListener(OnSendButtonClick);
+
+        if (inputField != null)
+            inputField.onSubmit.AddListener(_ => OnSendButtonClick());
     }
 
     public void SetPlayerChat(PlayerChat pc)
     {
-        playerChat = pc;
-    }
-
-    void Update()
-    {
-        if (inputField.isFocused && Input.GetKeyDown(KeyCode.KeypadEnter) && playerChat != null)
-        {
-            if (!string.IsNullOrWhiteSpace(inputField.text))
-            {
-                playerChat.SendChat(inputField.text);
-                inputField.text = "";
-            }
-        }
+        if (pc != null)
+            playerChat = pc;
     }
 
     public void OnSendButtonClick()
     {
-        Debug.Log("Bấm Send!");
-        playerChat = FindMyPlayerChat();
         if (playerChat != null && !string.IsNullOrWhiteSpace(inputField.text))
         {
-            Debug.Log("playerChat.SendChat: " + inputField.text);
             playerChat.SendChat(inputField.text);
             inputField.text = "";
             inputField.ActivateInputField();
@@ -50,16 +36,25 @@ public class ChatInputUI : MonoBehaviour
         {
             Debug.LogWarning("playerChat NULL hoặc input rỗng!");
         }
-        WorldChatUIManager.Instance.ToggleTatchatlive();
+
+        if (WorldChatUIManager.Instance != null)
+            WorldChatUIManager.Instance.ToggleTatchatlive();
     }
+
     public PlayerChat FindMyPlayerChat()
     {
+        if (playerChat != null)
+            return playerChat;
+
         foreach (var pc in FindObjectsByType<PlayerChat>(FindObjectsSortMode.None))
         {
             if (pc.Object != null && pc.Object.HasInputAuthority)
+            {
+                playerChat = pc;
                 return pc;
+            }
         }
+
         return null;
     }
-
 }

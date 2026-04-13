@@ -35,14 +35,14 @@ public class PlayerAvatar : NetworkBehaviour
     {
         if (Character == null)
             Character = GetComponentInChildren<Character>();
-
-        if (HasStateAuthority)
-            Instance = this;
     }
 
     public override void Spawned()
     {
         isSpawned = true;
+
+        if (Object.HasInputAuthority)
+            Instance = this;
 
         if (HasStateAuthority && Object.HasInputAuthority)
         {
@@ -51,14 +51,13 @@ public class PlayerAvatar : NetworkBehaviour
             RPC_SendDisplayNameToServer(PlayerDataHolder1.PlayerName);
         }
 
-        // Apply lần đầu
         string json = GetFullCharacterJson();
         ApplyCharacter(json);
 
         SetupCamera();
     }
 
-    void Update()
+    public override void Render()
     {
         if (!isSpawned) return;
 
@@ -68,10 +67,10 @@ public class PlayerAvatar : NetworkBehaviour
         ApplyCharacter(json);
     }
 
-    // ================= APPLY CHARACTER (CHỖ DUY NHẤT) =================
     private void ApplyCharacter(string json)
     {
         if (Character == null || string.IsNullOrEmpty(json)) return;
+        if (_lastAppliedJson == json) return;
 
         _lastAppliedJson = json;
 
@@ -79,18 +78,15 @@ public class PlayerAvatar : NetworkBehaviour
         {
             var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
 
-            // Base
             Character.FromJson(json);
 
-            // Weapon
             if (dict.TryGetValue("WeaponType", out var weaponType))
             {
                 if (weaponType == "Melee2H" &&
-    dict.TryGetValue("PrimaryMeleeWeapon", out var melee2HId))
+                    dict.TryGetValue("PrimaryMeleeWeapon", out var melee2HId))
                 {
                     EquipMelee2H(melee2HId);
                 }
-
                 else if (weaponType == "Melee1H" &&
                          dict.TryGetValue("PrimaryMeleeWeapon", out var melee1HId))
                 {
@@ -103,7 +99,6 @@ public class PlayerAvatar : NetworkBehaviour
                 }
             }
 
-            // Armor mix
             string[] mixTypes = { "Boots", "Gloves", "Belt", "Pauldrons", "Vest" };
             foreach (var t in mixTypes)
             {
@@ -111,11 +106,9 @@ public class PlayerAvatar : NetworkBehaviour
                     CharacterEquipHandler.EquipPartialArmorFromEntry(Character, partId, t);
             }
 
-            // Full armor
             if (dict.TryGetValue("Armor", out var armorId) && !string.IsNullOrEmpty(armorId))
                 CharacterEquipHandler.TestEquipArmor(Character, armorId);
 
-            // FINAL BUILD
             Character.Initialize();
 
             Debug.Log("[PlayerAvatar] ApplyCharacter OK");
@@ -124,11 +117,8 @@ public class PlayerAvatar : NetworkBehaviour
         {
             Debug.LogError($"[PlayerAvatar] ApplyCharacter failed: {e}");
         }
-
-
     }
 
-    // ================= WEAPON HELPERS =================
     private void EquipMelee2H(string id)
     {
         var entry = Character.SpriteCollection.MeleeWeapon2H.FirstOrDefault(e => e.Id == id);
@@ -160,7 +150,6 @@ public class PlayerAvatar : NetworkBehaviour
         Character.Equip(entry, EquipmentPart.Bow);
     }
 
-    // ================= NETWORK JSON =================
     public void UpdateCharacterJson(string fullJson)
     {
         if (!HasStateAuthority || string.IsNullOrEmpty(fullJson)) return;
@@ -186,7 +175,6 @@ public class PlayerAvatar : NetworkBehaviour
              + CharacterJsonPart7.ToString();
     }
 
-    // ================= CAMERA =================
     private void SetupCamera()
     {
         vCam = GetComponentInChildren<CinemachineCamera>();
@@ -196,20 +184,21 @@ public class PlayerAvatar : NetworkBehaviour
         if (vCam) vCam.enabled = isLocal;
         if (cam) cam.enabled = isLocal;
     }
+
     public bool IsLocalPlayer()
     {
         return Object != null && Object.HasInputAuthority;
     }
+
     public void LoadCharacter(string json)
     {
         ApplyCharacter(json);
     }
+
     public void SendCharacterJsonToAllClients()
     {
-        // Fusion tự sync Networked fields
     }
 
-    // ================= RPC =================
     [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
     public void RPC_SendDisplayNameToServer(string name) => RPC_SetDisplayName(name);
 
@@ -218,6 +207,7 @@ public class PlayerAvatar : NetworkBehaviour
 
     [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
     void RPC_SetNick(string name) => NickName = name;
+
     [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
     public void RPC_KickToLogin()
     {
@@ -227,6 +217,4 @@ public class PlayerAvatar : NetworkBehaviour
             SceneManager.LoadScene("Login");
         }
     }
-
-
 }

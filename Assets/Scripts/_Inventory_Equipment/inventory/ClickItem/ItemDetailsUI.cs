@@ -114,86 +114,32 @@ public class ItemDetailsUI : MonoBehaviour
 
     public void UseItem()
     {
-        if (currentItem == null || currentItem.stats == null)
+        if (!TryValidateCurrentItem(out string failMessage))
         {
-            Debug.LogError("[ItemDetailsUI] currentItem null hoặc thiếu stats.");
+            ShowEquipMessage(failMessage);
             return;
         }
 
-        int playerLevel = PlayerDataHolder1.CurrentPlayerState.level;
-        int levelRequired = currentItem.stats.LevelRequired;
-
-        if (playerLevel < levelRequired)
-        {
-            ShowEquipMessage($"Cần cấp {levelRequired} mới mặc được!");
-            return;
-        }
+        RefreshPlayerCache();
 
         string type = currentItem.stats.Type;
-        string newItemId = currentItem.itemId;
-
+        string newItemId = ItemIdUtility.Normalize(currentItem.itemId);
         var dict = CharacterJsonService.LoadDict();
 
-        // inventory swap
-        if (type == "Bow" || type.Contains("Weapon"))
+        if (!TryHandleInventorySwapBeforeEquip(dict, type, newItemId, out failMessage))
         {
-            string[] weaponKeys = { "PrimaryMeleeWeapon", "SecondaryMeleeWeapon", "Bow", "MeleeWeapon1H", "MeleeWeapon2H" };
-
-            foreach (string key in weaponKeys)
-            {
-                string oldWeaponId = CharacterJsonService.GetValue(dict, key);
-                if (!string.IsNullOrEmpty(oldWeaponId) && oldWeaponId != newItemId)
-                {
-                    InventoryManager.Instance.AddItem(oldWeaponId, 1);
-                    CharacterJsonService.SetValue(dict, key, "");
-                }
-            }
-
-            InventoryManager.Instance.RemoveItem(newItemId, 1);
-        }
-        else
-        {
-            string equippedItemId = CharacterUIManager1.Instance != null
-                ? CharacterUIManager1.Instance.GetItemIdFromJson(PlayerDataHolder1.CharacterJson, type)
-                : null;
-
-            if (!string.IsNullOrEmpty(equippedItemId))
-            {
-                if (equippedItemId == newItemId)
-                {
-                    int idx = InventoryManager.Instance.playerInventory.FindIndex(i => i == currentItem);
-                    if (idx >= 0)
-                    {
-                        InventoryManager.Instance.playerInventory.RemoveAt(idx);
-                        InventoryManager.Instance.AddItem(equippedItemId, 1);
-                    }
-                }
-                else
-                {
-                    InventoryManager.Instance.AddItem(equippedItemId, 1);
-                    InventoryManager.Instance.RemoveItem(newItemId, 1);
-                }
-            }
-            else
-            {
-                InventoryManager.Instance.RemoveItem(newItemId, 1);
-            }
-        }
-
-        var player = GameObject.FindWithTag("Player");
-        if (player != null)
-        {
-            var equipMgr = player.GetComponent<EquipmentStatManager>();
-            if (equipMgr != null)
-                equipMgr.Equip(currentItem.stats);
+            ShowEquipMessage(failMessage);
+            return;
         }
 
         CharacterEquipHandler.EquipItemToCharacter(currentItem);
 
-        CharacterUIManager1.Instance?.RefreshFromLatestJson();
-        CharacterUIManager1.Instance?.UpdateCharacterStatsAndUI();
+        if (cachedEquipStatManager != null)
+            cachedEquipStatManager.LoadFromCharacterJson(PlayerDataHolder1.CharacterJson);
 
-        ShowEquipMessage(" Trang bị thành công");
+        InventoryUIManager.instance?.DisplayInventory(InventoryManager.Instance.playerInventory);
+
+        ShowEquipMessage("Trang bị thành công");
         panel.SetActive(false);
     }
     private string GetEquippedWeaponId(string type)
@@ -916,6 +862,125 @@ public class ItemDetailsUI : MonoBehaviour
         return JsonConvert.DeserializeObject<Dictionary<string, string>>(PlayerDataHolder1.CharacterJson)
                ?? new Dictionary<string, string>();
     }
+    private bool TryValidateCurrentItem(out string message)
+    {
+        message = "";
 
+        if (currentItem == null)
+        {
+            message = "Không có item để dùng.";
+            return false;
+        }
+
+        if (currentItem.stats == null)
+        {
+            message = "Item bị thiếu dữ liệu stats.";
+            return false;
+        }
+
+        if (PlayerDataHolder1.CurrentPlayerState == null)
+        {
+            message = "Chưa có dữ liệu nhân vật.";
+            return false;
+        }
+
+        int playerLevel = PlayerDataHolder1.CurrentPlayerState.level;
+        int requiredLevel = currentItem.stats.LevelRequired;
+
+        if (playerLevel < requiredLevel)
+        {
+            message = $"Cần cấp {requiredLevel} mới mặc được!";
+            return false;
+        }
+
+        return true;
+    }
+
+    private bool TryHandleInventorySwapBeforeEquip(
+        Dictionary<string, string> dict,
+        string type,
+        string newItemId,
+        out string message)
+    {
+        message = "";
+
+        if (dict == null)
+        {
+            message = "Dữ liệu nhân vật bị lỗi.";
+            return false;
+        }
+
+        bool isWeapon =
+            type == EquipKeys.Bow ||
+            type == EquipKeys.MeleeWeapon1H ||
+            type == EquipKeys.MeleeWeapon2H ||
+            type.Contains("Weapon");
+
+        if (isWeapon)
+            return TryHandleWeaponSwap(dict, newItemId, out message);
+
+        return TryHandleNormalEquipSwap(dict, type, newItemId, out message);
+    }
+
+    private bool TryHandleWeaponSwap(
+        Dictionary<string, string> dict,
+        string newItemId,
+        out string message)
+    {
+        message = "";
+
+        HashSet<string> equippedWeaponIds = new HashSet<string>();
+
+        AddIfValid(equippedWeaponIds, CharacterJsonService.GetValue(dict, EquipKeys.PrimaryMeleeWeapon));
+        AddIfValid(equippedWeaponIds, CharacterJsonService.GetValue(dict, EquipKeys.SecondaryMeleeWeapon));
+        AddIfValid(equippedWeaponIds, CharacterJsonService.GetValue(dict, EquipKeys.MeleeWeapon1H));
+        AddIfValid(equippedWeaponIds, CharacterJsonService.GetValue(dict, EquipKeys.MeleeWeapon2H));
+        AddIfValid(equippedWeaponIds, CharacterJsonService.GetValue(dict, EquipKeys.Bow));
+
+        if (equippedWeaponIds.Contains(newItemId))
+        {
+            message = "Vũ khí này đã đang được trang bị.";
+            return false;
+        }
+
+        foreach (var oldWeaponId in equippedWeaponIds)
+        {
+            InventoryManager.Instance.AddItem(oldWeaponId, 1);
+        }
+
+        InventoryManager.Instance.RemoveItem(newItemId, 1);
+        return true;
+    }
+
+    private bool TryHandleNormalEquipSwap(
+        Dictionary<string, string> dict,
+        string type,
+        string newItemId,
+        out string message)
+    {
+        message = "";
+
+        string equippedItemId = CharacterJsonService.GetValue(dict, type);
+
+        if (!string.IsNullOrEmpty(equippedItemId) && equippedItemId == newItemId)
+        {
+            message = "Item này đã đang được trang bị.";
+            return false;
+        }
+
+        if (!string.IsNullOrEmpty(equippedItemId))
+        {
+            InventoryManager.Instance.AddItem(equippedItemId, 1);
+        }
+
+        InventoryManager.Instance.RemoveItem(newItemId, 1);
+        return true;
+    }
+
+    private void AddIfValid(HashSet<string> set, string itemId)
+    {
+        if (!string.IsNullOrWhiteSpace(itemId))
+            set.Add(itemId);
+    }
 
 }

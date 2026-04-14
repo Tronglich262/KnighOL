@@ -18,7 +18,6 @@ public static class EquipmentSyncService
             if (cloneController != null)
             {
                 cloneController.SendCharacterJsonToTarget(fullJson);
-                return;
             }
         }
 

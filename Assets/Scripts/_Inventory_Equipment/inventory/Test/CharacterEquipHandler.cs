@@ -28,11 +28,19 @@ public static class CharacterEquipHandler
     // ====== TRANG BỊ ITEM CHÍNH (auto detect) ======
     public static void EquipItemToCharacter(InventoryItem1 item)
     {
-        if (item == null || item.stats == null) return;
+        if (item == null || item.stats == null)
+            return;
 
-        var character = CharacterUIManager1.Instance.character;
-        var type = item.stats.Type;
-        var itemId = ItemIdUtility.Normalize(item.itemId);
+        var ui = CharacterUIManager1.Instance;
+        if (ui == null || ui.character == null)
+        {
+            Debug.LogWarning("[CharacterEquipHandler] CharacterUIManager1 hoặc character đang null.");
+            return;
+        }
+
+        var character = ui.character;
+        string type = item.stats.Type;
+        string itemId = ItemIdUtility.Normalize(item.itemId);
 
         var dict = CharacterJsonService.LoadDict();
 
@@ -92,8 +100,15 @@ public static class CharacterEquipHandler
             ItemDetailsUI.Instance != null ? ItemDetailsUI.Instance.playerClone : null
         );
 
-        CharacterUIManager1.Instance.RefreshFromLatestJson();
-        CharacterUIManager1.Instance.UpdateCharacterStatsAndUI();
+        if (PlayerSpawner.LocalPlayerObject != null)
+        {
+            var equipStat = PlayerSpawner.LocalPlayerObject.GetComponent<EquipmentStatManager>();
+            if (equipStat != null)
+                equipStat.LoadFromCharacterJson(finalJson);
+        }
+
+        ui.RefreshFromLatestJson();
+        ui.UpdateCharacterStatsAndUI();
     }
 
     // ====== HÀM MẶC TOÀN BỘ GIÁP ======
@@ -234,13 +249,17 @@ public static class CharacterEquipHandler
     }
     public static void UnequipItem(string type)
     {
-        var character = CharacterUIManager1.Instance.character;
-        if (character == null) return;
+        var ui = CharacterUIManager1.Instance;
+        if (ui == null || ui.character == null)
+            return;
 
-        bool isWeapon = type == EquipKeys.MeleeWeapon1H ||
-                        type == EquipKeys.MeleeWeapon2H ||
-                        type == EquipKeys.Bow ||
-                        type == EquipKeys.PrimaryMeleeWeapon;
+        var character = ui.character;
+
+        bool isWeapon =
+            type == EquipKeys.MeleeWeapon1H ||
+            type == EquipKeys.MeleeWeapon2H ||
+            type == EquipKeys.Bow ||
+            type == EquipKeys.PrimaryMeleeWeapon;
 
         if (isWeapon)
         {
@@ -249,7 +268,6 @@ public static class CharacterEquipHandler
         }
 
         var dict = CharacterJsonService.LoadDict();
-
         CharacterJsonService.SetValue(dict, type, "");
 
         if (type == EquipKeys.Armor)
@@ -257,7 +275,8 @@ public static class CharacterEquipHandler
 
         if (ArmorTypeToIndexes.TryGetValue(type, out var indexes))
         {
-            while (character.Armor.Count < 12) character.Armor.Add(null);
+            while (character.Armor.Count < 12)
+                character.Armor.Add(null);
 
             foreach (var idx in indexes)
             {
@@ -278,10 +297,18 @@ public static class CharacterEquipHandler
             ItemDetailsUI.Instance != null ? ItemDetailsUI.Instance.playerClone : null
         );
 
+        if (PlayerSpawner.LocalPlayerObject != null)
+        {
+            var equipStat = PlayerSpawner.LocalPlayerObject.GetComponent<EquipmentStatManager>();
+            if (equipStat != null)
+                equipStat.LoadFromCharacterJson(finalJson);
+        }
+
         character.Initialize();
         ClearUnequippedSlotOnly(type);
 
-        CharacterUIManager1.Instance.UpdateCharacterStatsAndUI();
+        ui.RefreshFromLatestJson();
+        ui.UpdateCharacterStatsAndUI();
     }
     // ===== SỬA LỖI ĐỒNG BỘ: DÙNG CHUẨN EQUIPKEYS =====
     private static void PreserveWeaponInfo(Dictionary<string, string> dict)

@@ -1,32 +1,41 @@
 ﻿using Assets.HeroEditor.Common.CharacterScripts;
 using Fusion;
-using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerCloneController : MonoBehaviour
 {
     public NetworkObject targetPlayerNetworkObject;
     private PlayerAvatar targetAvatar;
+
     public static PlayerCloneController Instante;
-    public void Awake()
+
+    private Character cachedCharacter;
+    private string lastJson = "";
+
+    private void Awake()
     {
-            Instante = this;
-    }
-    public void Update()
-    {
-        if (CharacterUIManager.Instance != null)
-        {
-            LoadJson(PlayerDataHolder1.CharacterJson);
-        }
+        Instante = this;
+        cachedCharacter = GetComponent<Character>();
     }
 
+    private void Update()
+    {
+        string json = PlayerDataHolder1.CharacterJson;
+
+        if (string.IsNullOrEmpty(json))
+            return;
+
+        if (json == lastJson)
+            return;
+
+        LoadJson(json);
+    }
 
     public void SetTarget(NetworkObject playerObj)
     {
         targetPlayerNetworkObject = playerObj;
-        targetAvatar = playerObj.GetComponent<PlayerAvatar>();
+        targetAvatar = playerObj != null ? playerObj.GetComponent<PlayerAvatar>() : null;
     }
 
     public void SendCharacterJsonToTarget(string json)
@@ -44,33 +53,34 @@ public class PlayerCloneController : MonoBehaviour
         }
     }
 
-
     public void LoadJson(string json)
     {
-
         if (string.IsNullOrEmpty(json))
-        {
             return;
-        }
 
-        if (TryGetComponent<Character>(out var character))
+        if (cachedCharacter == null)
+            cachedCharacter = GetComponent<Character>();
+
+        if (cachedCharacter == null)
+            return;
+
+        lastJson = json;
+
+        cachedCharacter.FromJson(json);
+        cachedCharacter.Initialize();
+
+        var dict = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
+        if (dict == null)
+            return;
+
+        string[] mixTypes = { "Boots", "Gloves", "Belt", "Pauldrons", "Vest" };
+
+        foreach (string t in mixTypes)
         {
-                
-            character.FromJson(json);
-            character.Initialize();
-
-            // Thay vì Equip ngay, dùng Coroutine đợi 1 frame
-            var dict = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
-            string[] mixTypes = new[] { "Boots", "Gloves", "Belt", "Pauldrons", "Vest" };
-            foreach (string t in mixTypes)
+            if (dict.TryGetValue(t, out string partId) && !string.IsNullOrEmpty(partId))
             {
-                if (dict.TryGetValue(t, out string partId) && !string.IsNullOrEmpty(partId))
-                {
-                    CharacterEquipHandler.EquipPartialArmorFromEntry(character, partId, t);
-                }
+                CharacterEquipHandler.EquipPartialArmorFromEntry(cachedCharacter, partId, t);
             }
-
         }
     }
-
 }

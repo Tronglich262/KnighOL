@@ -86,9 +86,14 @@ public class PlayerAvatar : NetworkBehaviour
 
         try
         {
-            _lastAppliedJson = json;
-
             var dict = CharacterJsonService.LoadDict(json);
+            if (dict == null)
+            {
+                Debug.LogWarning("[PlayerAvatar] CharacterJsonService.LoadDict trả về null.");
+                return;
+            }
+
+            _lastAppliedJson = json;
 
             Character.FromJson(json);
 

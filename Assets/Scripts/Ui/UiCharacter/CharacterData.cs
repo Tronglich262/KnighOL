@@ -11,8 +11,6 @@ public class CharacterData
 
     public string MeleeWeapon1H;
     public string MeleeWeapon2H;
-    public string Firearms1H;
-    public string Firearms2H;
 
     public string PrimaryMeleeWeapon;
     public string SecondaryMeleeWeapon;
@@ -32,8 +30,6 @@ public class CharacterData
     public string Ears;
 
     public string WeaponType;
-    public string Firearms;
-    public string FirearmParams;
 
     private const string DefaultHead = "Head/Male/Head1";
 
@@ -45,69 +41,30 @@ public class CharacterData
             return;
         }
 
+        string itemId = ItemIdUtility.Normalize(stats.itemId);
         EnsureDefaultHead();
 
         switch (stats.Type)
         {
-            case EquipKeys.Helmet:
-                Helmet = stats.itemId;
-                break;
-
-            case EquipKeys.Vest:
-                Vest = stats.itemId;
-                break;
-
-            case EquipKeys.Pauldrons:
-                Pauldrons = stats.itemId;
-                break;
-
-            case EquipKeys.Gloves:
-                Gloves = stats.itemId;
-                break;
-
-            case EquipKeys.Boots:
-                Boots = stats.itemId;
-                break;
-
-            case EquipKeys.Shield:
-                Shield = stats.itemId;
-                break;
-
-            case EquipKeys.Cape:
-                Cape = stats.itemId;
-                break;
-
-            case EquipKeys.Mask:
-                Mask = stats.itemId;
-                break;
-
-            case EquipKeys.Glasses:
-                Glasses = stats.itemId;
-                break;
-
-            case EquipKeys.Belt:
-                Belt = stats.itemId;
-                break;
-
-            case EquipKeys.Back:
-                Back = stats.itemId;
-                break;
-
-            case EquipKeys.Hair:
-                Hair = stats.itemId;
-                break;
-
-            case EquipKeys.Armor:
-                SetArmor(stats.itemId);
-                break;
+            case EquipKeys.Helmet: Helmet = itemId; break;
+            case EquipKeys.Vest: Vest = itemId; break;
+            case EquipKeys.Pauldrons: Pauldrons = itemId; break;
+            case EquipKeys.Gloves: Gloves = itemId; break;
+            case EquipKeys.Boots: Boots = itemId; break;
+            case EquipKeys.Shield: Shield = itemId; break;
+            case EquipKeys.Cape: Cape = itemId; break;
+            case EquipKeys.Mask: Mask = itemId; break;
+            case EquipKeys.Glasses: Glasses = itemId; break;
+            case EquipKeys.Belt: Belt = itemId; break;
+            case EquipKeys.Back: Back = itemId; break;
+            case EquipKeys.Hair: Hair = itemId; break;
+            case EquipKeys.Armor: SetArmor(itemId); break;
 
             case EquipKeys.MeleeWeapon1H:
             case EquipKeys.MeleeWeapon2H:
-            case EquipKeys.Firearms1H:
-            case EquipKeys.Firearms2H:
             case EquipKeys.Bow:
                 ClearWeaponSlots();
-                AssignWeapon(stats.Type, stats.itemId);
+                AssignWeapon(stats.Type, itemId);
                 break;
 
             default:
@@ -139,19 +96,6 @@ public class CharacterData
                 PrimaryMeleeWeapon = itemId;
                 WeaponType = EquipKeys.Weapon_Melee2H;
                 break;
-
-            case EquipKeys.Firearms1H:
-                Firearms1H = itemId;
-                Firearms = itemId;
-                WeaponType = EquipKeys.Weapon_Firearms1H;
-                break;
-
-            case EquipKeys.Firearms2H:
-                Firearms2H = itemId;
-                Firearms = itemId;
-                WeaponType = EquipKeys.Weapon_Firearms2H;
-                break;
-
             case EquipKeys.Bow:
                 Bow = itemId;
                 WeaponType = EquipKeys.Weapon_Bow;
@@ -163,14 +107,10 @@ public class CharacterData
     {
         MeleeWeapon1H = null;
         MeleeWeapon2H = null;
-        Firearms1H = null;
-        Firearms2H = null;
         Bow = null;
 
         PrimaryMeleeWeapon = null;
         SecondaryMeleeWeapon = null;
-        Firearms = null;
-        FirearmParams = null;
         WeaponType = null;
     }
 

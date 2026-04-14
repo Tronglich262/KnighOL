@@ -1,6 +1,5 @@
 public static class EquipKeys
 {
-    // Item types
     public const string Helmet = "Helmet";
     public const string Armor = "Armor";
     public const string Vest = "Vest";
@@ -18,16 +17,11 @@ public static class EquipKeys
 
     public const string MeleeWeapon1H = "MeleeWeapon1H";
     public const string MeleeWeapon2H = "MeleeWeapon2H";
-    public const string Firearms1H = "Firearms1H";
-    public const string Firearms2H = "Firearms2H";
 
     public const string PrimaryMeleeWeapon = "PrimaryMeleeWeapon";
     public const string SecondaryMeleeWeapon = "SecondaryMeleeWeapon";
 
-    // Weapon states
     public const string Weapon_Melee1H = "Melee1H";
     public const string Weapon_Melee2H = "Melee2H";
-    public const string Weapon_Firearms1H = "Firearms1H";
-    public const string Weapon_Firearms2H = "Firearms2H";
     public const string Weapon_Bow = "Bow";
 }

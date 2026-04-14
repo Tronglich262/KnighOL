@@ -1,5 +1,6 @@
 ﻿
 //new gỡ trang bị swap
+using Newtonsoft.Json;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -76,174 +77,55 @@ public class ItemDetailsPanel : MonoBehaviour
     public void OnUnequipButtonClick()
     {
         if (string.IsNullOrEmpty(currentType)) return;
-        if (!System.Enum.TryParse(currentType, out HeroEditor.Common.Enums.EquipmentPart part)) return;
-        var character = CharacterUIManager1.Instance?.character;
-        if (character == null) return;
 
-        character.UnEquip(part);
-
-        var json = PlayerDataHolder1.CharacterJson;
-        if (!string.IsNullOrEmpty(json))
+        // 1. Kiểm tra nếu là tóc thì không cho gỡ
+        if (currentType == EquipKeys.Hair)
         {
-            var dict = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
-
-            if (part == HeroEditor.Common.Enums.EquipmentPart.Bow)
-            {
-                // Lấy bow đang mặc
-                if (dict.TryGetValue("Bow", out var oldBowId) && !string.IsNullOrEmpty(oldBowId))
-                    InventoryManager.Instance.AddItem(oldBowId, 1);
-
-                if (dict.TryGetValue("PrimaryMeleeWeapon", out var old1HId) && !string.IsNullOrEmpty(old1HId))
-                    InventoryManager.Instance.AddItem(old1HId, 1);
-
-                if (dict.TryGetValue("SecondaryMeleeWeapon", out var old2HId) && !string.IsNullOrEmpty(old2HId))
-                    InventoryManager.Instance.AddItem(old2HId, 1);
-
-                dict["Bow"] = "";
-                dict["PrimaryMeleeWeapon"] = "";
-                dict["SecondaryMeleeWeapon"] = "";
-                dict["WeaponType"] = "Melee1H";
-                CharacterUIManager1.Instance?.ClearSlot(CharacterUIManager1.Instance.Bowslot);
-                CharacterUIManager1.Instance?.ClearSlot(CharacterUIManager1.Instance.MeleeWeapon1Hslot);
-                CharacterUIManager1.Instance?.ClearSlot(CharacterUIManager1.Instance.MeleeWeapon2Hslot);
-            }
-            else if (part == HeroEditor.Common.Enums.EquipmentPart.MeleeWeapon1H ||
-                     part == HeroEditor.Common.Enums.EquipmentPart.MeleeWeapon2H ||
-                     part == HeroEditor.Common.Enums.EquipmentPart.MeleeWeaponPaired)
-            {
-                if (dict.TryGetValue("PrimaryMeleeWeapon", out var old1HId) && !string.IsNullOrEmpty(old1HId))
-                    InventoryManager.Instance.AddItem(old1HId, 1);
-
-                if (dict.TryGetValue("SecondaryMeleeWeapon", out var old2HId) && !string.IsNullOrEmpty(old2HId))
-                    InventoryManager.Instance.AddItem(old2HId, 1);
-
-                dict["PrimaryMeleeWeapon"] = "";
-                dict["SecondaryMeleeWeapon"] = "";
-                dict["WeaponType"] = "Melee1H";
-                CharacterUIManager1.Instance?.ClearSlot(CharacterUIManager1.Instance.MeleeWeapon1Hslot);
-                CharacterUIManager1.Instance?.ClearSlot(CharacterUIManager1.Instance.MeleeWeapon2Hslot);
-            }
-            else if (part == HeroEditor.Common.Enums.EquipmentPart.Glasses)
-            {
-                if (dict.TryGetValue("Glasses", out var oldId) && !string.IsNullOrEmpty(oldId))
-                    InventoryManager.Instance.AddItem(oldId, 1);
-
-                character.Glasses = null;
-                dict["Glasses"] = "";
-                CharacterUIManager1.Instance?.ClearSlot(CharacterUIManager1.Instance.Glassesslot);
-            }
-            else if (part == HeroEditor.Common.Enums.EquipmentPart.Helmet)
-            {
-                if (dict.TryGetValue("Helmet", out var oldId) && !string.IsNullOrEmpty(oldId))
-                    InventoryManager.Instance.AddItem(oldId, 1);
-
-                character.Helmet = null;
-                dict["Helmet"] = "";
-                CharacterUIManager1.Instance?.ClearSlot(CharacterUIManager1.Instance.Helmetslot);
-            }
-            else if (part == HeroEditor.Common.Enums.EquipmentPart.Mask)
-            {
-                if (dict.TryGetValue("Mask", out var oldId) && !string.IsNullOrEmpty(oldId))
-                    InventoryManager.Instance.AddItem(oldId, 1);
-
-                character.Mask = null;
-                dict["Mask"] = "";
-                CharacterUIManager1.Instance?.ClearSlot(CharacterUIManager1.Instance.Maskslot);
-            }
-            else if (part == HeroEditor.Common.Enums.EquipmentPart.Shield)
-            {
-                if (dict.TryGetValue("Shield", out var oldId) && !string.IsNullOrEmpty(oldId))
-                    InventoryManager.Instance.AddItem(oldId, 1);
-
-                character.Shield = null;
-                dict["Shield"] = "";
-                CharacterUIManager1.Instance?.ClearSlot(CharacterUIManager1.Instance.Shieldslot);
-            }
-            else if (part == HeroEditor.Common.Enums.EquipmentPart.Cape)
-            {
-                if (dict.TryGetValue("Cape", out var oldId) && !string.IsNullOrEmpty(oldId))
-                    InventoryManager.Instance.AddItem(oldId, 1);
-
-                character.Cape = null;
-                dict["Cape"] = "";
-                CharacterUIManager1.Instance?.ClearSlot(CharacterUIManager1.Instance.Capeslot);
-            }
-            else if (part == HeroEditor.Common.Enums.EquipmentPart.Back)
-            {
-                if (dict.TryGetValue("Back", out var oldId) && !string.IsNullOrEmpty(oldId))
-                    InventoryManager.Instance.AddItem(oldId, 1);
-
-                character.Back = null;
-                dict["Back"] = "";
-                CharacterUIManager1.Instance?.ClearSlot(CharacterUIManager1.Instance.Backslot);
-            }
-            else
-            {
-                // Gỡ đúng loại Armor
-                string[] armorTypes = { "Armor", "Boots", "Gloves", "Pauldrons", "Vest", "Belt" };
-                int idx = System.Array.IndexOf(armorTypes, currentType);
-                if (idx >= 0 && idx < character.Armor.Count)
-                {
-                    // Lấy itemId đang mặc ở slot này
-                    if (dict.TryGetValue(armorTypes[idx], out var oldArmorId) && !string.IsNullOrEmpty(oldArmorId))
-                        InventoryManager.Instance.AddItem(oldArmorId, 1);
-
-                    character.Armor[idx] = null;
-                    character.EquipArmor(character.Armor);
-                    dict[armorTypes[idx]] = "";
-                    dict["Armor"] = ""; // Bắt buộc phải clear Armor tổng
-                }
-            }
-
-
-            // Serialize lại JSON
-            string updatedJson = Newtonsoft.Json.JsonConvert.SerializeObject(dict);
-            PlayerDataHolder1.CharacterJson = updatedJson;
-
-            // Gọi lại LoadJson đúng sau khi update
-
-            // Gửi về player thật nếu có
-            var playerClone = ItemDetailsUI.Instance?.playerClone;
-            if (playerClone != null)
-            {
-                var cloneCtrl = playerClone.GetComponent<PlayerCloneController>();
-                if (cloneCtrl != null)
-                {
-                    cloneCtrl.SendCharacterJsonToTarget(updatedJson);
-                    cloneCtrl.LoadJson(PlayerDataHolder1.CharacterJson); 
-
-                }
-            }
-
-            // Cập nhật lại UI slot
-            CharacterUIManager1.Instance?.LoadCharacterToUI();
-
-            // Đồng bộ lên server
-            if (AuthManager.Instance != null)
-            {
-                AuthManager.Instance.StartCoroutine(AuthManager.Instance.SaveCharacterToServer(updatedJson));
-            }
-        }
-        CharacterUIManager1.Instance.UpdateCharacterStatsAndUI();
-        // ===== UPDATE CHỈ SỐ NGAY KHI THÁO =====
-        var player = GameObject.FindWithTag("Player");
-        if (player != null)
-        {
-            var equipMgr = player.GetComponent<EquipmentStatManager>();
-            if (equipMgr != null)
-            {
-                equipMgr.Unequip(currentType);
-            }
+            ShowEquipMessage("Không thể gỡ bỏ tóc", 2.5f);
+            return;
         }
 
-        if (currentType == "Hair")
+        // 2. Kiểm tra nếu là vũ khí thì không thực hiện gỡ (chặn tại đây để tránh cộng Inventory sai)
+        bool isWeapon = currentType == EquipKeys.MeleeWeapon1H ||
+                        currentType == EquipKeys.MeleeWeapon2H ||
+                        currentType == EquipKeys.Bow ||
+                        currentType == EquipKeys.PrimaryMeleeWeapon;
+
+        if (isWeapon)
         {
-            ShowEquipMessage("    Không thể gỡ bỏ", 2.5f);
+            ShowEquipMessage("Vũ khí chỉ có thể thay thế, không thể gỡ bỏ!");
+            return;
         }
-        ShowEquipMessage("Đã gỡ trang bị thành công!", 2.5f);
-        Hide();
+
+        // 3. Thực hiện lấy ID trang bị để trả về Inventory trước khi gỡ trong JSON
+        string json = PlayerDataHolder1.CharacterJson;
+        var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(json) ?? new Dictionary<string, string>();
+
+        if (dict.TryGetValue(currentType, out string itemIdToReturn) && !string.IsNullOrEmpty(itemIdToReturn))
+        {
+            // Cộng item lại vào túi đồ
+            InventoryManager.Instance.AddItem(itemIdToReturn, 1);
+
+            // Gọi hàm xử lý gỡ trang bị trong dữ liệu & visual
+            CharacterEquipHandler.UnequipItem(currentType);
+
+            // Cập nhật Stats (Sức mạnh, phòng thủ...) cho Player thực tế
+            var player = GameObject.FindWithTag("Player");
+            if (player != null)
+            {
+                var equipMgr = player.GetComponent<EquipmentStatManager>();
+                equipMgr?.Unequip(currentType);
+            }
+
+            ShowEquipMessage("Đã gỡ trang bị thành công!");
+            Hide();
+        }
+        else
+        {
+            ShowEquipMessage("Không có trang bị để gỡ!");
+        }
     }
-  
+
     // THEM TU CODE B
     public bool IsVisible()
     {

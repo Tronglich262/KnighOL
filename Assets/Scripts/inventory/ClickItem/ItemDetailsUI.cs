@@ -322,12 +322,13 @@ public class ItemDetailsUI : MonoBehaviour
             if (type == "Bow")
             {
                 CharacterUIManager1.Instance.DisplayItem1(
-                    CharacterUIManager1.Instance.Bowslot, // Index 2 là Gloves
+                    CharacterUIManager1.Instance.Bowslot,
                     itemId,
                     "Bow"
                 );
+
+                CharacterEquipHandler.TestEquipBow(character, currentItem.itemId);
             }
-            CharacterEquipHandler.TestEquipBow(character, currentItem.itemId);
 
 
 
@@ -348,22 +349,25 @@ public class ItemDetailsUI : MonoBehaviour
 
         // Parse JSON hiện tại từ nhân vật
         dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(PlayerDataHolder1.CharacterJson);
-
         //  Xoá vũ khí cũ nếu đang chuyển đổi loại
         if (currentItem.stats.Type == "Bow")
         {
             dict.Remove("PrimaryMeleeWeapon");
             dict.Remove("SecondaryMeleeWeapon");
+            dict.Remove("MeleeWeapon1H");
+            dict.Remove("MeleeWeapon2H");
         }
-        if (currentItem.stats.Type == "PrimaryMeleeWeapon" || currentItem.stats.Type == "MeleeWeapon1H")
+        else if (currentItem.stats.Type == "PrimaryMeleeWeapon" || currentItem.stats.Type == "MeleeWeapon1H")
         {
             dict.Remove("Bow");
             dict.Remove("SecondaryMeleeWeapon");
+            dict.Remove("MeleeWeapon2H");
         }
-        if (currentItem.stats.Type == "MeleeWeapon2H")
+        else if (currentItem.stats.Type == "MeleeWeapon2H")
         {
             dict.Remove("Bow");
-            dict.Remove("SecondaryMeleeWeapon"); // KHÔNG XOÁ PRIMARY
+            dict.Remove("SecondaryMeleeWeapon");
+            dict.Remove("MeleeWeapon1H");
         }
 
 
@@ -394,12 +398,14 @@ public class ItemDetailsUI : MonoBehaviour
                 break;
             case "MeleeWeapon1H":
                 dict["PrimaryMeleeWeapon"] = currentItem.itemId;
+                dict["MeleeWeapon1H"] = currentItem.itemId; // THÊM DÒNG NÀY
                 dict["WeaponType"] = "Melee1H";
-
                 break;
+
             case "MeleeWeapon2H":
-                dict["PrimaryMeleeWeapon"] = currentItem.itemId; 
-                dict.Remove("SecondaryMeleeWeapon");              
+                dict["PrimaryMeleeWeapon"] = currentItem.itemId;
+                dict["MeleeWeapon2H"] = currentItem.itemId; // THÊM DÒNG NÀY
+                dict.Remove("SecondaryMeleeWeapon");
                 dict["WeaponType"] = "Melee2H";
                 break;
 
@@ -502,14 +508,17 @@ public class ItemDetailsUI : MonoBehaviour
         switch (type)
         {
             case "Bow":
-                return dict.TryGetValue("Bow", out var bowId) ? bowId : null;
+                return dict.TryGetValue(EquipKeys.Bow, out var bowId) ? bowId : null;
 
             case "MeleeWeapon1H":
-            case "PrimaryMeleeWeapon":
-                return dict.TryGetValue("PrimaryMeleeWeapon", out var melee1H) ? melee1H : null;
+                if (dict.TryGetValue(EquipKeys.MeleeWeapon1H, out var melee1H) && !string.IsNullOrEmpty(melee1H))
+                    return melee1H;
+                return dict.TryGetValue(EquipKeys.PrimaryMeleeWeapon, out var primary1H) ? primary1H : null;
 
             case "MeleeWeapon2H":
-                return dict.TryGetValue("PrimaryMeleeWeapon", out var melee2H) ? melee2H : null;
+                if (dict.TryGetValue(EquipKeys.MeleeWeapon2H, out var melee2H) && !string.IsNullOrEmpty(melee2H))
+                    return melee2H;
+                return dict.TryGetValue(EquipKeys.PrimaryMeleeWeapon, out var primary2H) ? primary2H : null;
 
             default:
                 return CharacterUIManager1.Instance.GetItemIdFromJson(PlayerDataHolder1.CharacterJson, type);
@@ -922,18 +931,22 @@ public class ItemDetailsUI : MonoBehaviour
         {
             dict.Remove("PrimaryMeleeWeapon");
             dict.Remove("SecondaryMeleeWeapon");
+            dict.Remove("MeleeWeapon1H");
+            dict.Remove("MeleeWeapon2H");
         }
 
         if (type == "PrimaryMeleeWeapon" || type == "MeleeWeapon1H")
         {
             dict.Remove("Bow");
             dict.Remove("SecondaryMeleeWeapon");
+            dict.Remove("MeleeWeapon2H");
         }
 
         if (type == "MeleeWeapon2H")
         {
             dict.Remove("Bow");
             dict.Remove("SecondaryMeleeWeapon");
+            dict.Remove("MeleeWeapon1H");
         }
 
         switch (type)
@@ -961,11 +974,15 @@ public class ItemDetailsUI : MonoBehaviour
 
             case "MeleeWeapon1H":
                 dict["PrimaryMeleeWeapon"] = itemId;
+                dict["MeleeWeapon1H"] = itemId;
+                dict.Remove("MeleeWeapon2H");
                 dict["WeaponType"] = "Melee1H";
                 break;
 
             case "MeleeWeapon2H":
                 dict["PrimaryMeleeWeapon"] = itemId;
+                dict["MeleeWeapon2H"] = itemId;
+                dict.Remove("MeleeWeapon1H");
                 dict.Remove("SecondaryMeleeWeapon");
                 dict["WeaponType"] = "Melee2H";
                 break;

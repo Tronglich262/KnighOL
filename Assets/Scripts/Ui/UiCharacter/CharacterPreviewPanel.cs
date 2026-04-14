@@ -7,15 +7,21 @@ using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using HeroEditor.Common;
 
 public class CharacterPreviewPanel : MonoBehaviour
 {
+    public static CharacterPreviewPanel Instance;
+
+    [Header("Preview Character")]
+    public Character characterPreview;
+
+    [Header("Slots")]
     public GameObject Helmetslot;
     public GameObject[] ArmorSlots;
     public GameObject Vestslot;
     public GameObject Pauldronsslot;
     public GameObject Glovesslot;
+    public GameObject Bootslot;
     public GameObject Firearms1Hslot;
     public GameObject Firearms2Hslot;
     public GameObject Bowslot;
@@ -26,376 +32,330 @@ public class CharacterPreviewPanel : MonoBehaviour
     public GameObject Maskslot;
     public GameObject Glassesslot;
     public GameObject Shieldslot;
-    public GameObject Bootslot;
     public GameObject ArmorGeneralSlot;
     public GameObject MeleeWeapon1Hslot;
     public GameObject MeleeWeapon2Hslot;
 
-    private List<ItemStats> equippedItems = new List<ItemStats>();
+    private readonly List<ItemStats> equippedItems = new List<ItemStats>(16);
 
-    public static CharacterPreviewPanel Instance;
-    public Character characterPreview; // Nhân vật trên panel preview
-    private string _currentPreviewJson = null;
+    private CharacterData _cachedData;
+    private Dictionary<string, string> _cachedDict;
+    private string _currentPreviewJson;
 
     private void Awake()
     {
         Instance = this;
 
-        GameObject clonePreviewObj = GameObject.Find("ClonePreview");
-        if (clonePreviewObj != null)
-        {
-            characterPreview = clonePreviewObj.GetComponent<Character>();
-        }
+        GameObject cloneObj = GameObject.Find("ClonePreview");
+        if (cloneObj != null)
+            characterPreview = cloneObj.GetComponent<Character>();
 
-        gameObject.SetActive(false); 
+        gameObject.SetActive(false);
     }
 
-
-  
-
-    /// <summary>
-    /// Hàm này được gọi khi bạn click vào một player bất kỳ để show preview!
-    /// </summary>
     public void LoadCharacterFromJson(string json)
     {
-        Debug.Log($"[PREVIEW] LoadCharacterFromJson: {json?.Substring(0, Mathf.Min(50, json.Length))}");
-        if (string.IsNullOrEmpty(json)) return;
+        if (string.IsNullOrEmpty(json) || characterPreview == null)
+            return;
+
         _currentPreviewJson = json;
+        _cachedData = JsonUtility.FromJson<CharacterData>(json);
+        _cachedDict = JsonConvert.DeserializeObject<Dictionary<string, string>>(json) ?? new Dictionary<string, string>();
 
         equippedItems.Clear();
         ClearAllSlots();
+        ResetPreviewCharacter();
 
-        if (characterPreview != null)
+        characterPreview.FromJson(json);
+
+        for (int i = 0; i < CharacterEquipmentHelper.PartialArmorTypes.Length; i++)
         {
-            characterPreview.Armor.Clear();
-            characterPreview.Helmet = null;
-            characterPreview.Glasses = null;
-            characterPreview.Hair = null;
-            characterPreview.Back = null;   
-            characterPreview.Cape = null;
-            characterPreview.Shield = null;
-            characterPreview.PrimaryMeleeWeapon = null;
-            characterPreview.SecondaryMeleeWeapon = null;
-            characterPreview.Firearms = null;
-            characterPreview.Bow = null;
-
-            characterPreview.FromJson(json);
-            characterPreview.Initialize();
-
-            string[] mixTypes = { "Boots", "Gloves", "Belt", "Pauldrons", "Vest" };
-            var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
-
-            foreach (var type in mixTypes)
+            string type = CharacterEquipmentHelper.PartialArmorTypes[i];
+            if (_cachedDict.TryGetValue(type, out string id) && !string.IsNullOrEmpty(id))
             {
-                if (dict.TryGetValue(type, out string partId) && !string.IsNullOrEmpty(partId))
-                {
-                    CharacterEquipHandler.EquipPartialArmorFromEntry(characterPreview, partId, type);
-                }
+                CharacterEquipHandler.EquipPartialArmorFromEntry(characterPreview, id, type);
             }
-            if (dict.TryGetValue("WeaponType", out string weaponType))
-            {
-                if (weaponType == "Melee2H" && dict.TryGetValue("SecondaryMeleeWeapon", out string weaponId) && !string.IsNullOrEmpty(weaponId))
+        }
+
+        ApplyWeaponFromData();
+        characterPreview.Initialize();
+
+        LoadToUI();
+    }
+
+    private void ApplyWeaponFromData()
+    {
+        if (_cachedData == null || string.IsNullOrEmpty(_cachedData.WeaponType))
+            return;
+
+        switch (_cachedData.WeaponType)
+        {
+            case "Melee1H":
                 {
-                    // Load MeleeWeapon2H đúng chuẩn
+                    string weaponId = !string.IsNullOrEmpty(_cachedData.MeleeWeapon1H)
+                        ? _cachedData.MeleeWeapon1H
+                        : _cachedData.PrimaryMeleeWeapon;
+
+                    if (string.IsNullOrEmpty(weaponId)) return;
+
+                    var entry = characterPreview.SpriteCollection.MeleeWeapon1H.FirstOrDefault(e => e.Id == weaponId);
+                    if (entry != null)
+                    {
+                        characterPreview.WeaponType = WeaponType.Melee1H;
+                        characterPreview.Equip(entry, EquipmentPart.MeleeWeapon1H);
+                    }
+                    break;
+                }
+
+            case "Melee2H":
+                {
+                    string weaponId = ResolveMelee2H();
+                    if (string.IsNullOrEmpty(weaponId)) return;
+
                     var entry = characterPreview.SpriteCollection.MeleeWeapon2H.FirstOrDefault(e => e.Id == weaponId);
                     if (entry != null)
                     {
                         characterPreview.WeaponType = WeaponType.Melee2H;
                         characterPreview.Equip(entry, EquipmentPart.MeleeWeapon2H);
                     }
+                    break;
                 }
-            }
-                    characterPreview.Initialize(); 
+
+            case "Bow":
+                {
+                    if (string.IsNullOrEmpty(_cachedData.Bow)) return;
+
+                    var entry = characterPreview.SpriteCollection.Bow.FirstOrDefault(e => e.Id == _cachedData.Bow);
+                    if (entry != null)
+                    {
+                        characterPreview.WeaponType = WeaponType.Bow;
+                        characterPreview.Equip(entry, EquipmentPart.Bow);
+                    }
+                    break;
+                }
         }
-
-        else
-        {
-            Debug.LogError("[PREVIEW] characterPreview bị NULL!");
-            return;
-        }
-
-
-
-        LoadCharacterToUI();
     }
 
-    /// <summary>
-    /// Hàm này tự động dùng _currentPreviewJson, KHÔNG BAO GIỜ DÙNG PlayerDataHolder1!
-    /// </summary>
-    public void LoadCharacterToUI()
+    private void LoadToUI()
     {
-        string json = _currentPreviewJson;
-        Debug.Log("[PREVIEW] LoadCharacterToUI: " + (json == null ? "NULL" : json.Substring(0, Mathf.Min(50, json.Length))));
-        if (string.IsNullOrEmpty(json)) return;
-        CharacterData characterData = JsonUtility.FromJson<CharacterData>(json);
-        string[] armorTypes = { "Armor", "Boots", "Gloves", "Pauldrons", "Vest", "Belt" };
-        for (int i = 0; i < ArmorSlots.Length && i < armorTypes.Length; i++)
+        if (_cachedData == null) return;
+
+        DisplayArmorSlots();
+        DisplayEquipmentSlots();
+    }
+
+    private void DisplayArmorSlots()
+    {
+        for (int i = 0; i < ArmorSlots.Length && i < CharacterEquipmentHelper.ArmorTypes.Length; i++)
         {
-            string armorValue = GetArmorValue(json, i);
-            string expectedType = armorTypes[i];
-            DisplayItem(ArmorSlots[i], armorValue, expectedType);
+            string type = CharacterEquipmentHelper.ArmorTypes[i];
+            string value = GetArmorDisplayValue(type);
+
+            // thay DisplayItem(...)
+            DisplaySlot(ArmorSlots[i], value, type, false, true);
         }
-        string fullArmorId = GetItemIdFromJson(json, "Armor");
-        if (!string.IsNullOrEmpty(fullArmorId))
+
+        string fullArmor = _cachedData.Armor != null && _cachedData.Armor.Length > 0
+            ? _cachedData.Armor[0]
+            : CharacterEquipmentHelper.GetValue(_cachedDict, EquipKeys.Armor);
+
+        if (!string.IsNullOrEmpty(fullArmor))
         {
-            DisplayItem1(ArmorGeneralSlot, fullArmorId, "Armor");
+            // thay DisplayItem1(...)
+            DisplaySlot(ArmorGeneralSlot, fullArmor, EquipKeys.Armor, true, true);
         }
-        DisplayItem1(Helmetslot, characterData.Helmet, "Helmet");
-        DisplayItem1(MeleeWeapon1Hslot, characterData.PrimaryMeleeWeapon, "PrimaryMeleeWeapon");
-        DisplayItem1(MeleeWeapon2Hslot, characterData.SecondaryMeleeWeapon, "SecondaryMeleeWeapon");
-        DisplayItem1(Firearms1Hslot, characterData.Firearms1H, "Firearms1H");
-        DisplayItem1(Firearms2Hslot, characterData.Firearms2H, "Firearms2H");
-        if (!string.IsNullOrEmpty(characterData.Bow)) DisplayItem1(Bowslot, characterData.Bow, "Bow");
-        DisplayItem1(Hairslot, characterData.Hair, "Hair");
-        DisplayItem1(Pauldronsslot, characterData.Pauldrons, "Pauldrons");
-        DisplayItem1(Bootslot, characterData.Boots, "Boots");
-        DisplayItem1(Beltslot, characterData.Belt, "Belt");
-        DisplayItem1(Glovesslot, characterData.Gloves, "Gloves");
-        DisplayItem1(Vestslot, characterData.Vest, "Vest");
-        DisplayItem1(Capeslot, characterData.Cape, "Cape");
-        DisplayItem1(Backslot, characterData.Back, "Back");
-        DisplayItem1(Maskslot, characterData.Mask, "Mask");
-        DisplayItem1(Glassesslot, characterData.Glasses, "Glasses");
-        DisplayItem1(Shieldslot, characterData.Shield, "Shield");
+    }
+
+    private void DisplayEquipmentSlots()
+    {
+        DisplaySlot(Helmetslot, _cachedData.Helmet, EquipKeys.Helmet, true, true);
+        DisplaySlot(MeleeWeapon1Hslot, ResolveMelee1H(), EquipKeys.MeleeWeapon1H, false, true);
+        DisplaySlot(MeleeWeapon2Hslot, ResolveMelee2H(), EquipKeys.MeleeWeapon2H, false, true);
+        DisplaySlot(Firearms1Hslot, _cachedData.Firearms1H, EquipKeys.Firearms1H, false, true);
+        DisplaySlot(Firearms2Hslot, _cachedData.Firearms2H, EquipKeys.Firearms2H, false, true);
+        DisplaySlot(Bowslot, _cachedData.Bow, EquipKeys.Bow, false, true);
+        DisplaySlot(Hairslot, _cachedData.Hair, EquipKeys.Hair, true, true);
+        DisplaySlot(Pauldronsslot, _cachedData.Pauldrons, EquipKeys.Pauldrons, true, true);
+        DisplaySlot(Bootslot, _cachedData.Boots, EquipKeys.Boots, true, true);
+        DisplaySlot(Beltslot, _cachedData.Belt, EquipKeys.Belt, true, true);
+        DisplaySlot(Glovesslot, _cachedData.Gloves, EquipKeys.Gloves, true, true);
+        DisplaySlot(Vestslot, _cachedData.Vest, EquipKeys.Vest, true, true);
+        DisplaySlot(Capeslot, _cachedData.Cape, EquipKeys.Cape, true, true);
+        DisplaySlot(Backslot, _cachedData.Back, EquipKeys.Back, true, true);
+        DisplaySlot(Maskslot, _cachedData.Mask, EquipKeys.Mask, true, true);
+        DisplaySlot(Glassesslot, _cachedData.Glasses, EquipKeys.Glasses, true, true);
+        DisplaySlot(Shieldslot, _cachedData.Shield, EquipKeys.Shield, true, true);
+    }
+
+    private string GetArmorDisplayValue(string type)
+    {
+        switch (type)
+        {
+            case "Armor":
+                return _cachedData.Armor != null && _cachedData.Armor.Length > 0 ? _cachedData.Armor[0] : null;
+            case "Boots":
+                return _cachedData.Boots;
+            case "Gloves":
+                return _cachedData.Gloves;
+            case "Pauldrons":
+                return _cachedData.Pauldrons;
+            case "Vest":
+                return _cachedData.Vest;
+            case "Belt":
+                return _cachedData.Belt;
+            default:
+                return null;
+        }
+    }
+
+    private string ResolveMelee1H()
+    {
+        if (!string.IsNullOrEmpty(_cachedData.MeleeWeapon1H))
+            return _cachedData.MeleeWeapon1H;
+
+        if (_cachedData.WeaponType == "Melee1H")
+            return _cachedData.PrimaryMeleeWeapon;
+
+        return null;
+    }
+
+    private string ResolveMelee2H()
+    {
+        if (!string.IsNullOrEmpty(_cachedData.MeleeWeapon2H))
+            return _cachedData.MeleeWeapon2H;
+
+        if (_cachedData.WeaponType == "Melee2H" && !string.IsNullOrEmpty(_cachedData.PrimaryMeleeWeapon))
+            return _cachedData.PrimaryMeleeWeapon;
+
+        return _cachedData.SecondaryMeleeWeapon;
+    }
+
+    private void EquipVisualFromStats(ItemStats stats)
+    {
+        if (stats == null || stats.Icon == null)
+            return;
+
+        switch (stats.Type)
+        {
+            case "Helmet": characterPreview.Helmet = stats.Icon; break;
+            case "Glasses": characterPreview.Glasses = stats.Icon; break;
+            case "Hair": characterPreview.Hair = stats.Icon; break;
+            case "Back": characterPreview.Back = stats.Icon; break;
+            case "Cape": characterPreview.Cape = stats.Icon; break;
+            case "Shield": characterPreview.Shield = stats.Icon; break;
+
+            case "Armor": EnsureArmorSize(0); characterPreview.Armor[0] = stats.Icon; break;
+            case "Boots": EnsureArmorSize(1); characterPreview.Armor[1] = stats.Icon; break;
+            case "Gloves": EnsureArmorSize(2); characterPreview.Armor[2] = stats.Icon; break;
+            case "Pauldrons": EnsureArmorSize(3); characterPreview.Armor[3] = stats.Icon; break;
+            case "Vest": EnsureArmorSize(4); characterPreview.Armor[4] = stats.Icon; break;
+            case "Belt": EnsureArmorSize(5); characterPreview.Armor[5] = stats.Icon; break;
+        }
+    }
+
+    private void EnsureArmorSize(int index)
+    {
+        while (characterPreview.Armor.Count <= index)
+            characterPreview.Armor.Add(null);
     }
 
     public void ClearAllSlots()
     {
-        ClearSlot(Helmetslot);
-        foreach (var s in ArmorSlots) ClearSlot(s);
-        ClearSlot(Vestslot); ClearSlot(Pauldronsslot); ClearSlot(Glovesslot); ClearSlot(Firearms1Hslot);
-        ClearSlot(Firearms2Hslot); ClearSlot(Bowslot); ClearSlot(Hairslot); ClearSlot(Beltslot);
-        ClearSlot(Capeslot); ClearSlot(Backslot); ClearSlot(Maskslot); ClearSlot(Glassesslot);
-        ClearSlot(Shieldslot); ClearSlot(Bootslot); ClearSlot(ArmorGeneralSlot);
-        ClearSlot(MeleeWeapon1Hslot); ClearSlot(MeleeWeapon2Hslot);
+        CharacterEquipmentHelper.ClearSlotUI(Helmetslot);
+
+        for (int i = 0; i < ArmorSlots.Length; i++)
+            CharacterEquipmentHelper.ClearSlotUI(ArmorSlots[i]);
+
+        CharacterEquipmentHelper.ClearSlotUI(Vestslot);
+        CharacterEquipmentHelper.ClearSlotUI(Pauldronsslot);
+        CharacterEquipmentHelper.ClearSlotUI(Glovesslot);
+        CharacterEquipmentHelper.ClearSlotUI(Bootslot);
+        CharacterEquipmentHelper.ClearSlotUI(Firearms1Hslot);
+        CharacterEquipmentHelper.ClearSlotUI(Firearms2Hslot);
+        CharacterEquipmentHelper.ClearSlotUI(Bowslot);
+        CharacterEquipmentHelper.ClearSlotUI(Hairslot);
+        CharacterEquipmentHelper.ClearSlotUI(Beltslot);
+        CharacterEquipmentHelper.ClearSlotUI(Capeslot);
+        CharacterEquipmentHelper.ClearSlotUI(Backslot);
+        CharacterEquipmentHelper.ClearSlotUI(Maskslot);
+        CharacterEquipmentHelper.ClearSlotUI(Glassesslot);
+        CharacterEquipmentHelper.ClearSlotUI(Shieldslot);
+        CharacterEquipmentHelper.ClearSlotUI(ArmorGeneralSlot);
+        CharacterEquipmentHelper.ClearSlotUI(MeleeWeapon1Hslot);
+        CharacterEquipmentHelper.ClearSlotUI(MeleeWeapon2Hslot);
     }
 
-    public void DisplayItem1(GameObject slot, string itemPath, string expectedType = null)
+    private void ResetPreviewCharacter()
     {
-        if (slot == null || string.IsNullOrEmpty(itemPath)) return;
+        characterPreview.Armor.Clear();
 
-        string id = itemPath.Split('#')[0].Trim();
-        TextMeshProUGUI tmpText = slot.GetComponentInChildren<TextMeshProUGUI>();
-        if (tmpText != null) tmpText.text = id;
+        characterPreview.Helmet = null;
+        characterPreview.Glasses = null;
+        characterPreview.Hair = null;
+        characterPreview.Back = null;
+        characterPreview.Cape = null;
+        characterPreview.Shield = null;
 
-        Image img = slot.GetComponentInChildren<Image>();
-        if (img != null)
-        {
-            var icon = IconCollection.Active.FindIconItem(id, expectedType);
-
-            if (icon != null)
-            {
-                img.sprite = icon.Sprite;
-                img.color = Color.white;
-
-                var eqSlot = slot.GetComponent<EquipmentSlotUI>();
-                if (eqSlot != null)
-                {
-                    eqSlot.SetItem(id, icon.Sprite, icon.Type);
-                }
-
-                // Cộng chỉ số
-                string itemId = icon.Id.Split('.').Last();
-                string itemType = icon.Type;
-                var stats = ItemDatabase.Instance.GetItemStatsById(itemId, itemType);
-                if (stats != null)
-                {
-                    equippedItems.Add(stats);
-                    EquipToCharacterFromStats(stats);
-                }
-            }
-            else
-            {
-                img.sprite = IconCollection.Active.DefaultItemIcon;
-                img.color = Color.gray;
-            }
-        }
-    }
-
-    public void DisplayItem(GameObject slot, string itemPath, string expectedType = null)
-    {
-        if (slot == null) return;
-
-        Image img = slot.GetComponentInChildren<Image>();
-        if (img == null) return;
-
-        if (string.IsNullOrEmpty(itemPath))
-        {
-            img.sprite = IconCollection.Active.DefaultItemIcon;
-            img.color = Color.gray;
-            var eqSlot = slot.GetComponent<EquipmentSlotUI>();
-            if (eqSlot != null)
-            {
-                eqSlot.SetItem("", IconCollection.Active.DefaultItemIcon, "");
-            }
-            TextMeshProUGUI tmpText = slot.GetComponentInChildren<TextMeshProUGUI>();
-            if (tmpText != null) tmpText.text = "";
-            return;
-        }
-
-        string raw = itemPath.Split('#')[0].Trim();
-        string name = raw.Split('.').Last();
-
-        string[] collections = {
-            "Extensions.Legendary",
-            "FantasyHeroes.Basic",
-            "Extensions.Epic",
-            "FantasyHeroes.Samurai",
-            "Extensions.AbandonedWorkshop",
-            "UndeadHeroes.Undead",
-            "Extensions.MoonStyle [NoPaint]"
-        };
-
-        TextMeshProUGUI tmpText2 = slot.GetComponentInChildren<TextMeshProUGUI>();
-        if (tmpText2 != null) tmpText2.text = name;
-
-        var icon = FindIconWithFallback(collections, expectedType, name);
-
-        if (icon != null)
-        {
-            img.sprite = icon.Sprite;
-            img.color = Color.white;
-
-            var eqSlot = slot.GetComponent<EquipmentSlotUI>();
-            if (eqSlot != null)
-            {
-                eqSlot.SetItem(icon.Id, icon.Sprite, icon.Type);
-            }
-
-            string itemId = icon.Id.Split('.').Last();
-            string itemType = icon.Type;
-            var stats = ItemDatabase.Instance.GetItemStatsById(itemId, itemType);
-            if (stats != null)
-            {
-                equippedItems.Add(stats);
-            }
-        }
-        else
-        {
-            img.sprite = IconCollection.Active.DefaultItemIcon;
-            img.color = Color.gray;
-        }
-    }
-
-    ItemIcon FindIconWithFallback(string[] collections, string type, string name)
-    {
-        foreach (var collection in collections)
-        {
-            string id = $"{collection}.{type}.{name}";
-            var icon = IconCollection.Active.Icons
-                .Where(i => i.Type == type)
-                .FirstOrDefault(i => i.Id == id);
-            if (icon != null) return icon;
-        }
-        return null;
-    }
-
-    string GetArmorValue(string json, int index)
-    {
-        string key = $"\"Armor[{index}]\":\"";
-        int start = json.IndexOf(key);
-        if (start == -1) return null;
-        start += key.Length;
-        int end = json.IndexOf("\"", start);
-        if (end == -1) return null;
-        return json.Substring(start, end - start);
-    }
-
-    private void EquipToCharacterFromStats(ItemStats stats)
-    {
-        string spriteName = stats.itemId.Split('.').Last();
-        Sprite sprite = stats.Icon;
-        if (string.IsNullOrEmpty(spriteName) || sprite == null) return;
-
-        switch (stats.Type)
-        {
-            case "Helmet": characterPreview.Helmet = sprite; break;
-            case "Glasses": characterPreview.Glasses = sprite; break;
-            case "Hair": characterPreview.Hair = sprite; break;
-            case "Back": characterPreview.Back = sprite; break;
-            case "Cape": characterPreview.Cape = sprite; break;
-            case "Shield": characterPreview.Shield = sprite; break;
-            case "Armor": EnsureArmorListSize(0); characterPreview.Armor[0] = sprite; break;
-            case "Boots": EnsureArmorListSize(1); characterPreview.Armor[1] = sprite; break;
-            case "Gloves": EnsureArmorListSize(2); characterPreview.Armor[2] = sprite; break;
-            case "Pauldrons": EnsureArmorListSize(3); characterPreview.Armor[3] = sprite; break;
-            case "Vest": EnsureArmorListSize(4); characterPreview.Armor[4] = sprite; break;
-            case "Belt": EnsureArmorListSize(5); characterPreview.Armor[5] = sprite; break;
-            case "MeleeWeapon1H":
-            case "PrimaryMeleeWeapon": EquipWeapon(sprite, WeaponType.Melee1H); break;
-            case "MeleeWeapon2H":
-            case "SecondaryMeleeWeapon": EquipWeapon(sprite, WeaponType.Melee2H); break;
-            case "Bow": EquipWeapon(sprite, WeaponType.Bow); break;
-            case "Firearms1H": EquipWeapon(sprite, WeaponType.Firearms1H); break;
-            case "Firearms2H": EquipWeapon(sprite, WeaponType.Firearms2H); break;
-            default: break;
-        }
-        characterPreview.Initialize();
-    }
-
-    private void EquipWeapon(Sprite sprite, WeaponType type)
-    {
-        if (sprite == null) return;
-
-        var entry = new HeroEditor.Common.SpriteGroupEntry(
-            edition: "Custom",
-            collection: "Default",
-            type: type.ToString(),
-            name: sprite.name,
-            path: "",
-            sprite: sprite,
-            sprites: new List<Sprite> { sprite }
-        );
-
-        characterPreview.WeaponType = type;
-        characterPreview.Equip(entry, EquipmentPart.MeleeWeapon1H); // <--- CHỈ LUÔN LUÔN LÀ MeleeWeapon1H
-    }
-
-
-    private void EnsureArmorListSize(int index)
-    {
-        while (characterPreview.Armor.Count <= index)
-        {
-            characterPreview.Armor.Add(null);
-        }
-    }
-
-    public string GetItemIdFromJson(string json, string key)
-    {
-        if (string.IsNullOrEmpty(json) || string.IsNullOrEmpty(key)) return null;
-        var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
-        if (dict.ContainsKey(key)) return dict[key];
-        return null;
+        characterPreview.PrimaryMeleeWeapon = null;
+        characterPreview.SecondaryMeleeWeapon = null;
+        characterPreview.Firearms = null;
+        characterPreview.Bow = null;
     }
 
     public void ClearPreviewData()
     {
         ClearAllSlots();
         equippedItems.Clear();
+        _cachedData = null;
+        _cachedDict = null;
         _currentPreviewJson = null;
     }
-    public void ClearSlot(GameObject slot)
+    private void DisplaySlot(
+    GameObject slot,
+    string itemPath,
+    string expectedType,
+    bool applyVisual,
+    bool addStats)
     {
-        if (slot == null) return;
+        if (slot == null)
+            return;
 
-        Image img = slot.GetComponentInChildren<Image>();
-        if (img != null)
+        if (string.IsNullOrEmpty(itemPath))
         {
-            img.sprite = IconCollection.Active.DefaultItemIcon;
-            img.color = Color.gray;
+            CharacterEquipmentHelper.ClearSlotUI(slot);
+            return;
         }
 
-        TextMeshProUGUI tmpText = slot.GetComponentInChildren<TextMeshProUGUI>();
-        if (tmpText != null)
+        string cleanId = CharacterEquipmentHelper.GetCleanId(itemPath);
+        string itemName = CharacterEquipmentHelper.GetLastToken(cleanId);
+
+        var icon = IconCollection.Active.FindIconItem(cleanId, expectedType);
+        if (icon == null)
+            icon = CharacterEquipmentHelper.FindIcon(itemName, expectedType);
+
+        if (icon == null)
         {
-            tmpText.text = "";
+            CharacterEquipmentHelper.ClearSlotUI(slot);
+            return;
         }
 
-        var eqSlot = slot.GetComponent<EquipmentSlotUI>();
-        if (eqSlot != null)
-        {
-            eqSlot.SetItem("", IconCollection.Active.DefaultItemIcon, "");
-        }
+        CharacterEquipmentHelper.SetSlotUI(slot, itemName, icon.Sprite, icon.Id, icon.Type);
+
+        if (!applyVisual && !addStats)
+            return;
+
+        ItemStats stats = ItemDatabase.Instance.GetItemStatsById(
+            CharacterEquipmentHelper.GetLastToken(icon.Id),
+            icon.Type
+        );
+
+        if (stats == null)
+            return;
+
+        if (addStats)
+            equippedItems.Add(stats);
+
+        if (applyVisual)
+            EquipVisualFromStats(stats);
     }
-
 }

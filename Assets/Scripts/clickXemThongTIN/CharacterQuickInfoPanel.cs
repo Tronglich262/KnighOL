@@ -1,7 +1,6 @@
 ﻿using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using System.Collections.Generic;
 using System.Collections;
 
 public class CharacterQuickInfoPanel : MonoBehaviour
@@ -12,6 +11,7 @@ public class CharacterQuickInfoPanel : MonoBehaviour
     public Button xemThongTinButton;
 
     private PlayerAvatar _currentTarget;
+    private Coroutine _waitNameCoroutine;
 
     private void Awake()
     {
@@ -24,9 +24,13 @@ public class CharacterQuickInfoPanel : MonoBehaviour
         _currentTarget = target;
         gameObject.SetActive(true);
 
-        string displayName = !string.IsNullOrEmpty(name) ? name : target?.DisplayName.ToString();
+        if (_waitNameCoroutine != null)
+        {
+            StopCoroutine(_waitNameCoroutine);
+            _waitNameCoroutine = null;
+        }
 
-        Debug.Log($"[QuickInfoPanel] Click vào: {target?.Object.InputAuthority} - DisplayName: {displayName}");
+        string displayName = !string.IsNullOrEmpty(name) ? name : target?.DisplayName.ToString();
 
         if (!string.IsNullOrEmpty(displayName))
         {
@@ -35,18 +39,17 @@ public class CharacterQuickInfoPanel : MonoBehaviour
         else
         {
             playerNameText.text = "Đang tải...";
-            StartCoroutine(WaitForDisplayName());
+            _waitNameCoroutine = StartCoroutine(WaitForDisplayName());
         }
     }
-
-
-
 
     private IEnumerator WaitForDisplayName()
     {
         float timeout = 5f;
 
-        while (_currentTarget != null && string.IsNullOrWhiteSpace(_currentTarget.DisplayName.ToString()) && timeout > 0)
+        while (_currentTarget != null &&
+               string.IsNullOrWhiteSpace(_currentTarget.DisplayName.ToString()) &&
+               timeout > 0f)
         {
             timeout -= Time.deltaTime;
             yield return null;
@@ -54,28 +57,24 @@ public class CharacterQuickInfoPanel : MonoBehaviour
 
         if (_currentTarget != null)
         {
-            if (!string.IsNullOrWhiteSpace(_currentTarget.DisplayName.ToString()))
-            {
-                playerNameText.text = _currentTarget.DisplayName.ToString();
-            }
-            else
-            {
-                playerNameText.text = "Không rõ tên";
-            }
+            string finalName = _currentTarget.DisplayName.ToString();
+            playerNameText.text = !string.IsNullOrWhiteSpace(finalName) ? finalName : "Không rõ tên";
         }
+
+        _waitNameCoroutine = null;
     }
-
-
-
-
 
     public void OnClickXemThongTin()
     {
         if (_currentTarget == null) return;
+
         gameObject.SetActive(false);
+
         string json = _currentTarget.GetFullCharacterJson();
+
         CharacterPreviewPanel.Instance.ClearPreviewData();
         CharacterPreviewPanel.Instance.gameObject.SetActive(true);
+
         if (CharacterPreviewPanel.Instance.characterPreview != null)
         {
             WorldChatUIManager.Instance.Chat.SetActive(false);
@@ -83,7 +82,6 @@ public class CharacterQuickInfoPanel : MonoBehaviour
             WorldChatUIManager.Instance.chatBar.SetActive(false);
             CharacterUIManager.Instance.CharacterButton.SetActive(false);
             SettingPanel.Instance.Setting.SetActive(false);
-
         }
 
         CharacterPreviewPanel.Instance.LoadCharacterFromJson(json);

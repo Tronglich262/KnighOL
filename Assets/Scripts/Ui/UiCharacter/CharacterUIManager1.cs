@@ -1,4 +1,4 @@
-using Assets.HeroEditor.Common.CharacterScripts;
+﻿using Assets.HeroEditor.Common.CharacterScripts;
 using HeroEditor.Common.Enums;
 using Newtonsoft.Json;
 using System.Collections;
@@ -101,8 +101,51 @@ public class CharacterUIManager1 : MonoBehaviour
         if (string.IsNullOrEmpty(json) || character == null)
             return;
 
+        // Xóa icon cũ trước khi load lại
+        equippedItems.Clear();
+        ClearAllWeaponSlots(); // bạn cần viết hàm này
+
         presenter.LoadFromJson(json, applyVisual: true);
+
+        // === PHẦN QUAN TRỌNG: Load icon cho Weapon ===
+        LoadWeaponIconFromJson(json);
+
         RecalculateStats();
+    }
+
+    // Hàm mới thêm vào class
+    private void LoadWeaponIconFromJson(string json)
+    {
+        // Lấy ID của các vũ khí từ JSON (tùy theo format JSON của bạn)
+        string melee1hId = GetItemIdFromJson(json, "MeleeWeapon1H");   // key phải đúng với JSON
+        string melee2hId = GetItemIdFromJson(json, "MeleeWeapon2H");
+        string bowId = GetItemIdFromJson(json, "Bow");
+
+        if (!string.IsNullOrEmpty(melee1hId))
+        {
+            string path = $"Items/MeleeWeapon1H/{melee1hId}"; // chỉnh lại đường dẫn cho đúng với project của bạn
+            DisplayItem(MeleeWeapon1Hslot, path, "MeleeWeapon1H");
+        }
+
+        if (!string.IsNullOrEmpty(melee2hId))
+        {
+            string path = $"Items/MeleeWeapon2H/{melee2hId}";
+            DisplayItem(MeleeWeapon2Hslot, path, "MeleeWeapon2H");
+        }
+
+        if (!string.IsNullOrEmpty(bowId))
+        {
+            string path = $"Items/Bow/{bowId}";
+            DisplayItem(Bowslot, path, "Bow");
+        }
+    }
+
+    // Hàm clear slot vũ khí (thêm vào)
+    private void ClearAllWeaponSlots()
+    {
+        ClearSlot(MeleeWeapon1Hslot);
+        ClearSlot(MeleeWeapon2Hslot);
+        ClearSlot(Bowslot);
     }
 
     private void RecalculateStats()

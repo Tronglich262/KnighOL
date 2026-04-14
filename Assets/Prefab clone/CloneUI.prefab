@@ -491,8 +491,8 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 21300038, guid: d42795d9ea8849a3b1bf81475cb162d8, type: 3}
   - {fileID: 21300000, guid: 93f9ab5022ce4ecb9f7e37957921f47c, type: 3}
-  Cape: {fileID: 21300000, guid: 8b7ff371658102b419b6cd1bbb2ca89b, type: 3}
-  Back: {fileID: 21300000, guid: 72bf6617f1bf40a2a91ba0d1a86cfcc0, type: 3}
+  Cape: {fileID: 0}
+  Back: {fileID: 0}
   Shield: {fileID: 21300000, guid: 74789fc98ef9f5e4f91b7628e04a7611, type: 3}
   Bow: []
   Firearms: []
@@ -1556,7 +1556,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 10
-  m_Sprite: {fileID: 21300000, guid: 8b7ff371658102b419b6cd1bbb2ca89b, type: 3}
+  m_Sprite: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -1564,7 +1564,7 @@ SpriteRenderer:
   m_Size: {x: 5.12, y: 5.12}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &1237896381715082
@@ -2374,7 +2374,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 5
-  m_Sprite: {fileID: 21300000, guid: 72bf6617f1bf40a2a91ba0d1a86cfcc0, type: 3}
+  m_Sprite: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -2382,7 +2382,7 @@ SpriteRenderer:
   m_Size: {x: 5.12, y: 5.12}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &1363335830201246

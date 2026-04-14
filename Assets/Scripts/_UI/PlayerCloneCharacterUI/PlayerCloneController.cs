@@ -31,13 +31,17 @@ public class PlayerCloneController : MonoBehaviour
 
     public void SendCharacterJsonToTarget(string json)
     {
-        if (targetAvatar != null && targetAvatar.HasStateAuthority)
-        {
-            targetAvatar.UpdateCharacterJson(json); //  Chia JSON thành 7 phần
-            targetAvatar.SendCharacterJsonToAllClients(); //  Fusion tự sync
+        if (targetAvatar == null || string.IsNullOrEmpty(json))
+            return;
 
+        if (targetAvatar.HasStateAuthority)
+        {
+            targetAvatar.UpdateCharacterJson(json);
         }
- 
+        else
+        {
+            targetAvatar.RPC_UpdateCharacterJson(json);
+        }
     }
 
 

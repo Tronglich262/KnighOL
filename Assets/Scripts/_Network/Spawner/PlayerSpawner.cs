@@ -5,128 +5,183 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.Rendering;
 
 public class PlayerSpawner : SimulationBehaviour, INetworkRunnerCallbacks
 {
+    [Header("Prefabs")]
     public NetworkObject playerPrefab;
     public GameObject characterCanvasPrefab;
+
+    [Header("Spawn Points")]
+    public Transform[] spawnPoints;
+
+    [Header("Optional References")]
+    [SerializeField] private PlayerCloneController cloneController;
+
     public static NetworkObject LocalPlayerObject;
 
-    // Danh sách vị trí spawn có thể có
-    public Transform[] spawnPoints;
+    private GameObject localCanvasInstance;
 
     public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
     {
-        // Debug: Log số lượng player đang có
-        // Debug.Log($"[PlayerSpawner] Player joined: {player}, Total players: {runner.ActivePlayers.Count()}");
-
         var sync = FindFirstObjectByType<NicknameSyncManager>();
-        if (sync != null) sync.OnPlayerJoined(runner, player);
+        if (sync != null)
+            sync.OnPlayerJoined(runner, player);
 
-        if (player == runner.LocalPlayer)
+        if (player != runner.LocalPlayer)
+            return;
+
+        EnsureLocalCanvas();
+
+        Vector3 spawnPosition = ResolveSpawnPosition(runner);
+        Quaternion spawnRotation = Quaternion.identity;
+
+        NetworkObject obj = runner.Spawn(playerPrefab, spawnPosition, spawnRotation, player);
+        LocalPlayerObject = obj;
+
+        SetupClonePreview(obj);
+        SetupAvatar(obj);
+        RegisterOnlineToken(runner, player);
+    }
+
+    private void EnsureLocalCanvas()
+    {
+        if (localCanvasInstance != null)
+            return;
+
+        localCanvasInstance = Instantiate(characterCanvasPrefab);
+        localCanvasInstance.SetActive(true);
+
+        if (localCanvasInstance.GetComponent<LocalPlayerStatsLoader>() == null)
+            localCanvasInstance.AddComponent<LocalPlayerStatsLoader>();
+
+        if (InventoryManager.Instance != null)
         {
-            // UI
-            var canvas = Instantiate(characterCanvasPrefab);
-            canvas.SetActive(true);
-            if (canvas.GetComponent<LocalPlayerStatsLoader>() == null)
-                canvas.AddComponent<LocalPlayerStatsLoader>();
-            InventoryManager.Instance.uiManager = canvas.GetComponentInChildren<InventoryUIManager>();
-
-            // Tính vị trí spawn dựa trên số thứ tự player
-            int playerIndex = runner.ActivePlayers.Count() - 1;
-            Vector3 spawnPosition;
-            Quaternion spawnRotation = Quaternion.identity;
-
-            // Nếu có spawnPoints array, sử dụng chúng
-            if (spawnPoints != null && spawnPoints.Length > 0)
-            {
-                // Lấy vị trí spawn theo index (loop nếu vượt quá số điểm)
-                int spawnIndex = playerIndex % spawnPoints.Length;
-                spawnPosition = spawnPoints[spawnIndex].position;
-                Debug.Log($"[PlayerSpawner] Using spawn point {spawnIndex} for player {playerIndex}");
-            }
-            else
-            {
-                // Fallback: Spawn lệch nhau theo khoảng cách ngẫu nhiên
-                float offsetX = (playerIndex % 4) * 3f; // Mỗi player lệch 3 đơn vị
-                float offsetY = (playerIndex / 4) * 3f;
-                spawnPosition = new Vector3(offsetX, -7.02f + offsetY, 0);
-                Debug.Log($"[PlayerSpawner] Using offset spawn: {spawnPosition} for player {playerIndex}");
-            }
-
-            // Tạo dữ liệu spawn từ thông tin người chơi hiện tại
-            PlayerSpawnData spawnData = new PlayerSpawnData
-            {
-                DisplayName = PlayerDataHolder1.PlayerName
-            };
-
-            // Truyền vào runner.Spawn
-            NetworkObject obj = runner.Spawn(playerPrefab, spawnPosition, spawnRotation, player);
-
-            // Local player object để ThongTin/StartInventory/BuffSkillNetwork luôn init đúng nhân vật mình
-            LocalPlayerObject = obj;
-
-            // Clone handling
-            var clone = GameObject.Find("CloneUI");
-            if (clone != null)
-            {
-                var cloneCtrl = clone.GetComponent<PlayerCloneController>();
-                cloneCtrl?.SetTarget(obj);
-                ItemDetailsUI.Instance.playerClone = clone;
-                ItemDetailsUI.Instance.character = clone.GetComponent<Character>();
-                CharacterUIManager1.Instance.character = clone.GetComponent<Character>();
-
-                string json = PlayerDataHolder1.CharacterJson;
-                clone.GetComponent<Character>().FromJson(json);
-                clone.GetComponent<PlayerCloneController>().LoadJson(json);
-            }
-            else Debug.LogWarning("Không tìm thấy PlayerClone trong scene.");
-
-            var avatar = obj.GetComponent<PlayerAvatar>();
-            if (avatar != null)
-            {
-                Debug.Log("UpdateCharacterJson ban đầu");
-                avatar.UpdateCharacterJson(PlayerDataHolder1.CharacterJson);
-
-                // Gửi tên lên server
-                avatar.RPC_SendDisplayNameToServer(PlayerDataHolder1.PlayerName);
-            }
-
-            string nickname = PlayerDataHolder1.PlayerName;
-
-            var nameTag = obj.GetComponentInChildren<NameTagManager>();
-            if (nameTag != null && obj.HasInputAuthority)
-            {
-                nameTag.RPC_SetNickname(nickname);
-            }
-
-            string token = PlayerDataHolder1.Token;
-            if (OnlineAccountManager.Instance.OnlineTokens.TryGetValue(token, out PlayerRef oldPlayer))
-            {
-                if (!oldPlayer.Equals(player) && runner.TryGetPlayerObject(oldPlayer, out NetworkObject oldPlayerObj))
-                {
-                    oldPlayerObj.GetComponent<PlayerAvatar>()?.RPC_KickToLogin();
-                }
-            }
-            OnlineAccountManager.Instance.OnlineTokens[token] = player;
+            var inventoryUi = localCanvasInstance.GetComponentInChildren<InventoryUIManager>(true);
+            InventoryManager.Instance.uiManager = inventoryUi;
         }
+    }
+
+    private Vector3 ResolveSpawnPosition(NetworkRunner runner)
+    {
+        int playerIndex = runner.ActivePlayers.Count() - 1;
+
+        if (spawnPoints != null && spawnPoints.Length > 0)
+        {
+            int spawnIndex = playerIndex % spawnPoints.Length;
+            return spawnPoints[spawnIndex].position;
+        }
+
+        float offsetX = (playerIndex % 4) * 3f;
+        float offsetY = (playerIndex / 4) * 3f;
+        return new Vector3(offsetX, -7.02f + offsetY, 0f);
+    }
+
+    private void SetupClonePreview(NetworkObject playerObject)
+    {
+        PlayerCloneController ctrl = cloneController;
+
+        if (ctrl == null)
+            ctrl = FindFirstObjectByType<PlayerCloneController>(FindObjectsInactive.Include);
+
+        if (ctrl == null)
+        {
+            Debug.LogWarning("[PlayerSpawner] Không tìm thấy PlayerCloneController trong scene.");
+            return;
+        }
+
+        ctrl.SetTarget(playerObject);
+
+        var cloneCharacter = ctrl.GetComponent<Character>();
+        if (cloneCharacter == null)
+        {
+            Debug.LogWarning("[PlayerSpawner] Clone preview không có component Character.");
+            return;
+        }
+
+        string json = PlayerDataHolder1.CharacterJson;
+
+        if (ItemDetailsUI.Instance != null)
+        {
+            ItemDetailsUI.Instance.playerClone = ctrl.gameObject;
+            ItemDetailsUI.Instance.character = cloneCharacter;
+        }
+
+        if (CharacterUIManager1.Instance != null)
+        {
+            CharacterUIManager1.Instance.character = cloneCharacter;
+        }
+
+        cloneCharacter.FromJson(json);
+        ctrl.LoadJson(json);
+    }
+
+    private void SetupAvatar(NetworkObject playerObject)
+    {
+        var avatar = playerObject.GetComponent<PlayerAvatar>();
+        if (avatar == null)
+        {
+            Debug.LogWarning("[PlayerSpawner] Player object không có PlayerAvatar.");
+            return;
+        }
+
+        string json = PlayerDataHolder1.CharacterJson;
+        string nickname = PlayerDataHolder1.PlayerName;
+
+        avatar.UpdateCharacterJson(json);
+        avatar.RPC_SendDisplayNameToServer(nickname);
+
+        var nameTag = playerObject.GetComponentInChildren<NameTagManager>(true);
+        if (nameTag != null && playerObject.HasInputAuthority)
+        {
+            nameTag.RPC_SetNickname(nickname);
+        }
+    }
+
+    private void RegisterOnlineToken(NetworkRunner runner, PlayerRef currentPlayer)
+    {
+        if (OnlineAccountManager.Instance == null)
+            return;
+
+        string token = PlayerDataHolder1.Token;
+        if (string.IsNullOrEmpty(token))
+            return;
+
+        if (OnlineAccountManager.Instance.OnlineTokens.TryGetValue(token, out PlayerRef oldPlayer))
+        {
+            if (!oldPlayer.Equals(currentPlayer) &&
+                runner.TryGetPlayerObject(oldPlayer, out NetworkObject oldPlayerObj))
+            {
+                oldPlayerObj.GetComponent<PlayerAvatar>()?.RPC_KickToLogin();
+            }
+        }
+
+        OnlineAccountManager.Instance.OnlineTokens[token] = currentPlayer;
     }
 
     public void OnPlayerLeft(NetworkRunner runner, PlayerRef player)
     {
+        if (OnlineAccountManager.Instance == null)
+            return;
+
+        string keyToRemove = null;
+
         foreach (var kvp in OnlineAccountManager.Instance.OnlineTokens)
         {
             if (kvp.Value == player)
             {
-                OnlineAccountManager.Instance.OnlineTokens.Remove(kvp.Key);
-                Debug.Log("Đã xóa token khi client rời game");
+                keyToRemove = kvp.Key;
                 break;
             }
         }
+
+        if (!string.IsNullOrEmpty(keyToRemove))
+        {
+            OnlineAccountManager.Instance.OnlineTokens.Remove(keyToRemove);
+            Debug.Log("[PlayerSpawner] Đã xóa token khi client rời game.");
+        }
     }
 
-    // Empty implementations
     public void OnInput(NetworkRunner runner, NetworkInput input) { }
     public void OnInputMissing(NetworkRunner runner, PlayerRef player, NetworkInput input) { }
     public void OnShutdown(NetworkRunner runner, ShutdownReason shutdownReason) { }

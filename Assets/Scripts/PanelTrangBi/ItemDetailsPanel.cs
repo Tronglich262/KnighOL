@@ -98,9 +98,7 @@ public class ItemDetailsPanel : MonoBehaviour
         }
 
         // 3. Thực hiện lấy ID trang bị để trả về Inventory trước khi gỡ trong JSON
-        string json = PlayerDataHolder1.CharacterJson;
-        var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(json) ?? new Dictionary<string, string>();
-
+        var dict = CharacterJsonService.LoadDict();
         if (dict.TryGetValue(currentType, out string itemIdToReturn) && !string.IsNullOrEmpty(itemIdToReturn))
         {
             // Cộng item lại vào túi đồ

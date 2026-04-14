@@ -114,7 +114,12 @@ public class ItemDetailsUI : MonoBehaviour
 
     public void UseItem()
     {
-        // 1. Kiểm tra level yêu cầu
+        if (currentItem == null || currentItem.stats == null)
+        {
+            Debug.LogError("[ItemDetailsUI] currentItem null hoặc thiếu stats.");
+            return;
+        }
+
         int playerLevel = PlayerDataHolder1.CurrentPlayerState.level;
         int levelRequired = currentItem.stats.LevelRequired;
 
@@ -124,34 +129,39 @@ public class ItemDetailsUI : MonoBehaviour
             return;
         }
 
-        // 2. Kiểm tra số lượng item
         string type = currentItem.stats.Type;
-        string newWeaponId = currentItem.itemId;
-        var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(PlayerDataHolder1.CharacterJson);
+        string newItemId = currentItem.itemId;
 
-        // Nếu là vũ khí
+        var dict = CharacterJsonService.LoadDict();
+
+        // inventory swap
         if (type == "Bow" || type.Contains("Weapon"))
         {
-            string[] weaponKeys = { "PrimaryMeleeWeapon", "SecondaryMeleeWeapon", "Bow" };
+            string[] weaponKeys = { "PrimaryMeleeWeapon", "SecondaryMeleeWeapon", "Bow", "MeleeWeapon1H", "MeleeWeapon2H" };
+
             foreach (string key in weaponKeys)
             {
-                if (dict.TryGetValue(key, out string oldWeaponId) && !string.IsNullOrEmpty(oldWeaponId) && oldWeaponId != newWeaponId)
+                string oldWeaponId = CharacterJsonService.GetValue(dict, key);
+                if (!string.IsNullOrEmpty(oldWeaponId) && oldWeaponId != newItemId)
                 {
                     InventoryManager.Instance.AddItem(oldWeaponId, 1);
-                    dict[key] = "";
+                    CharacterJsonService.SetValue(dict, key, "");
                 }
             }
-            InventoryManager.Instance.RemoveItem(newWeaponId, 1);
+
+            InventoryManager.Instance.RemoveItem(newItemId, 1);
         }
         else
         {
-            // Các item thường swap như cũ
-            string equippedItemId = CharacterUIManager1.Instance.GetItemIdFromJson(PlayerDataHolder1.CharacterJson, type);
+            string equippedItemId = CharacterUIManager1.Instance != null
+                ? CharacterUIManager1.Instance.GetItemIdFromJson(PlayerDataHolder1.CharacterJson, type)
+                : null;
+
             if (!string.IsNullOrEmpty(equippedItemId))
             {
-                if (equippedItemId == currentItem.itemId)
+                if (equippedItemId == newItemId)
                 {
-                    var idx = InventoryManager.Instance.playerInventory.FindIndex(i => i == currentItem);
+                    int idx = InventoryManager.Instance.playerInventory.FindIndex(i => i == currentItem);
                     if (idx >= 0)
                     {
                         InventoryManager.Instance.playerInventory.RemoveAt(idx);
@@ -161,346 +171,31 @@ public class ItemDetailsUI : MonoBehaviour
                 else
                 {
                     InventoryManager.Instance.AddItem(equippedItemId, 1);
-                    InventoryManager.Instance.RemoveItem(currentItem.itemId, 1);
+                    InventoryManager.Instance.RemoveItem(newItemId, 1);
                 }
             }
             else
             {
-                InventoryManager.Instance.RemoveItem(currentItem.itemId, 1);
+                InventoryManager.Instance.RemoveItem(newItemId, 1);
             }
         }
 
-        EquipToCharacter(currentItem.stats);
-        // ===== UPDATE CHỈ SỐ NGAY KHI MẶC =====
         var player = GameObject.FindWithTag("Player");
         if (player != null)
         {
             var equipMgr = player.GetComponent<EquipmentStatManager>();
             if (equipMgr != null)
-            {
                 equipMgr.Equip(currentItem.stats);
-            }
         }
 
-        if (CharacterUIManager1.Instance != null && currentItem != null)
-        {
-            // string type = currentItem.stats.Type;
-            string itemId = currentItem.itemId;
+        CharacterEquipHandler.EquipItemToCharacter(currentItem);
 
-            // Nếu là Gloves thì hiển thị lại đúng slot từ ArmorSlots
-            if (type == "Gloves")
-            {
-                CharacterUIManager1.Instance.DisplayItem(
-                    CharacterUIManager1.Instance.ArmorSlots[2], // Index 2 là Gloves
-                    itemId,
-                    "Gloves"
-                );
-                CharacterEquipHandler.EquipPartialArmorFromEntry(character, currentItem.itemId, type);
-                Debug.Log("Bao tay " + currentItem.itemId);
-            }
-            if (type == "Belt")
-            {
-                CharacterUIManager1.Instance.DisplayItem(
-                    CharacterUIManager1.Instance.ArmorSlots[5], // Index 2 là Gloves
-                    itemId,
-                    "Belt"
-
-                );
-                CharacterEquipHandler.EquipPartialArmorFromEntry(character, currentItem.itemId, type);
-            }
-            if (type == "Boots")
-            {
-                CharacterUIManager1.Instance.DisplayItem(
-                    CharacterUIManager1.Instance.ArmorSlots[1], // Index 2 là Gloves
-                    itemId,
-                    "Boots"
-                );
-                CharacterEquipHandler.EquipPartialArmorFromEntry(character, currentItem.itemId, type);
-            }
-            if (type == "Vest")
-            {
-                CharacterUIManager1.Instance.DisplayItem1(
-                    CharacterUIManager1.Instance.ArmorSlots[4], // Index 2 là Gloves
-                    itemId,
-                    "Vest"
-                );
-                CharacterEquipHandler.EquipPartialArmorFromEntry(character, currentItem.itemId, type);
-            }
-            if (type == "Armor")
-            {
-                CharacterUIManager1.Instance.DisplayItem(
-                    CharacterUIManager1.Instance.ArmorSlots[0], // Index 2 là Gloves
-                    itemId,
-                    "Armor"
-                );
-                CharacterEquipHandler.TestEquipArmor(character, currentItem.itemId);
-
-            }
-            if (type == "Helmet")
-            {
-                CharacterUIManager1.Instance.DisplayItem1(
-                    CharacterUIManager1.Instance.Helmetslot, // Index 2 là Gloves
-                    itemId,
-                    "Helmet"
-                );
-
-            }
-
-            if (type == "MeleeWeapon1H")
-            {
-                CharacterUIManager1.Instance.DisplayItem1(
-                    CharacterUIManager1.Instance.MeleeWeapon1Hslot, // Index 2 là Gloves
-                    itemId,
-                    "MeleeWeapon1H"
-                );
-            }
-            if (type == "MeleeWeapon2H")
-            {
-                CharacterUIManager1.Instance.DisplayItem1(
-                    CharacterUIManager1.Instance.MeleeWeapon2Hslot, // Index 2 là Gloves
-                    itemId,
-                    "MeleeWeapon2H"
-                );
-            }
-            if (type == "Cape")
-            {
-                CharacterUIManager1.Instance.DisplayItem1(
-                    CharacterUIManager1.Instance.Capeslot, // Index 2 là Gloves
-                    itemId,
-                    "Cape"
-                );
-            }
-            if (type == "Shield")
-            {
-                CharacterUIManager1.Instance.DisplayItem1(
-                    CharacterUIManager1.Instance.Shieldslot, // Index 2 là Gloves
-                    itemId,
-                    "Shield"
-                );
-            }
-            if (type == "Pauldrons")
-            {
-                CharacterUIManager1.Instance.DisplayItem1(
-                    CharacterUIManager1.Instance.ArmorSlots[3], // Index 2 là Gloves
-                    itemId,
-                    "Pauldrons"
-                );
-            }
-            if (type == "Glasses")
-            {
-                CharacterUIManager1.Instance.DisplayItem1(
-                    CharacterUIManager1.Instance.Glassesslot, // Index 2 là Gloves
-                    itemId,
-                    "Glasses"
-                );
-            }
-
-            if (type == "Hair")
-            {
-                CharacterUIManager1.Instance.DisplayItem1(
-                    CharacterUIManager1.Instance.Hairslot, // Index 2 là Gloves
-                    itemId,
-                    "Hair"
-                );
-            }
-            if (type == "Back")
-            {
-                CharacterUIManager1.Instance.DisplayItem1(
-                    CharacterUIManager1.Instance.Backslot, // Index 2 là Gloves
-                    itemId,
-                    "Back"
-                );
-            }
-            if (type == "Mask")
-            {
-                CharacterUIManager1.Instance.DisplayItem1(
-                    CharacterUIManager1.Instance.Maskslot, // Index 2 là Gloves
-                    itemId,
-                    "Mask"
-                );
-            }
-            if (type == "Bow")
-            {
-                CharacterUIManager1.Instance.DisplayItem1(
-                    CharacterUIManager1.Instance.Bowslot,
-                    itemId,
-                    "Bow"
-                );
-
-                CharacterEquipHandler.TestEquipBow(character, currentItem.itemId);
-            }
-
-
-
-            // Có thể làm tương tự với Boots, Vest, Belt, Armor, Pauldrons...
-        }
-
-        if (currentItem == null || currentItem.stats == null)
-        {
-            Debug.LogError(" currentItem null hoặc thiếu stats.");
-            return;
-        }
-
-        if (string.IsNullOrEmpty(PlayerDataHolder1.CharacterJson))
-        {
-            Debug.LogError(" Chưa có CharacterJson.");
-            return;
-        }
-
-        // Parse JSON hiện tại từ nhân vật
-        dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(PlayerDataHolder1.CharacterJson);
-        //  Xoá vũ khí cũ nếu đang chuyển đổi loại
-        if (currentItem.stats.Type == "Bow")
-        {
-            dict.Remove("PrimaryMeleeWeapon");
-            dict.Remove("SecondaryMeleeWeapon");
-            dict.Remove("MeleeWeapon1H");
-            dict.Remove("MeleeWeapon2H");
-        }
-        else if (currentItem.stats.Type == "PrimaryMeleeWeapon" || currentItem.stats.Type == "MeleeWeapon1H")
-        {
-            dict.Remove("Bow");
-            dict.Remove("SecondaryMeleeWeapon");
-            dict.Remove("MeleeWeapon2H");
-        }
-        else if (currentItem.stats.Type == "MeleeWeapon2H")
-        {
-            dict.Remove("Bow");
-            dict.Remove("SecondaryMeleeWeapon");
-            dict.Remove("MeleeWeapon1H");
-        }
-
-
-
-        // Ghi đè item vào đúng slot
-        switch (currentItem.stats.Type)
-        {
-            case "Helmet":
-            case "Armor":
-            case "Boots":
-            case "Gloves":
-            case "Pauldrons":
-            case "Vest":
-            case "Belt":
-            case "Shield":
-            case "Cape":
-            case "Back":
-            case "Glasses":
-            case "Hair":
-
-                //case "Bow":
-                dict[currentItem.stats.Type] = currentItem.itemId;
-                break;
-            case "Bow":
-                dict["Bow"] = currentItem.itemId;
-                dict["WeaponType"] = "Bow";
-
-                break;
-            case "MeleeWeapon1H":
-                dict["PrimaryMeleeWeapon"] = currentItem.itemId;
-                dict["MeleeWeapon1H"] = currentItem.itemId; // THÊM DÒNG NÀY
-                dict["WeaponType"] = "Melee1H";
-                break;
-
-            case "MeleeWeapon2H":
-                dict["PrimaryMeleeWeapon"] = currentItem.itemId;
-                dict["MeleeWeapon2H"] = currentItem.itemId; // THÊM DÒNG NÀY
-                dict.Remove("SecondaryMeleeWeapon");
-                dict["WeaponType"] = "Melee2H";
-                break;
-
-
-            default:
-                Debug.LogWarning($"[ItemDetailsUI] Loai chua ho tro: {currentItem.stats.Type}");
-                return;
-        }
-        // Serialize lại JSON
-        string updatedJson = JsonConvert.SerializeObject(dict, Formatting.None);
-        PlayerDataHolder1.CharacterJson = updatedJson;
-
-        if (PlayerAvatar.Instance != null && PlayerAvatar.Instance.HasStateAuthority)
-        {
-            PlayerAvatar.Instance.UpdateCharacterJson(updatedJson);
-            PlayerAvatar.Instance.SendCharacterJsonToAllClients(); //  thêm dòng này!
-            Debug.Log("Đã gửi JSON mới cho tất cả client.");
-        }
-
-        //  Nếu đang test trên clone, gửi JSON về player thật thông qua controller
-        if (playerClone != null)
-        {
-            var cloneCtrl = playerClone.GetComponent<PlayerCloneController>();
-            if (cloneCtrl != null)
-            {
-                cloneCtrl.SendCharacterJsonToTarget(updatedJson); //  Gửi từ clone → player thật
-            }
-            else
-            {
-                Debug.LogError("[ItemDetailsUI] Khong tim thay PlayerCloneController.");
-            }
-        }
-        else
-        {
-            Debug.LogWarning("[ItemDetailsUI] playerClone chua duoc gan.");
-        }
-
-        // Đồng bộ với UI trung tâm (chỉ hiển thị preview)
-        if (CharacterUIManager1.Instance != null)
-        {
-            //  string type = currentItem.stats.Type;
-            string itemId = currentItem.itemId;
-
-            if (type == "Armor")
-            {
-                CleanUnsupportedEntries(dict, character);
-                CharacterUIManager1.Instance.character.FromJson(updatedJson);
-                StartCoroutine(EquipArmorNextFrame(currentItem.itemId));
-            }
-
-            else
-            {
-                CharacterUIManager1.Instance.character.FromJson(updatedJson);
-            }
-            string[] mixTypes = new[] { "Boots", "Gloves", "Belt", "Pauldrons", "Vest" };
-            foreach (string t in mixTypes)
-            {
-                if (dict.TryGetValue(t, out string partId) && !string.IsNullOrEmpty(partId))
-                {
-                    CharacterEquipHandler.EquipPartialArmorFromEntry(character, partId, t);
-                }
-            }
-        }
-        if (currentItem == null || currentItem.stats == null)
-        {
-            ShowEquipMessage(" Trang bị thất bại! Dữ liệu item lỗi");
-            return;
-        }
-        if (string.IsNullOrEmpty(PlayerDataHolder1.CharacterJson))
-        {
-            ShowEquipMessage(" Trang bị thất bại! Không có dữ liệu nhân vật");
-            return;
-        }
+        CharacterUIManager1.Instance?.RefreshFromLatestJson();
+        CharacterUIManager1.Instance?.UpdateCharacterStatsAndUI();
 
         ShowEquipMessage(" Trang bị thành công");
-
-        //  Tắt panel
         panel.SetActive(false);
-        // Gửi JSON lên server để lưu theo account của chính client
-        // Thay vì check HasStateAuthority của PlayerAvatar.Instance, check theo account hiện tại
-        if (AuthManager.Instance != null)
-        {
-            Debug.Log("[ItemDetailsUI] Gui JSON len server de luu theo account cua client hien tai.");
-            AuthManager.Instance.StartCoroutine(AuthManager.Instance.SaveCharacterToServer(updatedJson));
-        }
-        else
-        {
-            Debug.LogError("[ItemDetailsUI] Khong tim thay AuthManager.");
-        }
-
-
-
     }
-
-
     private string GetEquippedWeaponId(string type)
     {
         var dict = GetCharacterJsonDict();

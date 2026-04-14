@@ -34,8 +34,7 @@ public static class CharacterEquipHandler
         var type = item.stats.Type;
         var itemId = ItemIdUtility.Normalize(item.itemId);
 
-        var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(PlayerDataHolder1.CharacterJson)
-                   ?? new Dictionary<string, string>();
+        var dict = CharacterJsonService.LoadDict();
 
         bool isWeapon =
             type == EquipKeys.MeleeWeapon1H ||
@@ -43,30 +42,29 @@ public static class CharacterEquipHandler
             type == EquipKeys.Bow;
 
         if (isWeapon)
-        {
             ClearWeaponFields(dict);
-        }
 
         switch (type)
         {
             case EquipKeys.Bow:
-                dict[EquipKeys.Bow] = itemId;
-                dict["WeaponType"] = EquipKeys.Weapon_Bow;
+                CharacterJsonService.SetValue(dict, EquipKeys.Bow, itemId);
+                CharacterJsonService.SetValue(dict, "WeaponType", EquipKeys.Weapon_Bow);
                 break;
 
             case EquipKeys.MeleeWeapon1H:
-                dict[EquipKeys.MeleeWeapon1H] = itemId;
-                dict[EquipKeys.PrimaryMeleeWeapon] = itemId;
-                dict["WeaponType"] = EquipKeys.Weapon_Melee1H;
+                CharacterJsonService.SetValue(dict, EquipKeys.MeleeWeapon1H, itemId);
+                CharacterJsonService.SetValue(dict, EquipKeys.PrimaryMeleeWeapon, itemId);
+                CharacterJsonService.SetValue(dict, "WeaponType", EquipKeys.Weapon_Melee1H);
                 break;
 
             case EquipKeys.MeleeWeapon2H:
-                dict[EquipKeys.MeleeWeapon2H] = itemId;
-                dict[EquipKeys.PrimaryMeleeWeapon] = itemId;
-                dict["WeaponType"] = EquipKeys.Weapon_Melee2H;
+                CharacterJsonService.SetValue(dict, EquipKeys.MeleeWeapon2H, itemId);
+                CharacterJsonService.SetValue(dict, EquipKeys.PrimaryMeleeWeapon, itemId);
+                CharacterJsonService.SetValue(dict, "WeaponType", EquipKeys.Weapon_Melee2H);
                 break;
+
             default:
-                dict[type] = itemId;
+                CharacterJsonService.SetValue(dict, type, itemId);
                 break;
         }
 
@@ -80,28 +78,19 @@ public static class CharacterEquipHandler
         }
         else
         {
-            string updatedJson = JsonConvert.SerializeObject(dict, Formatting.None);
-            PlayerDataHolder1.CharacterJson = updatedJson;
-            character.FromJson(updatedJson);
+            string tempJson = CharacterJsonService.SaveDict(dict);
+            character.FromJson(tempJson);
         }
 
-        dict["Armor"] = SaveArmorState(character.Armor);
-        string finalJson = JsonConvert.SerializeObject(dict, Formatting.None);
-        PlayerDataHolder1.CharacterJson = finalJson;
+        CharacterJsonService.SetValue(dict, "Armor", SaveArmorState(character.Armor));
+        PreserveWeaponInfo(dict);
 
-        if (AuthManager.Instance != null)
-            AuthManager.Instance.StartCoroutine(AuthManager.Instance.SaveCharacterToServer(finalJson));
+        string finalJson = CharacterJsonService.SaveDict(dict);
 
-        if (ItemDetailsUI.Instance != null && ItemDetailsUI.Instance.playerClone != null)
-        {
-            var cloneController = ItemDetailsUI.Instance.playerClone.GetComponent<PlayerCloneController>();
-            if (cloneController != null)
-                cloneController.SendCharacterJsonToTarget(finalJson);
-        }
-        else
-        {
-            PlayerAvatar.Instance?.UpdateCharacterJson(finalJson);
-        }
+        EquipmentSyncService.ApplyFullJson(
+            finalJson,
+            ItemDetailsUI.Instance != null ? ItemDetailsUI.Instance.playerClone : null
+        );
 
         CharacterUIManager1.Instance.RefreshFromLatestJson();
         CharacterUIManager1.Instance.UpdateCharacterStatsAndUI();
@@ -259,13 +248,12 @@ public static class CharacterEquipHandler
             return;
         }
 
-        var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(PlayerDataHolder1.CharacterJson)
-                   ?? new Dictionary<string, string>();
+        var dict = CharacterJsonService.LoadDict();
 
-        dict[type] = "";
+        CharacterJsonService.SetValue(dict, type, "");
 
         if (type == EquipKeys.Armor)
-            dict["Armor"] = "";
+            CharacterJsonService.SetValue(dict, "Armor", "");
 
         if (ArmorTypeToIndexes.TryGetValue(type, out var indexes))
         {
@@ -283,39 +271,144 @@ public static class CharacterEquipHandler
         PreserveWeaponInfo(dict);
         RestoreWeaponVisual(character, dict);
 
-        string json = JsonConvert.SerializeObject(dict, Formatting.None);
-        PlayerDataHolder1.CharacterJson = json;
+        string finalJson = CharacterJsonService.SaveDict(dict);
 
-        if (AuthManager.Instance != null)
-            AuthManager.Instance.StartCoroutine(AuthManager.Instance.SaveCharacterToServer(json));
-
-        // Đồng bộ local visual ngay
-        PlayerAvatar.Instance?.LoadCharacter(json);
-
-        // Đồng bộ sang đúng target/network giống luồng equip
-        if (ItemDetailsUI.Instance != null && ItemDetailsUI.Instance.playerClone != null)
-        {
-            var cloneController = ItemDetailsUI.Instance.playerClone.GetComponent<PlayerCloneController>();
-            if (cloneController != null)
-                cloneController.SendCharacterJsonToTarget(json);
-        }
-        else
-        {
-            if (PlayerAvatar.Instance != null)
-            {
-                if (PlayerAvatar.Instance.HasStateAuthority)
-                    PlayerAvatar.Instance.UpdateCharacterJson(json);
-                else
-                    PlayerAvatar.Instance.RPC_UpdateCharacterJson(json);
-            }
-        }
+        EquipmentSyncService.ApplyFullJson(
+            finalJson,
+            ItemDetailsUI.Instance != null ? ItemDetailsUI.Instance.playerClone : null
+        );
 
         character.Initialize();
-
-        // CHỈ clear đúng slot vừa tháo, KHÔNG refresh toàn bộ UI nữa
         ClearUnequippedSlotOnly(type);
 
         CharacterUIManager1.Instance.UpdateCharacterStatsAndUI();
+    }
+    // ===== SỬA LỖI ĐỒNG BỘ: DÙNG CHUẨN EQUIPKEYS =====
+    private static void PreserveWeaponInfo(Dictionary<string, string> dict)
+    {
+        string bow = CharacterJsonService.GetValue(dict, EquipKeys.Bow);
+        string melee1H = CharacterJsonService.GetValue(dict, EquipKeys.MeleeWeapon1H);
+        string melee2H = CharacterJsonService.GetValue(dict, EquipKeys.MeleeWeapon2H);
+        string primary = CharacterJsonService.GetValue(dict, EquipKeys.PrimaryMeleeWeapon);
+        string wt = CharacterJsonService.GetValue(dict, "WeaponType");
+
+        if (!string.IsNullOrEmpty(bow))
+        {
+            CharacterJsonService.SetValue(dict, "WeaponType", EquipKeys.Weapon_Bow);
+            CharacterJsonService.SetValue(dict, EquipKeys.MeleeWeapon1H, "");
+            CharacterJsonService.SetValue(dict, EquipKeys.MeleeWeapon2H, "");
+            CharacterJsonService.SetValue(dict, EquipKeys.PrimaryMeleeWeapon, "");
+            return;
+        }
+
+        if (!string.IsNullOrEmpty(melee1H))
+        {
+            CharacterJsonService.SetValue(dict, EquipKeys.PrimaryMeleeWeapon, melee1H);
+            CharacterJsonService.SetValue(dict, "WeaponType", EquipKeys.Weapon_Melee1H);
+            CharacterJsonService.SetValue(dict, EquipKeys.MeleeWeapon2H, "");
+            CharacterJsonService.SetValue(dict, EquipKeys.Bow, "");
+            return;
+        }
+
+        if (!string.IsNullOrEmpty(melee2H))
+        {
+            CharacterJsonService.SetValue(dict, EquipKeys.PrimaryMeleeWeapon, melee2H);
+            CharacterJsonService.SetValue(dict, "WeaponType", EquipKeys.Weapon_Melee2H);
+            CharacterJsonService.SetValue(dict, EquipKeys.MeleeWeapon1H, "");
+            CharacterJsonService.SetValue(dict, EquipKeys.Bow, "");
+            return;
+        }
+
+        if (!string.IsNullOrEmpty(primary))
+        {
+            if (wt == EquipKeys.Weapon_Melee1H || wt == "0" || wt == "Melee1H")
+            {
+                CharacterJsonService.SetValue(dict, EquipKeys.MeleeWeapon1H, primary);
+                CharacterJsonService.SetValue(dict, "WeaponType", EquipKeys.Weapon_Melee1H);
+                return;
+            }
+
+            if (wt == EquipKeys.Weapon_Melee2H || wt == "1" || wt == "Melee2H")
+            {
+                CharacterJsonService.SetValue(dict, EquipKeys.MeleeWeapon2H, primary);
+                CharacterJsonService.SetValue(dict, "WeaponType", EquipKeys.Weapon_Melee2H);
+                return;
+            }
+        }
+
+        CharacterJsonService.SetValue(dict, EquipKeys.MeleeWeapon1H, "");
+        CharacterJsonService.SetValue(dict, EquipKeys.MeleeWeapon2H, "");
+        CharacterJsonService.SetValue(dict, EquipKeys.PrimaryMeleeWeapon, "");
+        CharacterJsonService.SetValue(dict, EquipKeys.Bow, "");
+        CharacterJsonService.SetValue(dict, "WeaponType", "");
+    }
+
+    private static void SyncWeaponConsistency(Dictionary<string, string> dict)
+    {
+    }
+
+    private static void RestoreWeaponVisual(Character character, Dictionary<string, string> dict)
+    {
+        if (character == null || dict == null) return;
+
+        string weaponType = dict.TryGetValue("WeaponType", out var wt) ? wt : "";
+
+        // So sánh bao quát cả giá trị hằng số và các giá trị ép kiểu thủ công
+        if (weaponType == EquipKeys.Weapon_Melee1H || weaponType == "Melee1H" || weaponType == "0")
+        {
+            string id = dict.TryGetValue(EquipKeys.MeleeWeapon1H, out var m1) && !string.IsNullOrEmpty(m1) ? m1 :
+                        dict.TryGetValue(EquipKeys.PrimaryMeleeWeapon, out var p1) ? p1 : null;
+
+            if (!string.IsNullOrEmpty(id))
+            {
+                var entry = character.SpriteCollection.MeleeWeapon1H.FirstOrDefault(e => e.Id == id);
+                if (entry != null)
+                {
+                    character.WeaponType = WeaponType.Melee1H;
+                    character.Equip(entry, EquipmentPart.MeleeWeapon1H);
+                }
+            }
+        }
+        else if (weaponType == EquipKeys.Weapon_Melee2H || weaponType == "Melee2H" || weaponType == "1")
+        {
+            string id = dict.TryGetValue(EquipKeys.MeleeWeapon2H, out var m2) && !string.IsNullOrEmpty(m2) ? m2 :
+                        dict.TryGetValue(EquipKeys.PrimaryMeleeWeapon, out var p2) ? p2 : null;
+
+            if (!string.IsNullOrEmpty(id))
+            {
+                var entry = character.SpriteCollection.MeleeWeapon2H.FirstOrDefault(e => e.Id == id);
+                if (entry != null)
+                {
+                    character.WeaponType = WeaponType.Melee2H;
+                    character.Equip(entry, EquipmentPart.MeleeWeapon2H);
+                }
+            }
+        }
+        else if (weaponType == EquipKeys.Weapon_Bow || weaponType == "Bow" || weaponType == "2")
+        {
+            if (dict.TryGetValue(EquipKeys.Bow, out var bowId) && !string.IsNullOrEmpty(bowId))
+            {
+                var entry = character.SpriteCollection.Bow.FirstOrDefault(e => e.Id == bowId);
+                if (entry != null)
+                {
+                    character.WeaponType = WeaponType.Bow;
+                    character.Equip(entry, EquipmentPart.Bow);
+                }
+            }
+        }
+    }
+
+    // Giữ nguyên hàm ClearWeaponFields
+    public static void ClearWeaponFields(Dictionary<string, string> dict)
+    {
+        if (dict == null) return;
+
+        CharacterJsonService.SetValue(dict, EquipKeys.MeleeWeapon1H, "");
+        CharacterJsonService.SetValue(dict, EquipKeys.MeleeWeapon2H, "");
+        CharacterJsonService.SetValue(dict, EquipKeys.PrimaryMeleeWeapon, "");
+        CharacterJsonService.SetValue(dict, EquipKeys.SecondaryMeleeWeapon, "");
+        CharacterJsonService.SetValue(dict, EquipKeys.Bow, "");
+        CharacterJsonService.SetValue(dict, "WeaponType", "");
     }
     private static void ClearUnequippedSlotOnly(string type)
     {
@@ -384,131 +477,4 @@ public static class CharacterEquipHandler
                 break;
         }
     }
-    // ===== SỬA LỖI ĐỒNG BỘ: DÙNG CHUẨN EQUIPKEYS =====
-    private static void PreserveWeaponInfo(Dictionary<string, string> dict)
-    {
-        // 1. Ưu tiên kiểm tra Bow
-        if (dict.TryGetValue(EquipKeys.Bow, out var bow) && !string.IsNullOrEmpty(bow))
-        {
-            dict[EquipKeys.Bow] = bow;
-            dict["WeaponType"] = EquipKeys.Weapon_Bow;
-
-            // Dọn dẹp rác melee nếu có
-            dict.Remove(EquipKeys.MeleeWeapon1H);
-            dict.Remove(EquipKeys.MeleeWeapon2H);
-            dict.Remove(EquipKeys.PrimaryMeleeWeapon);
-            return;
-        }
-
-        // 2. Kiểm tra Melee 1H
-        if (dict.TryGetValue(EquipKeys.MeleeWeapon1H, out var melee1H) && !string.IsNullOrEmpty(melee1H))
-        {
-            dict[EquipKeys.MeleeWeapon1H] = melee1H;
-            dict[EquipKeys.PrimaryMeleeWeapon] = melee1H; // Đồng bộ sang Primary như khi Equip mới
-            dict["WeaponType"] = EquipKeys.Weapon_Melee1H;
-
-            dict.Remove(EquipKeys.MeleeWeapon2H);
-            dict.Remove(EquipKeys.Bow);
-            return;
-        }
-
-        // 3. Kiểm tra Melee 2H
-        if (dict.TryGetValue(EquipKeys.MeleeWeapon2H, out var melee2H) && !string.IsNullOrEmpty(melee2H))
-        {
-            dict[EquipKeys.MeleeWeapon2H] = melee2H;
-            dict[EquipKeys.PrimaryMeleeWeapon] = melee2H; // Đồng bộ sang Primary
-            dict["WeaponType"] = EquipKeys.Weapon_Melee2H;
-
-            dict.Remove(EquipKeys.MeleeWeapon1H);
-            dict.Remove(EquipKeys.Bow);
-            return;
-        }
-
-        // 4. Fallback (Dự phòng nếu JSON chỉ còn PrimaryMeleeWeapon)
-        if (dict.TryGetValue(EquipKeys.PrimaryMeleeWeapon, out var primary) && !string.IsNullOrEmpty(primary))
-        {
-            string wt = dict.TryGetValue("WeaponType", out var val) ? val : "";
-
-            if (wt == EquipKeys.Weapon_Melee1H || wt == "0" || wt.Contains("1H") || wt == "Melee1H")
-            {
-                dict[EquipKeys.MeleeWeapon1H] = primary;
-                dict["WeaponType"] = EquipKeys.Weapon_Melee1H;
-            }
-            else if (wt == EquipKeys.Weapon_Melee2H || wt == "1" || wt.Contains("2H") || wt == "Melee2H")
-            {
-                dict[EquipKeys.MeleeWeapon2H] = primary;
-                dict["WeaponType"] = EquipKeys.Weapon_Melee2H;
-            }
-        }
-    }
-
-    private static void SyncWeaponConsistency(Dictionary<string, string> dict)
-    {
-    }
-
-    private static void RestoreWeaponVisual(Character character, Dictionary<string, string> dict)
-    {
-        if (character == null || dict == null) return;
-
-        string weaponType = dict.TryGetValue("WeaponType", out var wt) ? wt : "";
-
-        // So sánh bao quát cả giá trị hằng số và các giá trị ép kiểu thủ công
-        if (weaponType == EquipKeys.Weapon_Melee1H || weaponType == "Melee1H" || weaponType == "0")
-        {
-            string id = dict.TryGetValue(EquipKeys.MeleeWeapon1H, out var m1) && !string.IsNullOrEmpty(m1) ? m1 :
-                        dict.TryGetValue(EquipKeys.PrimaryMeleeWeapon, out var p1) ? p1 : null;
-
-            if (!string.IsNullOrEmpty(id))
-            {
-                var entry = character.SpriteCollection.MeleeWeapon1H.FirstOrDefault(e => e.Id == id);
-                if (entry != null)
-                {
-                    character.WeaponType = WeaponType.Melee1H;
-                    character.Equip(entry, EquipmentPart.MeleeWeapon1H);
-                }
-            }
-        }
-        else if (weaponType == EquipKeys.Weapon_Melee2H || weaponType == "Melee2H" || weaponType == "1")
-        {
-            string id = dict.TryGetValue(EquipKeys.MeleeWeapon2H, out var m2) && !string.IsNullOrEmpty(m2) ? m2 :
-                        dict.TryGetValue(EquipKeys.PrimaryMeleeWeapon, out var p2) ? p2 : null;
-
-            if (!string.IsNullOrEmpty(id))
-            {
-                var entry = character.SpriteCollection.MeleeWeapon2H.FirstOrDefault(e => e.Id == id);
-                if (entry != null)
-                {
-                    character.WeaponType = WeaponType.Melee2H;
-                    character.Equip(entry, EquipmentPart.MeleeWeapon2H);
-                }
-            }
-        }
-        else if (weaponType == EquipKeys.Weapon_Bow || weaponType == "Bow" || weaponType == "2")
-        {
-            if (dict.TryGetValue(EquipKeys.Bow, out var bowId) && !string.IsNullOrEmpty(bowId))
-            {
-                var entry = character.SpriteCollection.Bow.FirstOrDefault(e => e.Id == bowId);
-                if (entry != null)
-                {
-                    character.WeaponType = WeaponType.Bow;
-                    character.Equip(entry, EquipmentPart.Bow);
-                }
-            }
-        }
-    }
-
-    // Giữ nguyên hàm ClearWeaponFields
-    public static void ClearWeaponFields(Dictionary<string, string> dict)
-    {
-        if (dict == null) return;
-        dict.Remove(EquipKeys.MeleeWeapon1H);
-        dict.Remove(EquipKeys.MeleeWeapon2H);
-        dict.Remove(EquipKeys.PrimaryMeleeWeapon);
-        dict.Remove(EquipKeys.SecondaryMeleeWeapon);
-        dict.Remove(EquipKeys.Bow);
-        dict.Remove("Firearms");
-        dict.Remove("FirearmParams");
-        dict.Remove("WeaponType");
-    }
-    
 }

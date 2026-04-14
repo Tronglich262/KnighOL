@@ -76,8 +76,7 @@ public class PlayerAvatar : NetworkBehaviour
 
         try
         {
-            var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
-
+            var dict = CharacterJsonService.LoadDict(json);
             Character.FromJson(json);
 
             if (dict.TryGetValue("WeaponType", out var weaponType))

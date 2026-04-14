@@ -110210,7 +110210,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   inputField: {fileID: 1331227423}
   sendButton: {fileID: 226138903}
-  Instate: {fileID: 0}
 --- !u!1 &2022908880
 GameObject:
   m_ObjectHideFlags: 0

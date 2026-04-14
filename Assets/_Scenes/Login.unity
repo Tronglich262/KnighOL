@@ -6485,6 +6485,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2aeca2cde93606468e0143fd1fbc96a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  iconFolder: Icons
 --- !u!4 &1440038392
 Transform:
   m_ObjectHideFlags: 0

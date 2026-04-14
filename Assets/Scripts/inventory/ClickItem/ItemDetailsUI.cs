@@ -57,14 +57,23 @@ public class ItemDetailsUI : MonoBehaviour
     //itembuy 
     private NpcShopItem currentShopItem;
 
+    // Cache tối ưu
+    private static Dictionary<int, ItemStats> cachedShopStatsById;
+    private EquipmentStatManager cachedEquipStatManager;
+    private GameObject cachedPlayerObject;
+
+
     private void Start()
     {
+        BuildShopStatsCacheIfNeeded();
+        RefreshPlayerCache();
 
         StartCoroutine(EquipArmorFromSavedJson());
+
         if (character == null && CharacterUIManager1.Instance != null)
         {
             character = CharacterUIManager1.Instance.character;
-            Debug.Log(" character được gán từ CharacterUIManager1.");
+            Debug.Log("character được gán từ CharacterUIManager1.");
         }
     }
     void Awake()
@@ -484,23 +493,23 @@ public class ItemDetailsUI : MonoBehaviour
 
 
     }
-   
+
 
     private string GetEquippedWeaponId(string type)
     {
-        var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(PlayerDataHolder1.CharacterJson);
+        var dict = GetCharacterJsonDict();
+
         switch (type)
         {
             case "Bow":
-                return dict.ContainsKey("Bow") ? dict["Bow"] : null;
+                return dict.TryGetValue("Bow", out var bowId) ? bowId : null;
+
             case "MeleeWeapon1H":
             case "PrimaryMeleeWeapon":
-                return dict.ContainsKey("PrimaryMeleeWeapon") ? dict["PrimaryMeleeWeapon"] : null;
-            case "MeleeWeapon2H":
-                return dict.ContainsKey("PrimaryMeleeWeapon")
-                    ? dict["PrimaryMeleeWeapon"]
-                    : null;
+                return dict.TryGetValue("PrimaryMeleeWeapon", out var melee1H) ? melee1H : null;
 
+            case "MeleeWeapon2H":
+                return dict.TryGetValue("PrimaryMeleeWeapon", out var melee2H) ? melee2H : null;
 
             default:
                 return CharacterUIManager1.Instance.GetItemIdFromJson(PlayerDataHolder1.CharacterJson, type);
@@ -759,29 +768,213 @@ public class ItemDetailsUI : MonoBehaviour
     public void SetCurrentShopItem(NpcShopItem shopItem)
     {
         currentShopItem = shopItem;
-        if (shopItem != null)
-        {
-            // Lấy thông tin ItemStats theo itemId
-            var statsList = Resources.LoadAll<ItemStats>("ItemStats");
-            var stats = statsList.FirstOrDefault(x => x.Item_ID == shopItem.itemId);
-            // Fake 1 InventoryItem1 để dùng cho UI/hàm mua
-            currentItem = new InventoryItem1
-            {
-                itemId = shopItem.itemId.ToString(),
-                quantity = 1,
-                stats = stats
-            };
-        }
-        else
+
+        if (shopItem == null)
         {
             currentItem = null;
+            return;
         }
+
+        BuildShopStatsCacheIfNeeded();
+
+        cachedShopStatsById.TryGetValue(shopItem.itemId, out var stats);
+
+        currentItem = new InventoryItem1
+        {
+            itemId = shopItem.itemId.ToString(),
+            quantity = 1,
+            stats = stats
+        };
     }
 
 
 
 
+    private void RefreshEquippedSlotUI(string type, string itemId)
+    {
+        if (CharacterUIManager1.Instance == null || string.IsNullOrEmpty(type) || string.IsNullOrEmpty(itemId))
+            return;
 
+        var ui = CharacterUIManager1.Instance;
+
+        switch (type)
+        {
+            case "Gloves":
+                ui.DisplayItem(ui.ArmorSlots[2], itemId, "Gloves");
+                CharacterEquipHandler.EquipPartialArmorFromEntry(character, itemId, type);
+                break;
+
+            case "Belt":
+                ui.DisplayItem(ui.ArmorSlots[5], itemId, "Belt");
+                CharacterEquipHandler.EquipPartialArmorFromEntry(character, itemId, type);
+                break;
+
+            case "Boots":
+                ui.DisplayItem(ui.ArmorSlots[1], itemId, "Boots");
+                CharacterEquipHandler.EquipPartialArmorFromEntry(character, itemId, type);
+                break;
+
+            case "Vest":
+                ui.DisplayItem1(ui.ArmorSlots[4], itemId, "Vest");
+                CharacterEquipHandler.EquipPartialArmorFromEntry(character, itemId, type);
+                break;
+
+            case "Armor":
+                ui.DisplayItem(ui.ArmorSlots[0], itemId, "Armor");
+                CharacterEquipHandler.TestEquipArmor(character, itemId);
+                break;
+
+            case "Helmet":
+                ui.DisplayItem1(ui.Helmetslot, itemId, "Helmet");
+                break;
+
+            case "MeleeWeapon1H":
+                ui.DisplayItem1(ui.MeleeWeapon1Hslot, itemId, "MeleeWeapon1H");
+                break;
+
+            case "MeleeWeapon2H":
+                ui.DisplayItem1(ui.MeleeWeapon2Hslot, itemId, "MeleeWeapon2H");
+                break;
+
+            case "Cape":
+                ui.DisplayItem1(ui.Capeslot, itemId, "Cape");
+                break;
+
+            case "Shield":
+                ui.DisplayItem1(ui.Shieldslot, itemId, "Shield");
+                break;
+
+            case "Pauldrons":
+                ui.DisplayItem1(ui.ArmorSlots[3], itemId, "Pauldrons");
+                CharacterEquipHandler.EquipPartialArmorFromEntry(character, itemId, type);
+                break;
+
+            case "Glasses":
+                ui.DisplayItem1(ui.Glassesslot, itemId, "Glasses");
+                break;
+
+            case "Hair":
+                ui.DisplayItem1(ui.Hairslot, itemId, "Hair");
+                break;
+
+            case "Back":
+                ui.DisplayItem1(ui.Backslot, itemId, "Back");
+                break;
+
+            case "Mask":
+                ui.DisplayItem1(ui.Maskslot, itemId, "Mask");
+                break;
+
+            case "Bow":
+                ui.DisplayItem1(ui.Bowslot, itemId, "Bow");
+                CharacterEquipHandler.TestEquipBow(character, itemId);
+                break;
+        }
+    }
+    private void HandleInventorySwap(string type, string newItemId, Dictionary<string, string> dict)
+    {
+        if (type == "Bow" || type.Contains("Weapon"))
+        {
+            string[] weaponKeys = { "PrimaryMeleeWeapon", "SecondaryMeleeWeapon", "Bow" };
+
+            foreach (string key in weaponKeys)
+            {
+                if (dict.TryGetValue(key, out string oldWeaponId) &&
+                    !string.IsNullOrEmpty(oldWeaponId) &&
+                    oldWeaponId != newItemId)
+                {
+                    InventoryManager.Instance.AddItem(oldWeaponId, 1);
+                    dict[key] = "";
+                }
+            }
+
+            InventoryManager.Instance.RemoveItem(newItemId, 1);
+            return;
+        }
+
+        string equippedItemId = CharacterUIManager1.Instance.GetItemIdFromJson(PlayerDataHolder1.CharacterJson, type);
+
+        if (!string.IsNullOrEmpty(equippedItemId))
+        {
+            if (equippedItemId == newItemId)
+            {
+                int idx = InventoryManager.Instance.playerInventory.FindIndex(i => i == currentItem);
+                if (idx >= 0)
+                {
+                    InventoryManager.Instance.playerInventory.RemoveAt(idx);
+                    InventoryManager.Instance.AddItem(equippedItemId, 1);
+                }
+            }
+            else
+            {
+                InventoryManager.Instance.AddItem(equippedItemId, 1);
+                InventoryManager.Instance.RemoveItem(newItemId, 1);
+            }
+        }
+        else
+        {
+            InventoryManager.Instance.RemoveItem(newItemId, 1);
+        }
+    }
+    private void UpdateCharacterDictAfterEquip(Dictionary<string, string> dict, string type, string itemId)
+    {
+        if (type == "Bow")
+        {
+            dict.Remove("PrimaryMeleeWeapon");
+            dict.Remove("SecondaryMeleeWeapon");
+        }
+
+        if (type == "PrimaryMeleeWeapon" || type == "MeleeWeapon1H")
+        {
+            dict.Remove("Bow");
+            dict.Remove("SecondaryMeleeWeapon");
+        }
+
+        if (type == "MeleeWeapon2H")
+        {
+            dict.Remove("Bow");
+            dict.Remove("SecondaryMeleeWeapon");
+        }
+
+        switch (type)
+        {
+            case "Helmet":
+            case "Armor":
+            case "Boots":
+            case "Gloves":
+            case "Pauldrons":
+            case "Vest":
+            case "Belt":
+            case "Shield":
+            case "Cape":
+            case "Back":
+            case "Glasses":
+            case "Hair":
+            case "Mask":
+                dict[type] = itemId;
+                break;
+
+            case "Bow":
+                dict["Bow"] = itemId;
+                dict["WeaponType"] = "Bow";
+                break;
+
+            case "MeleeWeapon1H":
+                dict["PrimaryMeleeWeapon"] = itemId;
+                dict["WeaponType"] = "Melee1H";
+                break;
+
+            case "MeleeWeapon2H":
+                dict["PrimaryMeleeWeapon"] = itemId;
+                dict.Remove("SecondaryMeleeWeapon");
+                dict["WeaponType"] = "Melee2H";
+                break;
+
+            default:
+                Debug.LogWarning($"[ItemDetailsUI] Loai chua ho tro: {type}");
+                break;
+        }
+    }
     IEnumerator CoBuyItemFromShop(int accountId, int itemId, string token)
     {
         var buyData = new
@@ -966,6 +1159,50 @@ public class ItemDetailsUI : MonoBehaviour
         {
             ShowEquipMessage("Lỗi ký gửi: " + req.downloadHandler.text);
         }
+    }
+    private void BuildShopStatsCacheIfNeeded()
+    {
+        if (cachedShopStatsById != null)
+            return;
+
+        cachedShopStatsById = new Dictionary<int, ItemStats>();
+
+        var statsList = Resources.LoadAll<ItemStats>("ItemStats");
+        foreach (var stats in statsList)
+        {
+            if (stats == null) continue;
+
+            if (!cachedShopStatsById.ContainsKey(stats.Item_ID))
+                cachedShopStatsById.Add(stats.Item_ID, stats);
+        }
+
+        Debug.Log($"[ItemDetailsUI] Cached ItemStats: {cachedShopStatsById.Count}");
+    }
+
+    private void RefreshPlayerCache()
+    {
+        if (PlayerSpawner.LocalPlayerObject == null)
+        {
+            cachedPlayerObject = null;
+            cachedEquipStatManager = null;
+            return;
+        }
+
+        GameObject playerObj = PlayerSpawner.LocalPlayerObject.gameObject;
+        if (cachedPlayerObject != playerObj)
+        {
+            cachedPlayerObject = playerObj;
+            cachedEquipStatManager = playerObj.GetComponent<EquipmentStatManager>();
+        }
+    }
+
+    private Dictionary<string, string> GetCharacterJsonDict()
+    {
+        if (string.IsNullOrEmpty(PlayerDataHolder1.CharacterJson))
+            return new Dictionary<string, string>();
+
+        return JsonConvert.DeserializeObject<Dictionary<string, string>>(PlayerDataHolder1.CharacterJson)
+               ?? new Dictionary<string, string>();
     }
 
 

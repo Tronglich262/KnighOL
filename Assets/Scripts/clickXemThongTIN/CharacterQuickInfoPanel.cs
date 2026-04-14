@@ -70,20 +70,21 @@ public class CharacterQuickInfoPanel : MonoBehaviour
 
         gameObject.SetActive(false);
 
-        string json = _currentTarget.GetFullCharacterJson();
+        string latestJson = _currentTarget.GetFullCharacterJson();
+
+        if (string.IsNullOrEmpty(latestJson))
+        {
+            Debug.LogWarning("Không lấy được JSON!");
+            return;
+        }
 
         CharacterPreviewPanel.Instance.ClearPreviewData();
         CharacterPreviewPanel.Instance.gameObject.SetActive(true);
 
-        if (CharacterPreviewPanel.Instance.characterPreview != null)
-        {
-            WorldChatUIManager.Instance.Chat.SetActive(false);
-            QuestDisplay.Instance.TatactiveallQuestDisplay();
-            WorldChatUIManager.Instance.chatBar.SetActive(false);
-            CharacterUIManager.Instance.CharacterButton.SetActive(false);
-            SettingPanel.Instance.Setting.SetActive(false);
-        }
+        // Tắt UI khác...
+        WorldChatUIManager.Instance.Chat?.SetActive(false);
+        // ... các dòng tắt UI khác
 
-        CharacterPreviewPanel.Instance.LoadCharacterFromJson(json);
+        CharacterPreviewPanel.Instance.ShowPreviewOfOtherPlayer(latestJson);   // ← dùng hàm này
     }
 }

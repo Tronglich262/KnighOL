@@ -289,7 +289,26 @@ public static class CharacterEquipHandler
         if (AuthManager.Instance != null)
             AuthManager.Instance.StartCoroutine(AuthManager.Instance.SaveCharacterToServer(json));
 
-        PlayerAvatar.Instance?.UpdateCharacterJson(json);
+        // Đồng bộ local visual ngay
+        PlayerAvatar.Instance?.LoadCharacter(json);
+
+        // Đồng bộ sang đúng target/network giống luồng equip
+        if (ItemDetailsUI.Instance != null && ItemDetailsUI.Instance.playerClone != null)
+        {
+            var cloneController = ItemDetailsUI.Instance.playerClone.GetComponent<PlayerCloneController>();
+            if (cloneController != null)
+                cloneController.SendCharacterJsonToTarget(json);
+        }
+        else
+        {
+            if (PlayerAvatar.Instance != null)
+            {
+                if (PlayerAvatar.Instance.HasStateAuthority)
+                    PlayerAvatar.Instance.UpdateCharacterJson(json);
+                else
+                    PlayerAvatar.Instance.RPC_UpdateCharacterJson(json);
+            }
+        }
 
         character.Initialize();
 
@@ -425,8 +444,6 @@ public static class CharacterEquipHandler
 
     private static void SyncWeaponConsistency(Dictionary<string, string> dict)
     {
-        // Đã được gộp toàn bộ logic an toàn và xử lý triệt để bên trong PreserveWeaponInfo.
-        // Giữ hàm này trống để không phá vỡ cấu trúc gọi hàm hiện tại trong UnequipItem.
     }
 
     private static void RestoreWeaponVisual(Character character, Dictionary<string, string> dict)

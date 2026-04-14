@@ -217,4 +217,9 @@ public class PlayerAvatar : NetworkBehaviour
             SceneManager.LoadScene("Login");
         }
     }
+    [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
+    public void RPC_UpdateCharacterJson(string fullJson)
+    {
+        UpdateCharacterJson(fullJson);
+    }
 }

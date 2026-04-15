@@ -73,31 +73,23 @@ public static class EquipmentCoordinator
 
     private static void Commit(string finalJson)
     {
-        PlayerDataHolder1.CharacterJson = finalJson;
-
-        var ui = CharacterUIManager1.Instance;
-        if (ui != null && ui.character != null)
-        {
-            var dict = CharacterJsonService.LoadDict(finalJson);
-            CharacterVisualCompositeBuilder.ApplyAll(ui.character, dict);
-        }
-
         EquipmentSyncService.ApplyFullJson(
             finalJson,
             ItemDetailsUI.Instance != null ? ItemDetailsUI.Instance.playerClone : null
         );
+
+        var ui = CharacterUIManager1.Instance;
+        if (ui != null)
+        {
+            ui.RefreshFromLatestJson();
+            ui.UpdateCharacterStatsAndUI();
+        }
 
         if (PlayerSpawner.LocalPlayerObject != null)
         {
             var equipStat = PlayerSpawner.LocalPlayerObject.GetComponent<EquipmentStatManager>();
             if (equipStat != null)
                 equipStat.LoadFromCharacterJson(finalJson);
-        }
-
-        if (CharacterUIManager1.Instance != null)
-        {
-            CharacterUIManager1.Instance.RefreshFromLatestJson();
-            CharacterUIManager1.Instance.UpdateCharacterStatsAndUI();
         }
 
         if (InventoryManager.Instance != null && InventoryUIManager.instance != null)

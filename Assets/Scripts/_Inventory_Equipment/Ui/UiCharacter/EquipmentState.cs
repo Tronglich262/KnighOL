@@ -142,7 +142,7 @@ public sealed class EquipmentState
         {
             Set(EquipKeys.MeleeWeapon1H, "");
             Set(EquipKeys.MeleeWeapon2H, "");
-            Set(EquipKeys.PrimaryMeleeWeapon, "");
+            Set(EquipKeys.PrimaryMeleeWeapon, bow);
             Set(EquipKeys.SecondaryMeleeWeapon, "");
             Set("WeaponType", EquipKeys.Weapon_Bow);
             return;
@@ -187,6 +187,16 @@ public sealed class EquipmentState
                 Set(EquipKeys.Bow, "");
                 Set(EquipKeys.SecondaryMeleeWeapon, "");
                 Set("WeaponType", EquipKeys.Weapon_Melee2H);
+                return;
+            }
+
+            if (weaponType == EquipKeys.Weapon_Bow || weaponType == "Bow" || weaponType == "2")
+            {
+                Set(EquipKeys.Bow, primary);
+                Set(EquipKeys.MeleeWeapon1H, "");
+                Set(EquipKeys.MeleeWeapon2H, "");
+                Set(EquipKeys.SecondaryMeleeWeapon, "");
+                Set("WeaponType", EquipKeys.Weapon_Bow);
                 return;
             }
         }

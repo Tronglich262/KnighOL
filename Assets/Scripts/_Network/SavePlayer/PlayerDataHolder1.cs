@@ -1,15 +1,16 @@
 ﻿using UnityEngine;
-using Assets.HeroEditor.Common.CharacterScripts;
 
 public static class PlayerDataHolder1
 {
-    //lưu trữ dữ liệu Character , accountid , token  ( dữ liệu sẽ truyền qua )
-    //nơi lấy dữ liệu sẽ là PlayerAvatar
     public static string PlayerName;
 
     private static string _characterJson;
 
-    public static PlayerState CurrentPlayerState; // <-- Dùng cho lưu state hiện tại
+    public static PlayerState CurrentPlayerState;
+    public static int AccountId;
+    public static string Token;
+    public static CharacterData Character;
+    public static PlayerStats CurrentStats;
 
     public static string CharacterJson
     {
@@ -17,22 +18,7 @@ public static class PlayerDataHolder1
         set
         {
             _characterJson = value;
-            Debug.Log("[PlayerDataHolder1] CharacterJson da duoc gan lai.");
-
-            // Chỉ update UI local
-            if (CharacterUIManager1.Instance != null &&
-                CharacterUIManager1.Instance.character != null)
-            {
-                CharacterUIManager1.Instance.character.FromJson(_characterJson);
-                Debug.Log("Character UI updated.");
-            }
+            Debug.Log("[PlayerDataHolder1] CharacterJson da duoc cap nhat.");
         }
     }
-
-
-    public static int AccountId;
-    public static string Token;
-    public static CharacterData Character;
-    public static PlayerStats CurrentStats;
-
 }

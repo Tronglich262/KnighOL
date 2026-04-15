@@ -76,52 +76,14 @@ public class ItemDetailsPanel : MonoBehaviour
     //gỡ ttrang bị 
     public void OnUnequipButtonClick()
     {
-        if (string.IsNullOrEmpty(currentType)) return;
-
-        // 1. Kiểm tra nếu là tóc thì không cho gỡ
-        if (currentType == EquipKeys.Hair)
-        {
-            ShowEquipMessage("Không thể gỡ bỏ tóc", 2.5f);
+        if (string.IsNullOrEmpty(currentType))
             return;
-        }
 
-        // 2. Kiểm tra nếu là vũ khí thì không thực hiện gỡ (chặn tại đây để tránh cộng Inventory sai)
-        bool isWeapon = currentType == EquipKeys.MeleeWeapon1H ||
-                        currentType == EquipKeys.MeleeWeapon2H ||
-                        currentType == EquipKeys.Bow ||
-                        currentType == EquipKeys.PrimaryMeleeWeapon;
+        bool ok = EquipmentCoordinator.Unequip(currentType, out string message);
+        ShowEquipMessage(message);
 
-        if (isWeapon)
-        {
-            ShowEquipMessage("Vũ khí chỉ có thể thay thế, không thể gỡ bỏ!");
-            return;
-        }
-
-        // 3. Thực hiện lấy ID trang bị để trả về Inventory trước khi gỡ trong JSON
-        var dict = CharacterJsonService.LoadDict();
-        if (dict.TryGetValue(currentType, out string itemIdToReturn) && !string.IsNullOrEmpty(itemIdToReturn))
-        {
-            // Cộng item lại vào túi đồ
-            InventoryManager.Instance.AddItem(itemIdToReturn, 1);
-
-            // Gọi hàm xử lý gỡ trang bị trong dữ liệu & visual
-            CharacterEquipHandler.UnequipItem(currentType);
-
-            // Cập nhật Stats (Sức mạnh, phòng thủ...) cho Player thực tế
-            var player = GameObject.FindWithTag("Player");
-            if (player != null)
-            {
-                var equipMgr = player.GetComponent<EquipmentStatManager>();
-                equipMgr?.Unequip(currentType);
-            }
-
-            ShowEquipMessage("Đã gỡ trang bị thành công!");
+        if (ok)
             Hide();
-        }
-        else
-        {
-            ShowEquipMessage("Không có trang bị để gỡ!");
-        }
     }
 
     // THEM TU CODE B

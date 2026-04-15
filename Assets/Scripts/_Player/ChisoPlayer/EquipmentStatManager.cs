@@ -8,6 +8,26 @@ public class EquipmentStatManager : MonoBehaviour
 
     private CharacterStats stats;
 
+    private static readonly string[] StatSlots =
+    {
+        EquipKeys.Helmet,
+        EquipKeys.Armor,
+        EquipKeys.Vest,
+        EquipKeys.Pauldrons,
+        EquipKeys.Gloves,
+        EquipKeys.Boots,
+        EquipKeys.Shield,
+        EquipKeys.Cape,
+        EquipKeys.Mask,
+        EquipKeys.Glasses,
+        EquipKeys.Belt,
+        EquipKeys.Back,
+        EquipKeys.Hair,
+        EquipKeys.Bow,
+        EquipKeys.MeleeWeapon1H,
+        EquipKeys.MeleeWeapon2H
+    };
+
     private void Awake()
     {
         stats = GetComponent<CharacterStats>();
@@ -30,11 +50,15 @@ public class EquipmentStatManager : MonoBehaviour
             return;
         }
 
-        foreach (var pair in dict)
+        foreach (var slot in StatSlots)
         {
-            if (string.IsNullOrEmpty(pair.Value)) continue;
+            if (!dict.TryGetValue(slot, out string itemId))
+                continue;
 
-            ItemStats item = FindItemStats(pair.Value);
+            if (string.IsNullOrWhiteSpace(itemId))
+                continue;
+
+            ItemStats item = FindItemStats(itemId);
             if (item != null)
                 equippedItems.Add(item);
         }
@@ -44,7 +68,8 @@ public class EquipmentStatManager : MonoBehaviour
 
     public void Equip(ItemStats item)
     {
-        if (item == null) return;
+        if (item == null || string.IsNullOrEmpty(item.Type))
+            return;
 
         equippedItems.RemoveAll(i => i != null && i.Type == item.Type);
         equippedItems.Add(item);
@@ -53,7 +78,8 @@ public class EquipmentStatManager : MonoBehaviour
 
     public void Unequip(string type)
     {
-        if (string.IsNullOrEmpty(type)) return;
+        if (string.IsNullOrEmpty(type))
+            return;
 
         equippedItems.RemoveAll(i => i != null && i.Type == type);
         Recalculate();

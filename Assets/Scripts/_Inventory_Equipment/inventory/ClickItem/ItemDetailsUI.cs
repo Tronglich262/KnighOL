@@ -135,21 +135,11 @@ public class ItemDetailsUI : MonoBehaviour
             return;
         }
 
-        CharacterEquipHandler.EquipItemToCharacter(currentItem);
+        bool ok = EquipmentCoordinator.Equip(currentItem, out string message);
+        ShowEquipMessage(message);
 
-        if (cachedEquipStatManager != null)
-            cachedEquipStatManager.LoadFromCharacterJson(PlayerDataHolder1.CharacterJson);
-
-        if (InventoryManager.Instance != null && InventoryUIManager.instance != null)
-            InventoryUIManager.instance.DisplayInventory(InventoryManager.Instance.playerInventory);
-
-        if (CharacterUIManager1.Instance != null)
-        {
-            CharacterUIManager1.Instance.RefreshFromLatestJson();
-            CharacterUIManager1.Instance.UpdateCharacterStatsAndUI();
-        }
-
-        ShowEquipMessage("Trang bị thành công");
+        if (!ok)
+            return;
 
         if (panel != null)
             panel.SetActive(false);

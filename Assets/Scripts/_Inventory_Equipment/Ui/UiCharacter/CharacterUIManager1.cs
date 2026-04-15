@@ -98,17 +98,15 @@ public class CharacterUIManager1 : MonoBehaviour
     public void RefreshFromLatestJson()
     {
         string json = PlayerDataHolder1.CharacterJson;
-        if (string.IsNullOrEmpty(json) || character == null)
+        if (string.IsNullOrEmpty(json) || character == null || presenter == null)
             return;
 
-        // Xóa icon cũ trước khi load lại
         equippedItems.Clear();
-        ClearAllWeaponSlots(); // bạn cần viết hàm này
 
-        presenter.LoadFromJson(json, applyVisual: true);
+        presenter.LoadFromJson(json, applyVisual: false);
 
-        // === PHẦN QUAN TRỌNG: Load icon cho Weapon ===
-        LoadWeaponIconFromJson(json);
+        var dict = CharacterJsonService.LoadDict(json);
+        CharacterVisualCompositeBuilder.ApplyAll(character, dict);
 
         RecalculateStats();
     }

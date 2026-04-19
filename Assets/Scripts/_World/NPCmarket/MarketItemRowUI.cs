@@ -48,8 +48,8 @@ public class MarketItemRowUI : MonoBehaviour
         }
 
         int quantity = 1; // Có thể lấy từ UI input nếu bạn có
-        int buyerAccountId = AuthManager.Instance.UserSession.AccountId; // hoặc InventoryManager.Instance.session.AccountId
-        string token = AuthManager.Instance.UserSession.Token; // hoặc InventoryManager.Instance.session.Token
+        int buyerAccountId = SessionManager.AccountId; // hoặc InventoryManager.Instance.session.AccountId
+        string token = SessionManager.Token; // hoặc InventoryManager.Instance.session.Token
 
         BuyMarketItemDto dto = new BuyMarketItemDto
         {

@@ -116,14 +116,14 @@ public class QuestDisplay : MonoBehaviour
     {
         ClaimQuestDto dto = new ClaimQuestDto { questId = questId };
         string json = JsonUtility.ToJson(dto);
-        string url = AuthManager.Instance.apiUrl + "/quests/claim";
+        string url = AuthManager.Instance.accountApiUrl + "/quests/claim";
 
         UnityWebRequest req = new UnityWebRequest(url, "POST");
         byte[] bodyRaw = Encoding.UTF8.GetBytes(json);
         req.uploadHandler = new UploadHandlerRaw(bodyRaw);
         req.downloadHandler = new DownloadHandlerBuffer();
         req.SetRequestHeader("Content-Type", "application/json");
-        req.SetRequestHeader("Authorization", "Bearer " + AuthManager.Instance.UserSession.Token);
+        req.SetRequestHeader("Authorization", "Bearer " + SessionManager.Token);
 
         yield return req.SendWebRequest();
 

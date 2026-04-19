@@ -26,7 +26,9 @@ public class AuthManager : MonoBehaviour
     public TMP_InputField loginPassword;
 
     [Header("API")]
-    public string apiUrl = "https://localhost:7124/api/Account";
+    public string authApiUrl = "https://localhost:7124/api/Auth";
+    public string accountApiUrl = "https://localhost:7124/api/Account";
+
 
     [Header("Thông báo UI")]
     public TMP_Text loginMessageText;
@@ -39,8 +41,6 @@ public class AuthManager : MonoBehaviour
     public Sprite eyeClosed;
 
     public static AuthManager Instance;
-
-    public ClientSession UserSession = new ClientSession();
 
     private Coroutine tokenCheckCoroutine;
     private Coroutine loginMessageCoroutine;
@@ -212,13 +212,29 @@ public class AuthManager : MonoBehaviour
             Password = registerPassword != null ? registerPassword.text.Trim() : ""
         };
 
-        string json = JsonUtility.ToJson(registerDto);
+        bool done = false;
+        bool success = false;
+        string errorMsg = "";
 
-        using UnityWebRequest request = BuildPostRequest(apiUrl + "/register", json, false);
+        Debug.Log("[REGISTER URL] " + authApiUrl + "/register");
 
-        yield return request.SendWebRequest();
+        yield return StartCoroutine(AuthApiClient.Register(
+            authApiUrl,
+            registerDto,
+            () =>
+            {
+                success = true;
+                done = true;
+            },
+            error =>
+            {
+                errorMsg = NormalizeError(error, "Đăng ký thất bại!");
+                done = true;
+            }));
 
-        if (request.result == UnityWebRequest.Result.Success)
+        yield return new WaitUntil(() => done);
+
+        if (success)
         {
             ShowRegisterMessage("Đăng ký thành công!\nVui lòng đăng nhập.");
             yield return new WaitForSeconds(1f);
@@ -228,7 +244,6 @@ public class AuthManager : MonoBehaviour
         }
         else
         {
-            string errorMsg = ExtractResponseMessage(request, "Đăng ký thất bại!");
             ShowRegisterMessage(errorMsg);
             Debug.LogError(errorMsg);
         }
@@ -272,24 +287,30 @@ public class AuthManager : MonoBehaviour
             Password = loginPassword != null ? loginPassword.text : ""
         };
 
-        string json = JsonUtility.ToJson(loginDto);
+        bool done = false;
+        LoginResponse loginResponse = null;
+        string errorMsg = "";
 
-        using UnityWebRequest request = BuildPostRequest(apiUrl + "/login", json, false);
+        Debug.Log("[LOGIN URL] " + authApiUrl + "/login");
 
-        yield return request.SendWebRequest();
-
-        if (request.result == UnityWebRequest.Result.Success)
-        {
-            string responseJson = request.downloadHandler.text;
-            LoginResponse loginResponse = JsonUtility.FromJson<LoginResponse>(responseJson);
-
-            if (loginResponse == null || loginResponse.accountId <= 0 || string.IsNullOrEmpty(loginResponse.token))
+        yield return StartCoroutine(AuthApiClient.Login(
+            authApiUrl,
+            loginDto,
+            response =>
             {
-                ShowLoginMessage("Dữ liệu đăng nhập trả về không hợp lệ.");
-                isLoggingIn = false;
-                yield break;
-            }
+                loginResponse = response;
+                done = true;
+            },
+            error =>
+            {
+                errorMsg = NormalizeError(error, "Đăng nhập thất bại!");
+                done = true;
+            }));
 
+        yield return new WaitUntil(() => done);
+
+        if (loginResponse != null && loginResponse.accountId > 0 && !string.IsNullOrEmpty(loginResponse.token))
+        {
             ApplySession(loginResponse);
             RestartTokenChecker();
 
@@ -300,7 +321,9 @@ public class AuthManager : MonoBehaviour
         }
         else
         {
-            string errorMsg = ExtractResponseMessage(request, "Đăng nhập thất bại!");
+            if (string.IsNullOrEmpty(errorMsg))
+                errorMsg = "Dữ liệu đăng nhập trả về không hợp lệ.";
+
             ShowLoginMessage(errorMsg);
             Debug.LogError(errorMsg);
         }
@@ -310,13 +333,8 @@ public class AuthManager : MonoBehaviour
 
     private void ApplySession(LoginResponse loginResponse)
     {
-        UserSession.AccountId = loginResponse.accountId;
-        UserSession.Token = loginResponse.token;
-
-        PlayerDataHolder1.AccountId = loginResponse.accountId;
-        PlayerDataHolder1.Token = loginResponse.token;
-
-        Debug.Log($"[LOGIN OK] accountId={UserSession.AccountId}, token={UserSession.Token}");
+        SessionManager.SetSession(loginResponse.accountId, loginResponse.token);
+        Debug.Log($"[LOGIN OK] accountId={SessionManager.AccountId}, token={SessionManager.Token}");
     }
 
     private void RestartTokenChecker()
@@ -345,7 +363,7 @@ public class AuthManager : MonoBehaviour
     public async Task<UnityWebRequest> SendAuthRequest(string url)
     {
         UnityWebRequest req = UnityWebRequest.Get(url);
-        req.SetRequestHeader("Authorization", "Bearer " + UserSession.Token);
+        req.SetRequestHeader("Authorization", "Bearer " + SessionManager.Token);
         req.timeout = 10;
 
         var op = req.SendWebRequest();
@@ -355,6 +373,7 @@ public class AuthManager : MonoBehaviour
         if (req.responseCode == 401)
         {
             Debug.LogWarning("Bị kick về login do đăng nhập trùng hoặc token hết hạn.");
+            ClearSession();
             ForceBackToLogin();
         }
 
@@ -366,8 +385,8 @@ public class AuthManager : MonoBehaviour
         if (!HasValidSession())
             yield break;
 
-        using UnityWebRequest request = UnityWebRequest.Get(apiUrl + "/profile");
-        request.SetRequestHeader("Authorization", "Bearer " + UserSession.Token);
+        using UnityWebRequest request = UnityWebRequest.Get(authApiUrl + "/profile");
+        request.SetRequestHeader("Authorization", "Bearer " + SessionManager.Token);
         request.timeout = 5;
 
         yield return request.SendWebRequest();
@@ -378,13 +397,9 @@ public class AuthManager : MonoBehaviour
         Debug.LogError($"Lỗi lấy dữ liệu user. Code={request.responseCode}, Error={request.error}, Body={request.downloadHandler.text}");
 
         if (request.responseCode == 401)
-        {
             Debug.LogWarning("Token không hợp lệ hoặc đã đăng nhập ở nơi khác.");
-        }
         else
-        {
             Debug.LogWarning("Không kết nối được đến API. Về màn hình Login!");
-        }
 
         ClearSession();
         ForceBackToLogin();
@@ -418,13 +433,9 @@ public class AuthManager : MonoBehaviour
             yield return StartCoroutine(SaveCharacterInternal(characterJson));
 
             if (!string.IsNullOrEmpty(pendingCharacterJson) && pendingCharacterJson != characterJson)
-            {
                 characterJson = pendingCharacterJson;
-            }
             else
-            {
                 characterJson = null;
-            }
         }
         while (!string.IsNullOrEmpty(characterJson));
 
@@ -433,7 +444,7 @@ public class AuthManager : MonoBehaviour
 
     private IEnumerator SaveCharacterInternal(string characterJson)
     {
-        int accountId = UserSession.AccountId;
+        int accountId = SessionManager.AccountId;
         if (accountId == 0)
         {
             Debug.LogError("AccountId chưa được lưu, không thể lưu nhân vật.");
@@ -448,7 +459,7 @@ public class AuthManager : MonoBehaviour
 
         string json = JsonUtility.ToJson(dto);
 
-        using UnityWebRequest request = BuildPostRequest(apiUrl + "/save-character", json, true);
+        using UnityWebRequest request = BuildPostRequest(accountApiUrl + "/save-character", json, true);
         yield return request.SendWebRequest();
 
         if (request.result == UnityWebRequest.Result.Success)
@@ -472,9 +483,9 @@ public class AuthManager : MonoBehaviour
             yield break;
         }
 
-        string url = apiUrl + $"/playerstate/{UserSession.AccountId}";
+        string url = accountApiUrl + $"/playerstate/{SessionManager.AccountId}";
         using UnityWebRequest req = UnityWebRequest.Get(url);
-        req.SetRequestHeader("Authorization", "Bearer " + UserSession.Token);
+        req.SetRequestHeader("Authorization", "Bearer " + SessionManager.Token);
 
         yield return req.SendWebRequest();
 
@@ -498,7 +509,7 @@ public class AuthManager : MonoBehaviour
             yield break;
         }
 
-        string url = apiUrl + "/playerstate/update";
+        string url = accountApiUrl + "/playerstate/update";
         string json = JsonUtility.ToJson(dto);
 
         using UnityWebRequest req = BuildPostRequest(url, json, true);
@@ -529,9 +540,9 @@ public class AuthManager : MonoBehaviour
             yield break;
         }
 
-        string url = apiUrl + "/quests";
+        string url = accountApiUrl + "/quests";
         using UnityWebRequest req = UnityWebRequest.Get(url);
-        req.SetRequestHeader("Authorization", "Bearer " + UserSession.Token);
+        req.SetRequestHeader("Authorization", "Bearer " + SessionManager.Token);
 
         yield return req.SendWebRequest();
 
@@ -565,7 +576,7 @@ public class AuthManager : MonoBehaviour
         };
 
         string json = JsonUtility.ToJson(dto);
-        string url = apiUrl + "/quests/progress";
+        string url = accountApiUrl + "/quests/progress";
 
         using UnityWebRequest req = BuildPostRequest(url, json, true);
         yield return req.SendWebRequest();
@@ -612,9 +623,7 @@ public class AuthManager : MonoBehaviour
 
         string rewardMsg = BuildRewardMessage(rewardResp.reward);
         if (ItemDetailsPanel.Instance != null && !string.IsNullOrEmpty(rewardMsg))
-        {
             ItemDetailsPanel.Instance.ShowEquipMessage(rewardMsg, 2.5f);
-        }
 
         if (!string.IsNullOrEmpty(rewardMsg))
             Debug.Log("[QUEST REWARD] " + rewardMsg);
@@ -663,9 +672,9 @@ public class AuthManager : MonoBehaviour
             yield break;
         }
 
-        string url = apiUrl + $"/stats/{UserSession.AccountId}";
+        string url = accountApiUrl + $"/stats/{SessionManager.AccountId}";
         using UnityWebRequest req = UnityWebRequest.Get(url);
-        req.SetRequestHeader("Authorization", "Bearer " + UserSession.Token);
+        req.SetRequestHeader("Authorization", "Bearer " + SessionManager.Token);
 
         yield return req.SendWebRequest();
 
@@ -689,7 +698,7 @@ public class AuthManager : MonoBehaviour
             yield break;
         }
 
-        string url = apiUrl + "/stats/allocate";
+        string url = accountApiUrl + "/stats/allocate";
         AllocateStatsDto dto = new AllocateStatsDto
         {
             HP = addHp,
@@ -750,53 +759,38 @@ public class AuthManager : MonoBehaviour
         request.SetRequestHeader("Content-Type", "application/json");
         request.timeout = 10;
 
-        if (withAuth && !string.IsNullOrEmpty(UserSession.Token))
-            request.SetRequestHeader("Authorization", "Bearer " + UserSession.Token);
+        if (withAuth && !string.IsNullOrEmpty(SessionManager.Token))
+            request.SetRequestHeader("Authorization", "Bearer " + SessionManager.Token);
 
         return request;
     }
 
     private bool HasValidSession()
     {
-        return UserSession != null &&
-               UserSession.AccountId > 0 &&
-               !string.IsNullOrEmpty(UserSession.Token);
+        return SessionManager.HasValidSession();
     }
 
-    private string ExtractResponseMessage(UnityWebRequest request, string fallback)
+    private string NormalizeError(string raw, string fallback)
     {
-        string errorMsg = fallback;
-
-        if (request == null || request.downloadHandler == null)
-            return errorMsg;
-
-        string text = request.downloadHandler.text;
-        if (string.IsNullOrEmpty(text))
-            return errorMsg;
+        if (string.IsNullOrEmpty(raw))
+            return fallback;
 
         try
         {
-            LoginResponse resp = JsonUtility.FromJson<LoginResponse>(text);
+            LoginResponse resp = JsonUtility.FromJson<LoginResponse>(raw);
             if (resp != null && !string.IsNullOrEmpty(resp.message))
-                errorMsg = resp.message;
+                return resp.message;
         }
         catch
         {
         }
 
-        return errorMsg;
+        return raw;
     }
 
     private void ClearSession()
     {
-        if (UserSession == null)
-            UserSession = new ClientSession();
-
-        UserSession.AccountId = 0;
-        UserSession.Token = "";
-
-        PlayerDataHolder1.AccountId = 0;
-        PlayerDataHolder1.Token = "";
+        SessionManager.Clear();
 
         isSavingCharacter = false;
         pendingCharacterJson = null;
@@ -812,9 +806,7 @@ public class AuthManager : MonoBehaviour
     {
         Scene currentScene = SceneManager.GetActiveScene();
         if (currentScene.name != "Login")
-        {
             SceneManager.LoadScene("Login");
-        }
     }
 }
 

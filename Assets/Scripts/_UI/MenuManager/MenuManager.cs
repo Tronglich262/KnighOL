@@ -21,7 +21,7 @@ public class MenuManager : MonoBehaviour
 
     void Start()
     {
-        accountId = AuthManager.Instance.UserSession.AccountId; 
+        accountId = SessionManager.AccountId; 
         if (accountId == 0)
         {
             Debug.LogError("Không có accountId, cần đăng nhập lại.");

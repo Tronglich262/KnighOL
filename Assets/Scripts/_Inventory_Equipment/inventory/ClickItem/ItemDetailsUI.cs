@@ -413,8 +413,8 @@ public class ItemDetailsUI : MonoBehaviour
         Debug.Log($"[OnClickBuy] currentItem: {currentItem}, currentItem.stats: {currentItem?.stats}");
         int itemId = currentItem.stats.Item_ID;
         int currentGold = PlayerDataHolder1.CurrentPlayerState.gold;
-        int accountId = AuthManager.Instance.UserSession.AccountId;
-        string token = AuthManager.Instance.UserSession.Token;
+        int accountId = SessionManager.AccountId;
+        string token = SessionManager.Token;
 
         // Bước này chỉ để check nhanh UI, không đảm bảo hoàn toàn (chủ yếu UX).
         // Server sẽ kiểm tra lại!
@@ -788,8 +788,8 @@ public class ItemDetailsUI : MonoBehaviour
         }
 
         int itemIdInt = currentItem.stats.Item_ID;
-        int accountId = AuthManager.Instance.UserSession.AccountId;
-        string token = AuthManager.Instance.UserSession.Token;
+        int accountId = SessionManager.AccountId;
+        string token = SessionManager.Token;
 
         MarketItemSendDto dto = new MarketItemSendDto
         {

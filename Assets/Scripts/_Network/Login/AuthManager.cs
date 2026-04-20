@@ -219,7 +219,7 @@ public class AuthManager : MonoBehaviour
         Debug.Log("[REGISTER URL] " + authApiUrl + "/register");
 
         yield return StartCoroutine(AuthApiClient.Register(
-            authApiUrl,
+            accountApiUrl,
             registerDto,
             () =>
             {
@@ -294,7 +294,7 @@ public class AuthManager : MonoBehaviour
         Debug.Log("[LOGIN URL] " + authApiUrl + "/login");
 
         yield return StartCoroutine(AuthApiClient.Login(
-            authApiUrl,
+            accountApiUrl,
             loginDto,
             response =>
             {
@@ -309,14 +309,12 @@ public class AuthManager : MonoBehaviour
 
         yield return new WaitUntil(() => done);
 
-        if (loginResponse != null && loginResponse.accountId > 0 && !string.IsNullOrEmpty(loginResponse.token))
+        if (loginResponse != null && loginResponse.accountId > 0 && !string.IsNullOrEmpty(loginResponse.accessToken))
         {
             ApplySession(loginResponse);
             RestartTokenChecker();
-
             ShowLoginMessage("Đăng nhập thành công!");
             yield return new WaitForSeconds(0.5f);
-
             SceneManager.LoadScene("MenuGame");
         }
         else
@@ -333,7 +331,7 @@ public class AuthManager : MonoBehaviour
 
     private void ApplySession(LoginResponse loginResponse)
     {
-        SessionManager.SetSession(loginResponse.accountId, loginResponse.token);
+        SessionManager.SetSession(loginResponse.accountId, loginResponse.accessToken);
         Debug.Log($"[LOGIN OK] accountId={SessionManager.AccountId}, token={SessionManager.Token}");
     }
 
@@ -385,19 +383,27 @@ public class AuthManager : MonoBehaviour
         if (!HasValidSession())
             yield break;
 
-        using UnityWebRequest request = UnityWebRequest.Get(authApiUrl + "/profile");
+        string profileUrl = authApiUrl + "/profile";
+        Debug.Log("[PROFILE URL] " + profileUrl); 
+
+        using UnityWebRequest request = UnityWebRequest.Get(profileUrl);
         request.SetRequestHeader("Authorization", "Bearer " + SessionManager.Token);
         request.timeout = 5;
 
         yield return request.SendWebRequest();
 
         if (request.result == UnityWebRequest.Result.Success)
+        {
+            Debug.Log("[PROFILE] Thành công! Dữ liệu user: " + request.downloadHandler.text);
             yield break;
+        }
 
         Debug.LogError($"Lỗi lấy dữ liệu user. Code={request.responseCode}, Error={request.error}, Body={request.downloadHandler.text}");
 
         if (request.responseCode == 401)
             Debug.LogWarning("Token không hợp lệ hoặc đã đăng nhập ở nơi khác.");
+        else if (request.responseCode == 404)
+            Debug.LogWarning("Endpoint sai (vẫn đang dùng accountApiUrl?)");
         else
             Debug.LogWarning("Không kết nối được đến API. Về màn hình Login!");
 
@@ -847,24 +853,16 @@ public class SaveCharacterDto
 }
 
 [System.Serializable]
-public class LoginResponse
+public class LoginDto
 {
-    public string message;
-    public int accountId;
-    public string token;
+    public string Email;
+    public string Password;
 }
 
 [System.Serializable]
 public class RegisterDto
 {
     public string Name;
-    public string Email;
-    public string Password;
-}
-
-[System.Serializable]
-public class LoginDto
-{
     public string Email;
     public string Password;
 }

@@ -1,27 +1,29 @@
-﻿using TMPro;
+﻿using Newtonsoft.Json;
+using System.Collections;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.Networking;
-using System.Text;
-using System.Collections;
-using Unity.Jobs;
 
 public class QuestDisplay : MonoBehaviour
 {
+    public static QuestDisplay Instance;
+
     public Transform questListParent;
     public GameObject questItemPrefab;
-    public static QuestDisplay Instance;
     public GameObject questPanel;
-    public QuestResponse[] currentQuests;
+
     public GameObject AnQuest;
     public GameObject HienQuest;
     public GameObject nhiemvu;
     public GameObject todoi;
-    public TextMeshProUGUI textUIan;
+
+    public QuestResponse[] currentQuests;
+
     private void Awake()
     {
         Instance = this;
     }
+
     void Start()
     {
         ReloadQuests();
@@ -29,7 +31,20 @@ public class QuestDisplay : MonoBehaviour
 
     public void ReloadQuests()
     {
-        StartCoroutine(AuthManager.Instance.GetUserQuests(ShowQuestsOnUI));
+        StartCoroutine(CoGetUserQuests(ShowQuestsOnUI));
+    }
+
+    private IEnumerator CoGetUserQuests(System.Action<QuestResponse[]> onSuccess)
+    {
+        yield return ApiClientBase.Instance.Get<QuestResponse[]>(
+            "Account/quests",
+            quests =>
+            {
+                currentQuests = quests;
+                onSuccess?.Invoke(quests);
+            },
+            error => Debug.LogError("Lỗi load quest: " + error)
+        );
     }
 
     void ShowQuestsOnUI(QuestResponse[] quests)
@@ -49,31 +64,26 @@ public class QuestDisplay : MonoBehaviour
         foreach (var quest in quests)
         {
             if (quest.is_completed) continue;
+
             string questText = $"- {quest.description}: {quest.progress}/{quest.targetAmount}";
             bool canClaim = quest.progress >= quest.targetAmount && !quest.is_completed;
-            bool isDone = quest.is_completed;
-
-            if (!isDone || canClaim)
-                activeQuestCount++;
 
             if (canClaim)
                 CreateQuestItem(questText + " (Hoàn thành! Nhấn nhận thưởng)", true, quest.quest_ID, false);
-            else if (isDone)
-                CreateQuestItem(questText + " (Đã nhận thưởng)", false, -1, true);
             else
                 CreateQuestItem(questText + " (Chưa xong)", false, -1, false);
+
+            activeQuestCount++;
         }
 
         if (activeQuestCount == 0)
         {
             CreateQuestItem("Đã hoàn thành tất cả nhiệm vụ!", false, -1, false);
-            if (questPanel != null)
-                questPanel.SetActive(false);
+            if (questPanel != null) questPanel.SetActive(false);
         }
         else
         {
-            if (questPanel != null)
-                questPanel.SetActive(true);
+            if (questPanel != null) questPanel.SetActive(true);
         }
     }
 
@@ -82,125 +92,72 @@ public class QuestDisplay : MonoBehaviour
         GameObject item = Instantiate(questItemPrefab, questListParent);
 
         TMP_Text tmp = item.GetComponentInChildren<TMP_Text>();
-        if (tmp != null)
-            tmp.text = text;
+        if (tmp != null) tmp.text = text;
 
         Button claimBtn = item.GetComponentInChildren<Button>(true);
-
         if (claimBtn != null)
         {
-            if (showClaimButton && questId != -1)
+            claimBtn.gameObject.SetActive(showClaimButton && questId != -1);
+            if (showClaimButton)
             {
-                claimBtn.gameObject.SetActive(true);
                 claimBtn.onClick.RemoveAllListeners();
                 claimBtn.onClick.AddListener(() => ClaimReward(questId));
-            }
-            else
-            {
-                claimBtn.gameObject.SetActive(false);
             }
         }
 
         if (isCompleted && tmp != null)
-        {
             tmp.color = Color.gray;
-        }
     }
 
-    void ClaimReward(int questId)
+    public void ClaimReward(int questId)
     {
-        StartCoroutine(ClaimRewardCoroutine(questId));
+        StartCoroutine(CoClaimReward(questId));
     }
 
-    IEnumerator ClaimRewardCoroutine(int questId)
+    private IEnumerator CoClaimReward(int questId)
     {
-        ClaimQuestDto dto = new ClaimQuestDto { questId = questId };
-        string json = JsonUtility.ToJson(dto);
+        var dto = new ClaimQuestDto { questId = questId };
 
-        // Sử dụng ApiConfigManager thay vì hardcode
-        string url = ApiConfigManager.Instance.GetFullUrl("Account/quests/claim");
-
-        UnityWebRequest req = new UnityWebRequest(url, "POST");
-        byte[] bodyRaw = Encoding.UTF8.GetBytes(json);
-        req.uploadHandler = new UploadHandlerRaw(bodyRaw);
-        req.downloadHandler = new DownloadHandlerBuffer();
-        req.SetRequestHeader("Content-Type", "application/json");
-        req.SetRequestHeader("Authorization", "Bearer " + SessionManager.Token);
-
-        yield return req.SendWebRequest();
-
-        Debug.Log("Server trả về: " + req.downloadHandler.text);
-
-        if (req.result == UnityWebRequest.Result.Success)
-        {
-            var res = JsonUtility.FromJson<QuestProgressRewardResponse>(req.downloadHandler.text);
-
-            int gold = 0, exp = 0;
-            if (res != null && res.reward != null)
+        yield return ApiClientBase.Instance.Post<object>(
+            "Account/quests/claim",
+            dto,
+            _ =>
             {
-                gold = res.reward.gold;
-                exp = res.reward.exp;
-            }
-
-            // Reload lại quest UI
-            ReloadQuests();
-
-            // Reload lại PlayerState
-            StartCoroutine(AuthManager.Instance.GetPlayerState((state) => {
-                if (state != null)
-                {
-                    ItemDetailsUI.Instance.ShowEquipMessage($"+{gold} gold +{exp} exp");
-                    PlayerDataHolder1.CurrentPlayerState = state;
-                }
-            }));
-        }
-        else
-        {
-            ItemDetailsUI.Instance.ShowEquipMessage("Nhận thưởng thất bại: " + req.downloadHandler.text);
-        }
+                Debug.Log("Nhận thưởng quest thành công!");
+                ReloadQuests();
+                ItemDetailsUI.Instance.ShowEquipMessage("Nhận thưởng thành công!");
+            },
+            error => ItemDetailsUI.Instance.ShowEquipMessage("Nhận thưởng thất bại: " + error)
+        );
     }
+
     public void ToggleQuestUI()
     {
         bool isActive = questPanel.activeSelf;
-
         questPanel.SetActive(!isActive);
-        nhiemvu.gameObject.SetActive(!isActive);
-        todoi.gameObject.SetActive(!isActive);
-        if (!isActive)
-        {
-            AnQuest.gameObject.SetActive(true);
-            HienQuest.gameObject.SetActive(false);
-        }
-        else
-        {
-            HienQuest.gameObject.SetActive(true);
-            AnQuest.gameObject.SetActive(false);
-        }
+        if (nhiemvu != null) nhiemvu.SetActive(!isActive);
+        if (todoi != null) todoi.SetActive(!isActive);
+        if (AnQuest != null) AnQuest.SetActive(!isActive);
+        if (HienQuest != null) HienQuest.SetActive(isActive);
     }
-    //tat all
+
     public void TatactiveallQuestDisplay()
     {
-       
-        
-            questPanel.SetActive(false);
-            nhiemvu.gameObject.SetActive(false);
-            todoi.gameObject.SetActive(false);
-            AnQuest.gameObject.SetActive(false);
-
+        if (questPanel != null) questPanel.SetActive(false);
+        if (nhiemvu != null) nhiemvu.SetActive(false);
+        if (todoi != null) todoi.SetActive(false);
+        if (AnQuest != null) AnQuest.SetActive(false);
     }
+
     public void BatactiveallQuestDisplay()
     {
-
-
-        questPanel.SetActive(true);
-        nhiemvu.gameObject.SetActive(true);
-        todoi.gameObject.SetActive(true);
-        AnQuest.gameObject.SetActive(true);
-
+        if (questPanel != null) questPanel.SetActive(true);
+        if (nhiemvu != null) nhiemvu.SetActive(true);
+        if (todoi != null) todoi.SetActive(true);
+        if (AnQuest != null) AnQuest.SetActive(true);
     }
 }
 
-// DTO cho claim quest reward
 [System.Serializable]
 public class ClaimQuestDto
 {

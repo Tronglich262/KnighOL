@@ -1,193 +1,123 @@
-﻿using Assets.HeroEditor.FantasyInventory.Scripts.Interface.Elements;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
-using UnityEngine.Networking;
 
 public class InventoryManager : MonoBehaviour
 {
     public static InventoryManager Instance;
 
-    public InventoryUIManager uiManager; 
+    public InventoryUIManager uiManager;
+
     public List<InventoryItem1> playerInventory = new List<InventoryItem1>();
     public List<InventoryItem1> equippedItemsList = new List<InventoryItem1>();
 
-    [HideInInspector] public ClientSession session = new ClientSession();
-
-    void Awake() => Instance = this;
-    public void OnLoginSuccess(int accountId, string token)
+    private void Awake()
     {
-        session.AccountId = accountId;
-        session.Token = token;
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        Instance = this;
+    }
+
+    // Gọi sau khi Login thành công
+    public void OnLoginSuccess()
+    {
         playerInventory.Clear();
         equippedItemsList.Clear();
         LoadInventory(null);
     }
+
+    // ====================== LOAD INVENTORY ======================
+    public void LoadInventory(Action<InventoryItemDto[]> onLoaded)
+    {
+        StartCoroutine(CoLoadInventory(onLoaded));
+    }
+
+    private IEnumerator CoLoadInventory(Action<InventoryItemDto[]> onLoaded)
+    {
+        yield return ApiClientBase.Instance.Get<InventoryItemDto[]>(
+            $"Account/inventory/{SessionManager.AccountId}",
+            items =>
+            {
+                playerInventory.Clear();
+                foreach (var item in items)
+                {
+                    string stringId = ItemStatDatabase.Instance.GetStringIdFromInt(item.itemId);
+                    var stats = ItemStatDatabase.Instance.GetStats(stringId);
+
+                    if (stats != null)
+                    {
+                        playerInventory.Add(new InventoryItem1
+                        {
+                            itemId = stats.itemId,
+                            quantity = item.quantity,
+                            stats = stats
+                        });
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"Không tìm thấy ItemStats cho itemId: {item.itemId}");
+                    }
+                }
+
+                uiManager?.DisplayInventory(playerInventory);
+                onLoaded?.Invoke(items);
+                Debug.Log($"[Inventory] Load xong {playerInventory.Count} items");
+            },
+            error => Debug.LogError("Lỗi load inventory: " + error)
+        );
+    }
+
+    // ====================== ADD / REMOVE ITEM ======================
     public void AddItem(string itemId, int quantity)
     {
         var item = playerInventory.Find(i => i.itemId == itemId);
         if (item != null)
         {
             item.quantity += quantity;
-            SaveSingleItemToServer(itemId, item.quantity);  
+            SaveSingleItemToServer(item.itemId, item.quantity);
         }
         else
         {
-            var stats = Resources.LoadAll<ItemStats>("ItemStats");
-            var data = System.Array.Find(stats, s => s.itemId == itemId);
-            if (data == null) return;
+            var stats = ItemStatDatabase.Instance.GetStats(itemId);
+            if (stats == null) return;
 
-            item = new InventoryItem1
-            {
-                itemId = itemId,
-                quantity = quantity,
-                stats = data
-            };
+            item = new InventoryItem1 { itemId = itemId, quantity = quantity, stats = stats };
             playerInventory.Add(item);
-            SaveSingleItemToServer(itemId, quantity);    
+            SaveSingleItemToServer(itemId, quantity);
         }
 
-        uiManager.DisplayInventory(playerInventory); 
+        uiManager?.DisplayInventory(playerInventory);
     }
 
-    public List<ItemStats> GetEquippedItems()
-    {
-        List<ItemStats> equipped = new List<ItemStats>();
-
-        if (string.IsNullOrEmpty(PlayerDataHolder1.CharacterJson)) return equipped;
-
-        var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(PlayerDataHolder1.CharacterJson);
-
-        string[] keys = { "Helmet", "Armor", "Boots", "Gloves", "Pauldrons", "Vest", "Belt", "Shield", "Cape", "Back", "Glasses", "Hair", "Bow", "PrimaryMeleeWeapon", "SecondaryMeleeWeapon" };
-
-        foreach (var key in keys)
-        {
-            if (dict.TryGetValue(key, out string itemId))
-            {
-                var stats = ItemDatabase.Instance.GetItemStatsById(itemId, key);
-                if (stats != null)
-                {
-                    equipped.Add(stats);
-                }
-            }
-        }
-        foreach (var item in equipped)
-        {
-        }
-        return equipped;
-
-    }
     public void RemoveItem(string itemId, int quantity)
     {
         var item = playerInventory.Find(i => i.itemId == itemId);
-        if (item != null)
+        if (item == null) return;
+
+        item.quantity -= quantity;
+        if (item.quantity <= 0)
         {
-            item.quantity -= quantity;
-            int newQuantity = item.quantity;
-            if (item.quantity <= 0)
-            {
-                playerInventory.Remove(item);
-                newQuantity = 0;
-            }
-            SaveSingleItemToServer(itemId, newQuantity);
+            playerInventory.Remove(item);
+            quantity = 0;
         }
-        else
-        {
-            Debug.LogWarning($"Không tìm thấy item {itemId} để remove.");
-        }
-        uiManager.DisplayInventory(playerInventory); 
+
+        SaveSingleItemToServer(itemId, item.quantity);
+        uiManager?.DisplayInventory(playerInventory);
     }
 
-
-
-
-    //load dữ liệu từ dtb xuống inventory 
-    public void LoadInventory(System.Action<InventoryItemDto[]> onLoaded)
-    {
-        StartCoroutine(CoLoadInventory(onLoaded));
-    }
-
-    IEnumerator CoLoadInventory(System.Action<InventoryItemDto[]> onLoaded)
-    {
-        int accountId = session.AccountId;
-        string token = session.Token;
-        string url = ApiConfigManager.Instance.GetFullUrl($"Account/inventory/{accountId}");
-
-        UnityWebRequest req = UnityWebRequest.Get(url);
-        req.SetRequestHeader("Authorization", "Bearer " + token);
-        yield return req.SendWebRequest();
-
-        if (req.result == UnityWebRequest.Result.Success)
-        {
-            InventoryItemDto[] items = JsonHelper.FromJson<InventoryItemDto>(req.downloadHandler.text);
-
-            playerInventory.Clear();
-            foreach (var item in items)
-            {
-                string stringId = ItemStatDatabase.Instance.GetStringIdFromInt(item.itemId);
-                var so = ItemStatDatabase.Instance.GetStats(stringId);
-
-                if (so != null)
-                {
-                    playerInventory.Add(new InventoryItem1
-                    {
-                        itemId = so.itemId,
-                        quantity = item.quantity,
-                        stats = so
-                    });
-                }
-                else
-                {
-                    Debug.LogWarning($"Không tìm thấy ItemStats cho DB itemId int: {item.itemId}");
-                }
-            }
-            uiManager.DisplayInventory(playerInventory);
-            onLoaded?.Invoke(items);
-        }
-        else
-        {
-            Debug.LogError("Lỗi tải inventory: " + req.error);
-            onLoaded?.Invoke(null);
-        }
-    }
-    public void OnInventoryLoaded(InventoryItemDto[] items)
-    {
-        playerInventory.Clear();
-        foreach (var dto in items)
-        {
-            // Lookup lại ScriptableObject theo itemId
-            var itemStatsSO = ItemStatDatabase.Instance.GetStatsdtb(dto.itemId);
-            if (itemStatsSO != null)
-            {
-                var invItem = new InventoryItem1
-                {
-                    itemId = itemStatsSO.itemId, 
-                    quantity = dto.quantity,
-                    stats = itemStatsSO
-                };
-                playerInventory.Add(invItem);
-            }
-            else
-            {
-                Debug.LogWarning($"Không tìm thấy ItemStats cho itemId: {dto.itemId}");
-            }
-        }
-        // Cập nhật UI
-        uiManager.DisplayInventory(playerInventory);
-    }
+    // ====================== SAVE TO SERVER ======================
     public void SaveSingleItemToServer(string itemId, int quantity)
     {
         StartCoroutine(CoSaveSingleItem(itemId, quantity));
     }
 
-    IEnumerator CoSaveSingleItem(string itemId, int quantity)
+    private IEnumerator CoSaveSingleItem(string itemId, int quantity)
     {
-        int accountId = session.AccountId;
-        string token = session.Token;
-        string url = ApiConfigManager.Instance.GetFullUrl("Account/add-item");
-
         int parsedId = 0;
         if (!int.TryParse(itemId, out parsedId))
         {
@@ -195,52 +125,33 @@ public class InventoryManager : MonoBehaviour
             if (stat != null) parsedId = stat.Item_ID;
             else
             {
-                Debug.LogWarning($"Không chuyển được itemId string sang int: {itemId}");
+                Debug.LogWarning($"Không convert được itemId: {itemId}");
                 yield break;
             }
         }
 
         var dto = new AddItemDto
         {
-            AccountId = accountId,
+            AccountId = SessionManager.AccountId,
             ItemId = parsedId,
             Quantity = quantity
         };
 
-        string json = JsonUtility.ToJson(dto);
-
-        UnityWebRequest req = new UnityWebRequest(url, "POST");
-        byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(json);
-        req.uploadHandler = new UploadHandlerRaw(bodyRaw);
-        req.downloadHandler = new DownloadHandlerBuffer();
-        req.SetRequestHeader("Content-Type", "application/json");
-        req.SetRequestHeader("Authorization", "Bearer " + token);
-
-        yield return req.SendWebRequest();
-
-        if (req.result == UnityWebRequest.Result.Success)
-        {
-            Debug.Log($"Đã lưu item {dto.ItemId} với số lượng {dto.Quantity} lên server");
-        }
-        else
-        {
-            Debug.LogError($"Lỗi lưu item {dto.ItemId} lên server: " + req.error);
-        }
+        yield return ApiClientBase.Instance.Post<object>(
+            "Account/add-item",
+            dto,
+            _ => Debug.Log($"Đã lưu item {itemId} x{quantity} lên server"),
+            error => Debug.LogError("Lỗi save item: " + error)
+        );
     }
 
+    // ====================== DTOs ======================
     [System.Serializable]
     public class AddItemDto
     {
         public int AccountId;
         public int ItemId;
         public int Quantity;
-    }
-    // DTO class
-    [System.Serializable]
-    public class SaveInventoryDto
-    {
-        public int AccountId;
-        public InventoryItemDto[] Items;
     }
 
     [System.Serializable]
@@ -249,6 +160,4 @@ public class InventoryManager : MonoBehaviour
         public int itemId;
         public int quantity;
     }
-
-
 }

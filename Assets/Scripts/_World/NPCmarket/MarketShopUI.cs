@@ -1,22 +1,23 @@
-﻿//using ApiLogin.modelAccount;
+﻿using Newtonsoft.Json;
+using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using UnityEngine;
-using UnityEngine.Networking;
-//using ApiLogin.modelAccount;
 
 public class MarketShopUI : MonoBehaviour
 {
-    public Transform Content; // Gán Content của Scroll View ở Inspector
+    public static MarketShopUI Instance;
+
+    public Transform Content;
     public GameObject MarketItemRowPrefab;
-    public static MarketShopUI Instance; // Singleton instance
 
     private float reloadInterval = 15f;
     private float reloadTimer;
-    public void Awake()
+
+    private void Awake()
     {
         Instance = this;
     }
+
     void Update()
     {
         reloadTimer += Time.deltaTime;
@@ -26,6 +27,7 @@ public class MarketShopUI : MonoBehaviour
             reloadTimer = 0;
         }
     }
+
     private void OnEnable()
     {
         LoadMarketItems();
@@ -33,52 +35,43 @@ public class MarketShopUI : MonoBehaviour
 
     public void LoadMarketItems()
     {
-        StartCoroutine(GetMarketItems());
+        StartCoroutine(CoLoadMarketItems());
     }
 
-    IEnumerator<UnityWebRequestAsyncOperation> GetMarketItems()
+    private IEnumerator CoLoadMarketItems()
     {
-        string url = ApiConfigManager.Instance.GetFullUrl("Account/market/all");
-
-        UnityWebRequest req = UnityWebRequest.Get(url);
-        // Nếu cần token (tùy backend yêu cầu)
-        // req.SetRequestHeader("Authorization", "Bearer " + SessionManager.Token);
-
-        yield return req.SendWebRequest();
-
-        if (req.result == UnityWebRequest.Result.Success)
-        {
-            Debug.Log("Market JSON: " + req.downloadHandler.text);
-            var items = JsonArrayHelper.FromJson<MarketItemDto>(req.downloadHandler.text);
-
-            // Xoá UI cũ
-            foreach (Transform child in Content)
-                Destroy(child.gameObject);
-
-            foreach (var item in items)
+        yield return ApiClientBase.Instance.Get<MarketItemDto[]>(
+            "Account/market/all",
+            items =>
             {
-                var row = Instantiate(MarketItemRowPrefab, Content);
-                var rowUI = row.GetComponent<MarketItemRowUI>();
+                // Xóa UI cũ
+                foreach (Transform child in Content)
+                    Destroy(child.gameObject);
 
-                if (rowUI == null)
+                foreach (var item in items)
                 {
-                    Debug.LogError("MarketItemRowUI component not found on prefab!");
-                    continue;
+                    var row = Instantiate(MarketItemRowPrefab, Content);
+                    var rowUI = row.GetComponent<MarketItemRowUI>();
+
+                    if (rowUI == null)
+                    {
+                        Debug.LogError("MarketItemRowUI component not found on prefab!");
+                        continue;
+                    }
+
+                    var stats = ItemStatDatabase.Instance.GetStatsdtb(item.item_ID);
+                    if (stats == null)
+                    {
+                        Debug.LogWarning($"Không tìm thấy stats cho market item ID: {item.item_ID}");
+                        continue;
+                    }
+
+                    rowUI.SetData(item, stats);
                 }
 
-                var stats = ItemStatDatabase.Instance.GetStatsdtb(item.item_ID);
-                if (stats == null)
-                {
-                    Debug.LogWarning($"Không tìm thấy stats cho item ID: {item.item_ID}");
-                    continue;
-                }
-
-                rowUI.SetData(item, stats);
-            }
-        }
-        else
-        {
-            Debug.LogError("Lỗi tải market: " + req.error);
-        }
+                Debug.Log($"[MarketShopUI] Load xong {items.Length} items từ market");
+            },
+            error => Debug.LogError("Lỗi load market: " + error)
+        );
     }
 }

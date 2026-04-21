@@ -12,14 +12,11 @@ public class StartInventory : MonoBehaviour
 
     private IEnumerator Start()
     {
+        // Chờ InventoryManager và SessionManager sẵn sàng
         yield return new WaitUntil(() => InventoryManager.Instance != null);
         yield return new WaitUntil(() => SessionManager.HasValidSession());
 
-        // Lấy session từ SessionManager
-        InventoryManager.Instance.session.AccountId = SessionManager.AccountId;
-        InventoryManager.Instance.session.Token = SessionManager.Token;
-
-        Debug.Log($"[StartInventory] Đang load inventory cho accountId: {InventoryManager.Instance.session.AccountId}, token: {InventoryManager.Instance.session.Token}");
+        Debug.Log($"[StartInventory] Đang load inventory cho accountId: {SessionManager.AccountId}");
 
         // Load PlayerState trước
         yield return StartCoroutine(AuthManager.Instance.GetPlayerState((state) =>
@@ -73,6 +70,6 @@ public class StartInventory : MonoBehaviour
 
         // Load inventory sau khi state/stats đã sẵn sàng
         InventoryManager.Instance.LoadInventory(null);
-        Debug.Log($"[StartInventory] Load inventory xong cho accountId: {InventoryManager.Instance.session.AccountId}, token: {InventoryManager.Instance.session.Token}");
+        Debug.Log($"[StartInventory] Load inventory xong cho accountId: {SessionManager.AccountId}");
     }
 }

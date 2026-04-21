@@ -1,5 +1,4 @@
 ﻿
-//sử dụng hero phải khai báo
 using Assets.HeroEditor.Common.CharacterScripts;
 using Assets.HeroEditor.FantasyInventory.Scripts.Data;
 using HeroEditor.Common.Enums;
@@ -12,7 +11,6 @@ using TMPro;
 using Unity.VisualScripting;
 using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using UnityEngine;
-using UnityEngine.Networking;
 using UnityEngine.UI;
 
 
@@ -645,7 +643,7 @@ public class ItemDetailsUI : MonoBehaviour
                 break;
         }
     }
-    IEnumerator CoBuyItemFromShop(int accountId, int itemId, string token)
+    private IEnumerator CoBuyItemFromShop(int accountId, int itemId, string token)
     {
         var buyData = new
         {
@@ -653,45 +651,37 @@ public class ItemDetailsUI : MonoBehaviour
             ItemId = itemId
         };
 
-        string json = Newtonsoft.Json.JsonConvert.SerializeObject(buyData);
-        string url = ApiConfigManager.Instance.GetFullUrl("account/shop/buy");
-
-        UnityWebRequest req = new UnityWebRequest(url, "POST");
-        byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(json);
-        req.uploadHandler = new UploadHandlerRaw(bodyRaw);
-        req.downloadHandler = new DownloadHandlerBuffer();
-        req.SetRequestHeader("Content-Type", "application/json");
-        req.SetRequestHeader("Authorization", "Bearer " + token);
-
-        yield return req.SendWebRequest();
-
-        if (req.result == UnityWebRequest.Result.Success)
-        {
-            var resp = JsonConvert.DeserializeObject<ShopBuyResponse>(req.downloadHandler.text);
-            PlayerDataHolder1.CurrentPlayerState.gold = resp.newGold;
-            CharacterUIManager1.Instance.gold.text = resp.newGold.ToString();
-            ShowEquipMessage("Mua thành công!");
-
-            InventoryManager.Instance.LoadInventory(null);
-
-            // Ẩn panel shop sau khi mua
-            switch (EquipmentSlotUI.Instante.shopPanelType)
+        yield return ApiClientBase.Instance.Post<ShopBuyResponse>(
+            "account/shop/buy",
+            buyData,
+            resp =>
             {
-                case EquipmentSlotUI.ShopPanelType.ShopTP:
-                    ShopTP.Instance.panelshopTP.SetActive(false);
-                    break;
-                case EquipmentSlotUI.ShopPanelType.ShopVK:
-                    shopvk.Instance.panelshopvk.SetActive(false);
-                    break;
-                case EquipmentSlotUI.ShopPanelType.ShopPK:
-                    shoppk.Instance.panelshoppk.SetActive(false);
-                    break;
-            }
-        }
-        else
-        {
-            ShowEquipMessage("Lỗi khi mua: " + req.downloadHandler.text);
-        }
+                if (resp != null)
+                {
+                    PlayerDataHolder1.CurrentPlayerState.gold = resp.newGold;
+                    if (CharacterUIManager1.Instance != null && CharacterUIManager1.Instance.gold != null)
+                        CharacterUIManager1.Instance.gold.text = resp.newGold.ToString();
+                }
+
+                ShowEquipMessage("Mua thành công!");
+                InventoryManager.Instance.LoadInventory(null);
+
+                // Ẩn panel shop tương ứng
+                switch (EquipmentSlotUI.Instante.shopPanelType)
+                {
+                    case EquipmentSlotUI.ShopPanelType.ShopTP:
+                        if (ShopTP.Instance != null) ShopTP.Instance.panelshopTP.SetActive(false);
+                        break;
+                    case EquipmentSlotUI.ShopPanelType.ShopVK:
+                        if (shopvk.Instance != null) shopvk.Instance.panelshopvk.SetActive(false);
+                        break;
+                    case EquipmentSlotUI.ShopPanelType.ShopPK:
+                        if (shoppk.Instance != null) shoppk.Instance.panelshoppk.SetActive(false);
+                        break;
+                }
+            },
+            error => ShowEquipMessage("Lỗi khi mua: " + error)
+        );
     }
 
 
@@ -807,31 +797,19 @@ public class ItemDetailsUI : MonoBehaviour
 
     IEnumerator CoDepositToMarket(MarketItemSendDto dto, string token)
     {
-        string url = ApiConfigManager.Instance.GetFullUrl("Account/market/deposit");
-        string json = Newtonsoft.Json.JsonConvert.SerializeObject(dto);
-
-        Debug.Log("Json gửi đi: " + json);
-
-        UnityWebRequest req = new UnityWebRequest(url, "POST");
-        byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(json);
-        req.uploadHandler = new UploadHandlerRaw(bodyRaw);
-        req.downloadHandler = new DownloadHandlerBuffer();
-        req.SetRequestHeader("Content-Type", "application/json");
-        req.SetRequestHeader("Authorization", "Bearer " + token);
-
-        yield return req.SendWebRequest();
-
-        if (req.result == UnityWebRequest.Result.Success)
-        {
-            ShowEquipMessage("Đã ký gửi thành công!");
-            InventoryManager.Instance.LoadInventory(null);
-            if (MarketShopUI.Instance != null) MarketShopUI.Instance.LoadMarketItems();
-            panel.SetActive(false);
-        }
-        else
-        {
-            ShowEquipMessage("Lỗi ký gửi: " + req.downloadHandler.text);
-        }
+        yield return ApiClientBase.Instance.Post<object>(
+            "Account/market/deposit",
+            dto,
+            _ =>
+            {
+                ShowEquipMessage("Đã ký gửi thành công!");
+                InventoryManager.Instance.LoadInventory(null);
+                if (MarketShopUI.Instance != null)
+                    MarketShopUI.Instance.LoadMarketItems();
+                panel.SetActive(false);
+            },
+            error => ShowEquipMessage("Lỗi ký gửi: " + error)
+        );
     }
     private void BuildShopStatsCacheIfNeeded()
     {

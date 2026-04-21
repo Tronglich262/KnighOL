@@ -87360,11 +87360,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02aea29d51d36bc48bf35ec939bee75a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  canvasDaily: {fileID: 0}
   canvasShop: {fileID: 1553338662}
   canvasShopvk: {fileID: 372286038}
   canvasShopPK: {fileID: 1535731441}
-  nv: {fileID: 0}
   panelshoptp: {fileID: 1772657212}
   panelshopvk: {fileID: 1932429563}
   panelshoppk: {fileID: 801935251}
@@ -95472,6 +95470,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   questData: {fileID: 11400000, guid: 35caef6a0a2364c4e9a25345861b48b7, type: 2}
+  playTime: 0
   updateMission: {fileID: 1762635937}
 --- !u!4 &1762635939
 Transform:

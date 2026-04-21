@@ -9,16 +9,10 @@ public class ItemPickup : MonoBehaviour
     private static int localItemHCCount = 0;
     private static bool missionCompleted = false;
     private iteminfo info;  
-    private static UpdateMission _mission;
 
     private void Awake()
     {
         info = GetComponent<iteminfo>();
-
-        if (_mission == null)
-        {
-            _mission = FindFirstObjectByType<UpdateMission>();
-        }
     }
 
     private void OnTriggerEnter(Collider other)
@@ -64,7 +58,6 @@ public class ItemPickup : MonoBehaviour
                 if (localItemHCCount >= 5)
                 {
                     missionCompleted = true;
-                    _mission?.slotItemHc();
                 }
             }
         }

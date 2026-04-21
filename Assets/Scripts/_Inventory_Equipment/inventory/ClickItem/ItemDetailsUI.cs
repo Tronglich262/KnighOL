@@ -38,7 +38,6 @@ public class ItemDetailsUI : MonoBehaviour
     private Sprite currentIcon;
 
     public GameObject PanelDaily;
-    public DailyCheckInSimple dailyCheckInSimple;
 
     private InventoryItem1 currentItem;
 
@@ -697,8 +696,6 @@ public class ItemDetailsUI : MonoBehaviour
         {
             InventoryManager.Instance.AddItem(currentItemId, 1);
             Debug.Log(" PanelDaily đang bật → Đã thêm item vào inventory.");
-            dailyCheckInSimple.faleCurrentDat();
-            dailyCheckInSimple.ClamedDaily();
 
         }
 

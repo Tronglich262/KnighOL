@@ -100,7 +100,7 @@ public class ApiClientBase : MonoBehaviour
     // ====================== TỰ ĐỘNG REFRESH TOKEN ======================
     private IEnumerator RefreshTokenRoutine<T>(Action<T> onSuccess, Action<string> onError, string originalEndpoint, string originalMethod, object originalData)
     {
-        if (string.IsNullOrEmpty(SessionManager.RefreshToken)) // bạn cần lưu RefreshToken vào SessionManager
+        if (string.IsNullOrEmpty(SessionManager.RefreshToken))
         {
             onError?.Invoke("Refresh token không tồn tại. Vui lòng đăng nhập lại.");
             yield break;
@@ -113,8 +113,9 @@ public class ApiClientBase : MonoBehaviour
             response =>
             {
                 refreshSuccess = true;
-                SessionManager.SetSession(response.accountId, response.accessToken, response.name);
-                ApiService.Instance?.SetTokens(response.accessToken, response.refreshToken); // nếu bạn vẫn dùng ApiService
+                SessionManager.SetSession(response.accountId, response.accessToken, response.name, response.refreshToken);
+                // XÓA DÒNG NÀY: ApiService.Instance?.SetTokens(...);
+                // Không cần ApiService nữa
             },
             err => onError?.Invoke("Refresh token thất bại: " + err));
 

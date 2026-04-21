@@ -26,7 +26,6 @@ public static class AuthApiClient
                 onError?.Invoke(error);
             });
     }
-
     // ====================== LOGIN ======================
     public static IEnumerator Login(LoginDto dto, Action<LoginResponse> onSuccess, Action<string> onError)
     {
@@ -35,15 +34,13 @@ public static class AuthApiClient
             {
                 if (!string.IsNullOrEmpty(response.accessToken))
                 {
+                    // Chỉ cần gọi SessionManager là đủ (không cần ApiService nữa)
                     SessionManager.SetSession(
                         response.accountId,
                         response.accessToken,
                         response.name,
                         response.refreshToken
                     );
-
-                    if (ApiService.Instance != null)
-                        ApiService.Instance.SetTokens(response.accessToken, response.refreshToken);
 
                     Debug.Log($"Đăng nhập thành công: {response.name}");
                     onSuccess?.Invoke(response);

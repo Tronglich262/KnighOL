@@ -5,101 +5,58 @@ using System.Text;
 using UnityEngine;
 using UnityEngine.Networking;
 
+using System;
+using System.Collections;
+using UnityEngine;
+
 public static class AuthApiClient
 {
-    private static string GetAccountUrl(string endpoint)
+    // ====================== REGISTER ======================
+    public static IEnumerator Register(RegisterDto dto, Action onSuccess, Action<string> onError)
     {
-        return ApiConfigManager.Instance != null
-            ? ApiConfigManager.Instance.GetFullUrl("Account/" + endpoint.TrimStart('/'))
-            : "https://localhost:7124/api/Account/" + endpoint.TrimStart('/');
+        yield return ApiClientBase.Instance.Post<LoginResponse>("Account/register", dto,
+            response =>
+            {
+                Debug.Log("Đăng ký thành công!");
+                onSuccess?.Invoke();
+            },
+            error =>
+            {
+                Debug.LogError("Đăng ký thất bại: " + error);
+                onError?.Invoke(error);
+            });
     }
 
-    public static IEnumerator Register(RegisterDto dto,
-        Action onSuccess, Action<string> onError)
+    // ====================== LOGIN ======================
+    public static IEnumerator Login(LoginDto dto, Action<LoginResponse> onSuccess, Action<string> onError)
     {
-        string fullUrl = GetAccountUrl("register");
-
-        string json = JsonUtility.ToJson(dto);
-
-        Debug.Log("[AuthApiClient.Register] URL = " + fullUrl);
-        Debug.Log("[AuthApiClient.Register] BODY = " + json);
-
-        using UnityWebRequest request = new UnityWebRequest(fullUrl, "POST");
-        byte[] bodyRaw = Encoding.UTF8.GetBytes(json);
-        request.uploadHandler = new UploadHandlerRaw(bodyRaw);
-        request.downloadHandler = new DownloadHandlerBuffer();
-        request.SetRequestHeader("Content-Type", "application/json");
-        request.timeout = 12;
-
-        if (fullUrl.Contains("localhost"))
-            request.certificateHandler = new AcceptAllCertificates();
-
-        yield return request.SendWebRequest();
-
-        Debug.Log($"[REGISTER] ResponseCode = {request.responseCode} | Body = {request.downloadHandler.text}");
-
-        if (request.result == UnityWebRequest.Result.Success)
-        {
-            onSuccess?.Invoke();
-        }
-        else
-        {
-            string error = string.IsNullOrEmpty(request.downloadHandler.text)
-                ? request.error
-                : request.downloadHandler.text;
-            onError?.Invoke(error);
-        }
-    }
-
-    public static IEnumerator Login(LoginDto dto,
-        Action<LoginResponse> onSuccess, Action<string> onError)
-    {
-        string fullUrl = GetAccountUrl("login");
-
-        string json = JsonUtility.ToJson(dto);
-
-        Debug.Log("[AuthApiClient.Login] URL = " + fullUrl);
-        Debug.Log("[AuthApiClient.Login] BODY = " + json);
-
-        using UnityWebRequest request = new UnityWebRequest(fullUrl, "POST");
-        byte[] bodyRaw = Encoding.UTF8.GetBytes(json);
-        request.uploadHandler = new UploadHandlerRaw(bodyRaw);
-        request.downloadHandler = new DownloadHandlerBuffer();
-        request.SetRequestHeader("Content-Type", "application/json");
-        request.timeout = 12;
-
-        if (fullUrl.Contains("localhost"))
-            request.certificateHandler = new AcceptAllCertificates();
-
-        yield return request.SendWebRequest();
-
-        Debug.Log($"[LOGIN] ResponseCode = {request.responseCode} | Body = {request.downloadHandler.text}");
-
-        if (request.result == UnityWebRequest.Result.Success)
-        {
-            string rawJson = request.downloadHandler.text;
-            LoginResponse response = JsonUtility.FromJson<LoginResponse>(rawJson);
-
-            if (response != null && !string.IsNullOrEmpty(response.accessToken))
+        yield return ApiClientBase.Instance.Post<LoginResponse>("Account/login", dto,
+            response =>
             {
-                if (ApiService.Instance != null)
-                    ApiService.Instance.SetTokens(response.accessToken, response.refreshToken);
+                if (!string.IsNullOrEmpty(response.accessToken))
+                {
+                    SessionManager.SetSession(
+                        response.accountId,
+                        response.accessToken,
+                        response.name,
+                        response.refreshToken
+                    );
 
-                SessionManager.SetSession(response.accountId, response.accessToken, response.name);
+                    if (ApiService.Instance != null)
+                        ApiService.Instance.SetTokens(response.accessToken, response.refreshToken);
 
-                onSuccess?.Invoke(response);
-            }
-            else
+                    Debug.Log($"Đăng nhập thành công: {response.name}");
+                    onSuccess?.Invoke(response);
+                }
+                else
+                {
+                    onError?.Invoke("Response không hợp lệ");
+                }
+            },
+            error =>
             {
-                onError?.Invoke("Response không hợp lệ");
-            }
-        }
-        else
-        {
-            string error = string.IsNullOrEmpty(request.downloadHandler.text)
-                ? request.error
-                : request.downloadHandler.text;
-            onError?.Invoke(error);
-        }
+                Debug.LogError("Đăng nhập thất bại: " + error);
+                onError?.Invoke(error);
+            });
     }
 }

@@ -1333,6 +1333,50 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &188664174
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 188664176}
+  - component: {fileID: 188664175}
+  m_Layer: 0
+  m_Name: ApiManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &188664175
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 188664174}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e56df685886fd0448185869c5cf652e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &188664176
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 188664174}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 649.7824, y: 645.0884, z: -6.050518}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &210423262
 GameObject:
   m_ObjectHideFlags: 0
@@ -1643,8 +1687,6 @@ MonoBehaviour:
   registerPassword: {fileID: 2128038186}
   loginEmail: {fileID: 912399097}
   loginPassword: {fileID: 837356502}
-  authApiUrl: https://localhost:7124/api/Auth
-  accountApiUrl: https://localhost:7124/api/Account
   loginMessageText: {fileID: 1980058889}
   registerMessageText: {fileID: 1779996160}
   loginPasswordToggleBtn: {fileID: 2060643760}
@@ -3753,3 +3795,4 @@ SceneRoots:
   - {fileID: 862438706}
   - {fileID: 154587608}
   - {fileID: 1215538871}
+  - {fileID: 188664176}

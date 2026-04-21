@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b6b16f5b7853f164d8a7722387225f6b, type: 3}
   m_Name: ApiConfigManager
   m_EditorClassIdentifier: 
-  BaseUrl: https://localhost:7124
+  BaseUrl: http://localhost:5072
   ApiVersion: api
   UseLocalhostInEditor: 1

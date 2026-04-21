@@ -7,7 +7,7 @@ public class ApiConfigManager : ScriptableObject
 
     [Header("=== API CONFIG ===")]
     [Tooltip("Đổi thành domain thật khi deploy")]
-    public string BaseUrl = "https://localhost:7124";
+    public string BaseUrl = "http://localhost:5072";
 
     [Tooltip("Thường là 'api'")]
     public string ApiVersion = "api";

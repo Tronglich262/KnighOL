@@ -17,19 +17,33 @@ public class ApiConfigManager : ScriptableObject
 
     private void OnEnable()
     {
-        if (Instance != null && Instance != this)
+        if (Instance == null)
         {
-            Destroy(this);
-            return;
+            Instance = this;
+            Debug.Log("[ApiConfigManager] Instance đã được load thành công từ Resources.");
         }
-        Instance = this;
     }
 
     /// <summary>
-    /// Tạo URL đầy đủ: https://localhost:7124/api/...
+    /// Load instance từ Resources (đảm bảo hoạt động trong Build)
     /// </summary>
+    public static ApiConfigManager GetInstance()
+    {
+        if (Instance == null)
+        {
+            Instance = Resources.Load<ApiConfigManager>("ApiConfig/ApiConfigManager");
+            if (Instance == null)
+                Debug.LogError("❌ Không tìm thấy ApiConfigManager.asset trong Resources/ApiConfig/");
+            else
+                Debug.Log("[ApiConfigManager] Load từ Resources thành công.");
+        }
+        return Instance;
+    }
+
     public string GetFullUrl(string endpoint)
     {
+        if (Instance == null) GetInstance(); // tự động load nếu chưa có
+
         string url = BaseUrl.TrimEnd('/');
 
         if (!string.IsNullOrEmpty(ApiVersion))

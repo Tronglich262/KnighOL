@@ -87,11 +87,10 @@ public class CharacterUIManager : MonoBehaviour
           !ShopTriggerPK.Instance.shopPanel.gameObject.activeSelf &&
           !ShopTriggerVK.Instance.shopPanel.gameObject.activeSelf &&
           !ShopTriggerTP.Instance.shopPanel.gameObject.activeSelf &&
-          !CanvasShop.Instante.canvasShop.gameObject.activeSelf &&
-          !CanvasShop.Instante.canvasDaily.gameObject.activeSelf &&
+         // !CanvasShop.Instante.canvasShop.gameObject.activeSelf &&
+          //!CanvasShop.Instante.canvasDaily.gameObject.activeSelf &&
           !CanvasShop.Instante.canvasShopPK.gameObject.activeSelf &&
-          !CanvasShop.Instante.canvasShopvk.gameObject.activeSelf &&
-          !CanvasShop.Instante.nv.gameObject.activeSelf);
+          !CanvasShop.Instante.canvasShopvk.gameObject.activeSelf);
 
             if (canShow)
             {

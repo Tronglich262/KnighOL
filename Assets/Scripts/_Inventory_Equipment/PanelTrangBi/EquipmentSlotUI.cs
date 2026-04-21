@@ -67,9 +67,6 @@ public class EquipmentSlotUI : MonoBehaviour, IPointerClickHandler
                 case ShopPanelType.ShopPK:
                     ToggleShopPKPanel(shoppk.Instance, itemId, iconImage.sprite, itemType);
                     break;
-                case ShopPanelType.Daily:
-                    ToggleDailyPanel(CanvasShop.Instante.canvasDaily, itemId, iconImage.sprite, itemType);
-                    break;
                 default:
                     Debug.LogWarning("Chưa gán đúng ShopPanelType cho slot!");
                     break;
@@ -82,8 +79,6 @@ public class EquipmentSlotUI : MonoBehaviour, IPointerClickHandler
         if (ShopTP.Instance != null) ShopTP.Instance.Hide();
         if (shopvk.Instance != null) shopvk.Instance.Hide();
         if (shoppk.Instance != null) shoppk.Instance.Hide();
-        if (CanvasShop.Instante.canvasDaily != null) CanvasShop.Instante.canvasDaily.SetActive(false);
-
     }
     public void OnSlotClicked()
     {

@@ -248,8 +248,7 @@ public class AuthManager : MonoBehaviour
     // =========================
     public void OnLoginClick()
     {
-        if (isLoggingIn)
-            return;
+        if (isLoggingIn) return;
 
         string email = loginEmail != null ? loginEmail.text.Trim() : "";
         string password = loginPassword != null ? loginPassword.text : "";
@@ -259,7 +258,6 @@ public class AuthManager : MonoBehaviour
             ShowLoginMessage("Vui lòng nhập email!");
             return;
         }
-
         if (string.IsNullOrEmpty(password))
         {
             ShowLoginMessage("Vui lòng nhập mật khẩu!");
@@ -268,10 +266,21 @@ public class AuthManager : MonoBehaviour
 
         StartCoroutine(Login());
     }
-
     private IEnumerator Login()
     {
         isLoggingIn = true;
+
+        Debug.Log("=== AuthManager.Login START ===");
+
+        // === KIỂM TRA INSTANCE TRƯỚC KHI DÙNG ===
+        if (ApiConfigManager.Instance == null)
+        {
+            Debug.LogError("❌ ApiConfigManager.Instance = NULL ! Kiểm tra file ApiConfigManager.asset có trong Resources hay được reference chưa?");
+            ShowLoginMessage("Lỗi cấu hình API (ApiConfigManager null)");
+            isLoggingIn = false;
+            yield break;
+        }
+
         LoginDto loginDto = new LoginDto
         {
             Email = loginEmail != null ? loginEmail.text.Trim() : "",
@@ -284,6 +293,7 @@ public class AuthManager : MonoBehaviour
 
         Debug.Log("[LOGIN URL] " + ApiConfigManager.Instance.GetFullUrl("login"));
 
+        // Gọi AuthApiClient (đã có debug bên trong)
         yield return StartCoroutine(AuthApiClient.Login(
             loginDto,
             response =>
@@ -314,7 +324,9 @@ public class AuthManager : MonoBehaviour
             ShowLoginMessage(errorMsg);
             Debug.LogError(errorMsg);
         }
+
         isLoggingIn = false;
+        Debug.Log("=== AuthManager.Login END ===");
     }
 
     private void ApplySession(LoginResponse loginResponse)

@@ -1,13 +1,8 @@
-// Scripts/BackEnd/AuthApiClient.cs
 using System;
 using System.Collections;
 using System.Text;
 using UnityEngine;
 using UnityEngine.Networking;
-
-using System;
-using System.Collections;
-using UnityEngine;
 
 public static class AuthApiClient
 {
@@ -29,12 +24,23 @@ public static class AuthApiClient
     // ====================== LOGIN ======================
     public static IEnumerator Login(LoginDto dto, Action<LoginResponse> onSuccess, Action<string> onError)
     {
+        Debug.Log("=== AuthApiClient.Login CALLED ===");
+
+        if (ApiClientBase.Instance == null)
+        {
+            Debug.LogError("❌ ApiClientBase.Instance = NULL ! Kiểm tra GameObject ApiClientBase có trong scene không?");
+            onError?.Invoke("ApiClientBase chưa khởi tạo");
+            yield break;
+        }
+
+        Debug.Log("→ Bắt đầu gọi ApiClientBase.Post...");
+
         yield return ApiClientBase.Instance.Post<LoginResponse>("Account/login", dto,
             response =>
             {
+                Debug.Log("→ Post thành công, nhận response");
                 if (!string.IsNullOrEmpty(response.accessToken))
                 {
-                    // Chỉ cần gọi SessionManager là đủ (không cần ApiService nữa)
                     SessionManager.SetSession(
                         response.accountId,
                         response.accessToken,
@@ -47,6 +53,7 @@ public static class AuthApiClient
                 }
                 else
                 {
+                    Debug.LogWarning("Response không có accessToken");
                     onError?.Invoke("Response không hợp lệ");
                 }
             },

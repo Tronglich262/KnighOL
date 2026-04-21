@@ -1,0 +1,216 @@
+﻿using Assets.HeroEditor.Common.ExampleScripts;
+using Ookii.Dialogs;
+using System;
+using Unity.Jobs;
+using UnityEngine;
+
+public class CanvasShop : MonoBehaviour
+{
+    //public GameObject canvasDaily;
+    public GameObject canvasShop;
+    public GameObject canvasShopvk;
+    public GameObject canvasShopPK;
+    //public GameObject nv;
+
+    public GameObject panelshoptp;
+    public GameObject panelshopvk;
+    public GameObject panelshoppk;
+    public GameObject diemdanh;
+    public static CanvasShop Instante;
+    public void Awake()
+    {
+        Instante = this;
+    }
+    private void Start()
+    {
+       
+        if (canvasShop != null)
+        {
+            canvasShop.SetActive(false);
+        }
+      
+        if (canvasShopvk != null)
+        {
+            canvasShopvk.SetActive(false);
+        }
+        if (canvasShopPK != null)
+        {
+            canvasShopPK.SetActive(false);
+        }
+    }
+    
+    public void OnClickshop()
+    {
+      canvasShop.SetActive(!canvasShop.activeSelf);
+        canvasShopvk.SetActive(false);
+        canvasShopPK.SetActive(false);
+        panelshoptp.SetActive(false);
+        //SkillButtonManager.Instance.Skillbutton.SetActive(false);
+        CharacterUIManager.Instance.Tui.SetActive(true);
+
+        Tat();
+
+    }
+   
+    public void OnClickshopvk()
+    {
+      canvasShopvk.SetActive(!canvasShopvk.activeSelf);
+        canvasShop.SetActive(false);
+        canvasShopPK.SetActive(false);
+        panelshopvk.SetActive(false);
+       // SkillButtonManager.Instance.Skillbutton.SetActive(false);
+        CharacterUIManager.Instance.Tui.SetActive(true);
+
+        Tat();
+    }
+    public void OnClickshoppk()
+    {
+      canvasShopPK.SetActive(!canvasShopPK.activeSelf);
+        canvasShop.SetActive(false);
+        canvasShopvk.SetActive(false);
+        panelshoppk.SetActive(false);
+       // SkillButtonManager.Instance.Skillbutton.SetActive(false);
+        CharacterUIManager.Instance.Tui.SetActive(true);
+
+        Tat();
+    }
+    public void ToogleTatTP()
+    {
+        panelshoptp.SetActive(!panelshoptp.activeSelf);
+        //SkillButtonManager.Instance.Skillbutton.SetActive(true);
+     //   bool checktoggle = MovementExample.Instante.checktoggle = false;
+        QuestDisplay.Instance.BatactiveallQuestDisplay();
+            SkillButtonManager.Instance.ToggleSkills(true);
+            FpsGame.Instance.ToggleBatBanghienthithongtin();
+        Bat();
+
+    }
+    public void ToogleTatpk()
+    {
+        panelshoppk.SetActive(!panelshoppk.activeSelf);
+     //   SkillButtonManager.Instance.Skillbutton.SetActive(true);
+    //    bool checktoggle = MovementExample.Instante.checktoggle = false;
+        QuestDisplay.Instance.BatactiveallQuestDisplay();
+        WorldChatUIManager.Instance.chatBar.SetActive(true);
+        CharacterUIManager.Instance.CharacterButton.SetActive(true);
+        SkillButtonManager.Instance.ToggleSkills(true);
+        FpsGame.Instance.ToggleBatBanghienthithongtin();
+        Bat();
+    }
+    public void ToogleTatvk()
+    {
+        panelshopvk.SetActive(!panelshopvk.activeSelf);
+     //   SkillButtonManager.Instance.Skillbutton.SetActive(true);
+      ///  bool checktoggle = MovementExample.Instante.checktoggle = false;
+        QuestDisplay.Instance.BatactiveallQuestDisplay();
+        WorldChatUIManager.Instance.chatBar.SetActive(true);
+        CharacterUIManager.Instance.CharacterButton.SetActive(true);
+        SkillButtonManager.Instance.ToggleSkills(true);
+        FpsGame.Instance.ToggleBatBanghienthithongtin();
+        Bat();
+
+    }
+    public void ToogleTatdiemdanh()
+    {
+        diemdanh.SetActive(!diemdanh.activeSelf);
+       // SkillButtonManager.Instance.Skillbutton.SetActive(true);
+       // bool checktoggle = MovementExample.Instante.checktoggle = false;
+        WorldChatUIManager.Instance.chatBar.SetActive(true);
+        CharacterUIManager.Instance.CharacterButton.SetActive(true);
+        SkillButtonManager.Instance.ToggleSkills(true);
+        FpsGame.Instance.ToggleBatBanghienthithongtin();
+        Bat();
+
+    }
+    public void ToogleTatTPshop()
+    {
+        canvasShop.SetActive(false);
+        panelshoptp.SetActive(false);
+     //   SkillButtonManager.Instance.Skillbutton.SetActive(true);
+        CharacterUIManager.Instance.Tui.SetActive(true);
+        Bat();
+        CharacterUIManager.Instance.Tui.SetActive(false);
+        if(ShopTP.Instance.panelshopTP != null)
+        {
+            ShopTP.Instance.panelshopTP.SetActive(false);
+        }
+        SkillButtonManager.Instance.ToggleSkills(true);
+        FpsGame.Instance.ToggleBatBanghienthithongtin();
+        WorldChatUIManager.Instance.Chat.SetActive(true);
+        QuestDisplay.Instance.BatactiveallQuestDisplay();
+
+      //  bool checktoggle = MovementExample.Instante.checktoggle = false;
+
+    }
+    public void ToogleTatpkshop()
+    {
+        canvasShopPK.SetActive(false);
+        panelshoppk.SetActive(false);
+     //   SkillButtonManager.Instance.Skillbutton.SetActive(true);
+        CharacterUIManager.Instance.Tui.SetActive(false);
+        if (shoppk.Instance.panelshoppk != null)
+        {
+            shoppk.Instance.panelshoppk.SetActive(false);
+        }
+        WorldChatUIManager.Instance.Chat.SetActive(true);
+        SkillButtonManager.Instance.ToggleSkills(true);
+        FpsGame.Instance.ToggleBatBanghienthithongtin();
+        Bat();
+        QuestDisplay.Instance.BatactiveallQuestDisplay();
+
+    //    bool checktoggle = MovementExample.Instante.checktoggle = false;
+
+
+    }
+    public void ToogleTatvkshop()
+    {
+        canvasShopvk.SetActive(false);
+        panelshopvk.SetActive(false);
+      //  SkillButtonManager.Instance.Skillbutton.SetActive(true);
+        CharacterUIManager.Instance.Tui.SetActive(false);
+        if (shopvk.Instance.panelshopvk != null)
+        {
+            shopvk.Instance.panelshopvk.SetActive(false);
+        }
+        WorldChatUIManager.Instance.Chat.SetActive(true);
+        QuestDisplay.Instance.BatactiveallQuestDisplay();
+        SkillButtonManager.Instance.ToggleSkills(true);
+        FpsGame.Instance.ToggleBatBanghienthithongtin();
+        Bat();
+      //  bool checktoggle = MovementExample.Instante.checktoggle = false;
+
+    }
+   
+    public void ToogleTatdiemdanhshop1()
+    {
+        diemdanh.SetActive(false);
+        //   SkillButtonManager.Instance.Skillbutton.SetActive(true);
+        SkillButtonManager.Instance.ToggleSkills(true);
+        FpsGame.Instance.ToggleBatBanghienthithongtin();
+        Bat();
+     //   bool checktoggle = MovementExample.Instante.checktoggle = false;
+
+    }
+    //( cấm động )
+    public void Tat()
+    {
+        CharacterUIManager.Instance.ToggleTatCharacterButton();
+        WorldChatUIManager.Instance.ToggleTatCharbarAndChatPrivateList();
+    }
+    public void Bat()
+    {
+        CharacterUIManager.Instance.ToggleBatCharacterButton();
+        WorldChatUIManager.Instance.ToggleBatCharbarAndChatPrivateList();
+    }
+    public void HideAllCanvas()
+    {
+        if (canvasShop != null) canvasShop.SetActive(false);
+        if (canvasShopPK != null) canvasShopPK.SetActive(false);
+        if (canvasShopvk != null) canvasShopvk.SetActive(false);
+        if (diemdanh != null) diemdanh.SetActive(false);
+        if (panelshopvk != null) panelshopvk.SetActive(false);
+        if (panelshoptp != null) panelshoptp.SetActive(false);
+        if (panelshoppk != null) panelshoppk.SetActive(false);
+    }
+   
+}

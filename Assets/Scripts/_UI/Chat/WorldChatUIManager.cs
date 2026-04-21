@@ -118,11 +118,9 @@ public class WorldChatUIManager : NetworkBehaviour
         bool isCanvasShoptp = CanvasShop.Instante.canvasShop != null && CanvasShop.Instante.canvasShop != null && CanvasShop.Instante.canvasShop.gameObject.activeSelf;
         bool isCanvasShopvk = CanvasShop.Instante.canvasShopvk != null && CanvasShop.Instante.canvasShopvk != null && CanvasShop.Instante.canvasShopvk.gameObject.activeSelf;
         bool isCanvasShoppk = CanvasShop.Instante.canvasShopPK != null && CanvasShop.Instante.canvasShopPK != null && CanvasShop.Instante.canvasShopPK.gameObject.activeSelf;
-        bool isCanvasShopdiemdanh = CanvasShop.Instante.canvasDaily != null && CanvasShop.Instante.canvasDaily != null && CanvasShop.Instante.canvasDaily.gameObject.activeSelf;
-        bool isCanvasShopnv = CanvasShop.Instante.nv != null && CanvasShop.Instante.nv != null && CanvasShop.Instante.nv.gameObject.activeSelf;
 
         if (isPreviewPanelActive || isCharacterUIActive || isShopPanelActive || isthongtinUI || isInventoryUI || isTiemNang || isShopPanelPKActive || isShopPanelTPTPActive || isShopPanelVKActive
-            || isCanvasShoptp || isCanvasShopvk || isCanvasShoppk || isCanvasShopdiemdanh || isCanvasShopnv)
+            || isCanvasShoptp || isCanvasShopvk || isCanvasShoppk)
             return;
         chatPanel.SetActive(true);
        SkillButtonManager.Instance.ToggleSkills(false);
@@ -175,12 +173,10 @@ public class WorldChatUIManager : NetworkBehaviour
         bool isCanvasShoptp = CanvasShop.Instante.canvasShop != null && CanvasShop.Instante.canvasShop != null && CanvasShop.Instante.canvasShop.gameObject.activeSelf;
         bool isCanvasShopvk = CanvasShop.Instante.canvasShopvk != null && CanvasShop.Instante.canvasShopvk != null && CanvasShop.Instante.canvasShopvk.gameObject.activeSelf;
         bool isCanvasShoppk = CanvasShop.Instante.canvasShopPK != null && CanvasShop.Instante.canvasShopPK != null && CanvasShop.Instante.canvasShopPK.gameObject.activeSelf;
-        bool isCanvasShopdiemdanh = CanvasShop.Instante.canvasDaily != null && CanvasShop.Instante.canvasDaily != null && CanvasShop.Instante.canvasDaily.gameObject.activeSelf;
-        bool isCanvasShopnv = CanvasShop.Instante.nv != null && CanvasShop.Instante.nv != null && CanvasShop.Instante.nv.gameObject.activeSelf;
 
 
         if (isPreviewPanelActive || isCharacterUIActive || isShopPanelActive || isthongtinUI || isInventoryUI || isTiemNang || isShopPanelPKActive || isShopPanelTPTPActive || isShopPanelVKActive
-            || isCanvasShoptp || isCanvasShopvk || isCanvasShoppk || isCanvasShopdiemdanh || isCanvasShopnv)
+            || isCanvasShoptp || isCanvasShopvk || isCanvasShoppk )
             return;
         chatBar.SetActive(false);
         chatPanel.SetActive(false);

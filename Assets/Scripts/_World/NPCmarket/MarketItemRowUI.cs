@@ -1,9 +1,7 @@
-﻿//using ApiLogin.modelAccount;
-//using ApiLogin.modelAccount;
+﻿using Newtonsoft.Json;
 using System.Collections;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Networking;
 using UnityEngine.UI;
 
 public class MarketItemRowUI : MonoBehaviour
@@ -14,86 +12,57 @@ public class MarketItemRowUI : MonoBehaviour
     public TextMeshProUGUI Price;
     public Button Mua;
     public TextMeshProUGUI StatsText;
+
     private MarketItemDto currentMarketItem;
 
-    // TRUYỀN CẢ MarketItemDto và ItemStats!
     public void SetData(MarketItemDto item, ItemStats stats)
     {
         currentMarketItem = item;
-      
-
-        if (Name == null) Debug.LogError("Name not assigned!");
-        if (SoLuong == null) Debug.LogError("SoLuong not assigned!");
-        if (Price == null) Debug.LogError("Price not assigned!");
-        if (StatsText == null) Debug.LogError("StatsText not assigned!");
-        if (Icon == null) Debug.LogError("Icon not assigned!");
 
         Name.text = stats != null ? stats.Name : $"ID:{item.item_ID}";
-        SoLuong.text = $"Số Lượng: {item.quantity.ToString()}";
-        Price.text = $"Giá: {item.price.ToString()}";
-        if (Icon != null && stats != null && stats.Icon != null)
+        SoLuong.text = $"Số Lượng: {item.quantity}";
+        Price.text = $"Giá: {item.price}";
+
+        if (Icon != null && stats?.Icon != null)
             Icon.sprite = stats.Icon;
+
         StatsText.text = stats != null
-            ? $" Sức mạnh:{stats.Strength} \n Phòng thủ:{stats.Defense} \n Nhanh nhẹn:{stats.Agility} \n Trí tuệ:{stats.Intelligence} \n Sinh lực:{stats.Vitality}"
+            ? $"Sức mạnh: {stats.Strength}\nPhòng thủ: {stats.Defense}\nNhanh nhẹn: {stats.Agility}\nTrí tuệ: {stats.Intelligence}\nSinh lực: {stats.Vitality}"
             : "Không có dữ liệu";
     }
 
-    //mua click 
     public void OnClickBuy()
     {
         if (currentMarketItem == null)
         {
-            ShowMessage("Chưa chọn món hàng");
+            ItemDetailsUI.Instance.ShowEquipMessage("Chưa chọn món hàng");
             return;
         }
 
-        int quantity = 1; // Có thể lấy từ UI input nếu bạn có
-        int buyerAccountId = SessionManager.AccountId; // hoặc InventoryManager.Instance.session.AccountId
-        string token = SessionManager.Token; // hoặc InventoryManager.Instance.session.Token
-
-        BuyMarketItemDto dto = new BuyMarketItemDto
+        var dto = new BuyMarketItemDto
         {
             MarketItem_ID = currentMarketItem.marketItem_ID,
-            Quantity = quantity,
-            BuyerAccountId = buyerAccountId
+            Quantity = 1,
+            BuyerAccountId = SessionManager.AccountId
         };
 
-        StartCoroutine(CoBuyMarketItem(dto, token));
+        StartCoroutine(CoBuyMarketItem(dto));
     }
 
-    IEnumerator CoBuyMarketItem(BuyMarketItemDto dto, string token)
+    private IEnumerator CoBuyMarketItem(BuyMarketItemDto dto)
     {
-        string url = ApiConfigManager.Instance.GetFullUrl("Account/market/buy");
-
-        string json = Newtonsoft.Json.JsonConvert.SerializeObject(dto);
-        Debug.Log("JSON mua hàng gửi đi: " + json);
-
-        UnityWebRequest req = new UnityWebRequest(url, "POST");
-        byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(json);
-        req.uploadHandler = new UploadHandlerRaw(bodyRaw);
-        req.downloadHandler = new DownloadHandlerBuffer();
-        req.SetRequestHeader("Content-Type", "application/json");
-        req.SetRequestHeader("Authorization", "Bearer " + token);
-
-        yield return req.SendWebRequest();
-
-        if (req.result == UnityWebRequest.Result.Success)
-        {
-            ShowMessage("Mua thành công");
-            InventoryManager.Instance.LoadInventory(null);
-            if (MarketShopUI.Instance != null)
-                MarketShopUI.Instance.LoadMarketItems();
-        }
-        else
-        {
-            ShowMessage("Lỗi mua hàng: " + req.downloadHandler.text);
-            Debug.LogError("Lỗi mua hàng: " + req.downloadHandler.text);
-        }
-    }
-
-    private void ShowMessage(string msg)
-    {
-        Debug.Log(msg);
+        yield return ApiClientBase.Instance.Post<object>(
+            "Account/market/buy",
+            dto,
+            _ =>
+            {
+                ItemDetailsUI.Instance.ShowEquipMessage("Mua thành công!");
+                InventoryManager.Instance.LoadInventory(null);
+                if (MarketShopUI.Instance != null)
+                    MarketShopUI.Instance.LoadMarketItems();
+            },
+            error => ItemDetailsUI.Instance.ShowEquipMessage("Lỗi mua hàng: " + error)
+        );
     }
 }
 

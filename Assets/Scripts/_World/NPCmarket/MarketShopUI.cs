@@ -38,27 +38,28 @@ public class MarketShopUI : MonoBehaviour
 
     IEnumerator<UnityWebRequestAsyncOperation> GetMarketItems()
     {
-        string url = "https://localhost:7124/api/Account/market/all";
+        string url = ApiConfigManager.Instance.GetFullUrl("Account/market/all");
+
         UnityWebRequest req = UnityWebRequest.Get(url);
-        // Nếu cần token thì add header
-        // req.SetRequestHeader("Authorization", "Bearer ...");
+        // Nếu cần token (tùy backend yêu cầu)
+        // req.SetRequestHeader("Authorization", "Bearer " + SessionManager.Token);
 
         yield return req.SendWebRequest();
 
         if (req.result == UnityWebRequest.Result.Success)
         {
-            // Parse về mảng object
             Debug.Log("Market JSON: " + req.downloadHandler.text);
-          var items = JsonArrayHelper.FromJson<MarketItemDto>(req.downloadHandler.text);
+            var items = JsonArrayHelper.FromJson<MarketItemDto>(req.downloadHandler.text);
 
-            // Xoá cũ
+            // Xoá UI cũ
             foreach (Transform child in Content)
                 Destroy(child.gameObject);
 
-            foreach (var item in items) 
+            foreach (var item in items)
             {
                 var row = Instantiate(MarketItemRowPrefab, Content);
                 var rowUI = row.GetComponent<MarketItemRowUI>();
+
                 if (rowUI == null)
                 {
                     Debug.LogError("MarketItemRowUI component not found on prefab!");
@@ -68,16 +69,12 @@ public class MarketShopUI : MonoBehaviour
                 var stats = ItemStatDatabase.Instance.GetStatsdtb(item.item_ID);
                 if (stats == null)
                 {
+                    Debug.LogWarning($"Không tìm thấy stats cho item ID: {item.item_ID}");
                     continue;
                 }
 
                 rowUI.SetData(item, stats);
             }
-
-
-
-
-
         }
         else
         {

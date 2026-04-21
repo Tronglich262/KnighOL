@@ -113,7 +113,7 @@ public class InventoryManager : MonoBehaviour
     {
         int accountId = session.AccountId;
         string token = session.Token;
-        string url = $"https://localhost:7124/api/Account/inventory/{accountId}";
+        string url = ApiConfigManager.Instance.GetFullUrl($"Account/inventory/{accountId}");
 
         UnityWebRequest req = UnityWebRequest.Get(url);
         req.SetRequestHeader("Authorization", "Bearer " + token);
@@ -123,12 +123,10 @@ public class InventoryManager : MonoBehaviour
         {
             InventoryItemDto[] items = JsonHelper.FromJson<InventoryItemDto>(req.downloadHandler.text);
 
-            // === UPDATE LẠI playerInventory ===
             playerInventory.Clear();
             foreach (var item in items)
             {
-                // Lookup string itemId tương ứng trong ItemStatDatabase (hoặc 1 mapping riêng)
-                string stringId = ItemStatDatabase.Instance.GetStringIdFromInt(item.itemId); 
+                string stringId = ItemStatDatabase.Instance.GetStringIdFromInt(item.itemId);
                 var so = ItemStatDatabase.Instance.GetStats(stringId);
 
                 if (so != null)
@@ -188,7 +186,7 @@ public class InventoryManager : MonoBehaviour
     {
         int accountId = session.AccountId;
         string token = session.Token;
-        string url = $"https://localhost:7124/api/Account/add-item";
+        string url = ApiConfigManager.Instance.GetFullUrl("Account/add-item");
 
         int parsedId = 0;
         if (!int.TryParse(itemId, out parsedId))

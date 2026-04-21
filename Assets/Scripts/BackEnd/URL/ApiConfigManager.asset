@@ -9,8 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cff47f275fd14514dacae5fd0d32fcaa, type: 3}
-  m_Name: ApiConfig
+  m_Script: {fileID: 11500000, guid: b6b16f5b7853f164d8a7722387225f6b, type: 3}
+  m_Name: ApiConfigManager
   m_EditorClassIdentifier: 
-  BaseUrl: https://localhost:7124/api/Auth
+  BaseUrl: https://localhost:7124
   ApiVersion: api
+  UseLocalhostInEditor: 1

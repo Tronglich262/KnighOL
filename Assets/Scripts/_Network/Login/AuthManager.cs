@@ -25,10 +25,6 @@ public class AuthManager : MonoBehaviour
     public TMP_InputField loginEmail;
     public TMP_InputField loginPassword;
 
-    [Header("API")]
-    public string authApiUrl = "https://localhost:7124/api/Auth";
-    public string accountApiUrl = "https://localhost:7124/api/Account";
-
 
     [Header("Thông báo UI")]
     public TMP_Text loginMessageText;
@@ -204,7 +200,6 @@ public class AuthManager : MonoBehaviour
     private IEnumerator Register()
     {
         isRegistering = true;
-
         RegisterDto registerDto = new RegisterDto
         {
             Name = registerUsername != null ? registerUsername.text.Trim() : "",
@@ -216,10 +211,9 @@ public class AuthManager : MonoBehaviour
         bool success = false;
         string errorMsg = "";
 
-        Debug.Log("[REGISTER URL] " + authApiUrl + "/register");
+        Debug.Log("[REGISTER URL] " + ApiConfigManager.Instance.GetFullUrl("register"));
 
         yield return StartCoroutine(AuthApiClient.Register(
-            accountApiUrl,
             registerDto,
             () =>
             {
@@ -238,7 +232,6 @@ public class AuthManager : MonoBehaviour
         {
             ShowRegisterMessage("Đăng ký thành công!\nVui lòng đăng nhập.");
             yield return new WaitForSeconds(1f);
-
             if (registerPanel != null) registerPanel.SetActive(false);
             if (loginPanel != null) loginPanel.SetActive(true);
         }
@@ -247,7 +240,6 @@ public class AuthManager : MonoBehaviour
             ShowRegisterMessage(errorMsg);
             Debug.LogError(errorMsg);
         }
-
         isRegistering = false;
     }
 
@@ -280,7 +272,6 @@ public class AuthManager : MonoBehaviour
     private IEnumerator Login()
     {
         isLoggingIn = true;
-
         LoginDto loginDto = new LoginDto
         {
             Email = loginEmail != null ? loginEmail.text.Trim() : "",
@@ -291,10 +282,9 @@ public class AuthManager : MonoBehaviour
         LoginResponse loginResponse = null;
         string errorMsg = "";
 
-        Debug.Log("[LOGIN URL] " + authApiUrl + "/login");
+        Debug.Log("[LOGIN URL] " + ApiConfigManager.Instance.GetFullUrl("login"));
 
         yield return StartCoroutine(AuthApiClient.Login(
-            accountApiUrl,
             loginDto,
             response =>
             {
@@ -321,11 +311,9 @@ public class AuthManager : MonoBehaviour
         {
             if (string.IsNullOrEmpty(errorMsg))
                 errorMsg = "Dữ liệu đăng nhập trả về không hợp lệ.";
-
             ShowLoginMessage(errorMsg);
             Debug.LogError(errorMsg);
         }
-
         isLoggingIn = false;
     }
 
@@ -383,8 +371,9 @@ public class AuthManager : MonoBehaviour
         if (!HasValidSession())
             yield break;
 
-        string profileUrl = authApiUrl + "/profile";
-        Debug.Log("[PROFILE URL] " + profileUrl); 
+        string profileUrl = ApiConfigManager.Instance.GetFullUrl("Account/profile");
+
+        Debug.Log("[PROFILE URL] " + profileUrl);
 
         using UnityWebRequest request = UnityWebRequest.Get(profileUrl);
         request.SetRequestHeader("Authorization", "Bearer " + SessionManager.Token);
@@ -395,20 +384,16 @@ public class AuthManager : MonoBehaviour
         if (request.result == UnityWebRequest.Result.Success)
         {
             Debug.Log("[PROFILE] Thành công! Dữ liệu user: " + request.downloadHandler.text);
-            yield break;
         }
-
-        Debug.LogError($"Lỗi lấy dữ liệu user. Code={request.responseCode}, Error={request.error}, Body={request.downloadHandler.text}");
-
-        if (request.responseCode == 401)
-            Debug.LogWarning("Token không hợp lệ hoặc đã đăng nhập ở nơi khác.");
-        else if (request.responseCode == 404)
-            Debug.LogWarning("Endpoint sai (vẫn đang dùng accountApiUrl?)");
         else
-            Debug.LogWarning("Không kết nối được đến API. Về màn hình Login!");
+        {
+            Debug.LogError($"Lỗi lấy dữ liệu user. Code={request.responseCode}, Error={request.error}");
+            if (request.responseCode == 401)
+                Debug.LogWarning("Token không hợp lệ hoặc đã đăng nhập ở nơi khác.");
 
-        ClearSession();
-        ForceBackToLogin();
+            ClearSession();
+            ForceBackToLogin();
+        }
     }
 
     // =========================
@@ -465,7 +450,7 @@ public class AuthManager : MonoBehaviour
 
         string json = JsonUtility.ToJson(dto);
 
-        using UnityWebRequest request = BuildPostRequest(accountApiUrl + "/save-character", json, true);
+        using UnityWebRequest request = BuildPostRequest(ApiConfigManager.Instance.GetFullUrl("Account/save-character"), json, true);
         yield return request.SendWebRequest();
 
         if (request.result == UnityWebRequest.Result.Success)
@@ -489,7 +474,7 @@ public class AuthManager : MonoBehaviour
             yield break;
         }
 
-        string url = accountApiUrl + $"/playerstate/{SessionManager.AccountId}";
+        string url = ApiConfigManager.Instance.GetFullUrl($"Account/playerstate/{SessionManager.AccountId}");
         using UnityWebRequest req = UnityWebRequest.Get(url);
         req.SetRequestHeader("Authorization", "Bearer " + SessionManager.Token);
 
@@ -515,7 +500,7 @@ public class AuthManager : MonoBehaviour
             yield break;
         }
 
-        string url = accountApiUrl + "/playerstate/update";
+        string url = ApiConfigManager.Instance.GetFullUrl("Account/playerstate/update");
         string json = JsonUtility.ToJson(dto);
 
         using UnityWebRequest req = BuildPostRequest(url, json, true);
@@ -546,7 +531,7 @@ public class AuthManager : MonoBehaviour
             yield break;
         }
 
-        string url = accountApiUrl + "/quests";
+        string url = ApiConfigManager.Instance.GetFullUrl("Account/quests");
         using UnityWebRequest req = UnityWebRequest.Get(url);
         req.SetRequestHeader("Authorization", "Bearer " + SessionManager.Token);
 
@@ -582,7 +567,7 @@ public class AuthManager : MonoBehaviour
         };
 
         string json = JsonUtility.ToJson(dto);
-        string url = accountApiUrl + "/quests/progress";
+        string url = ApiConfigManager.Instance.GetFullUrl("Account/quests/progress");
 
         using UnityWebRequest req = BuildPostRequest(url, json, true);
         yield return req.SendWebRequest();
@@ -593,46 +578,45 @@ public class AuthManager : MonoBehaviour
             yield break;
         }
 
+        // Reload quest UI
         QuestDisplay questDisplay = GameObject.FindAnyObjectByType<QuestDisplay>();
-        if (questDisplay != null)
-            questDisplay.ReloadQuests();
+        if (questDisplay != null) questDisplay.ReloadQuests();
 
+        // Xử lý reward
         string text = req.downloadHandler.text;
         QuestProgressRewardResponse rewardResp = JsonUtility.FromJson<QuestProgressRewardResponse>(text);
 
-        if (rewardResp?.reward == null)
-            yield break;
+        if (rewardResp?.reward == null) yield break;
 
+        // Cập nhật gold + exp
         if (PlayerDataHolder1.CurrentPlayerState != null)
         {
             if (rewardResp.reward.gold > 0)
             {
                 PlayerDataHolder1.CurrentPlayerState.gold += rewardResp.reward.gold;
-                Debug.Log($"[REWARD] Nhận {rewardResp.reward.gold} vàng!");
             }
-
             if (rewardResp.reward.exp > 0)
             {
                 PlayerDataHolder1.CurrentPlayerState.exp += rewardResp.reward.exp;
-                Debug.Log($"[REWARD] Nhận {rewardResp.reward.exp} EXP!");
             }
         }
 
+        // Thêm item vào inventory
         if (rewardResp.reward.items != null && InventoryManager.Instance != null)
         {
             foreach (var item in rewardResp.reward.items)
             {
                 InventoryManager.Instance.AddItem(item.itemId.ToString(), item.amount);
-                Debug.Log($"[REWARD] Nhận {item.amount} x {item.itemId}!");
             }
         }
 
         string rewardMsg = BuildRewardMessage(rewardResp.reward);
-        if (ItemDetailsPanel.Instance != null && !string.IsNullOrEmpty(rewardMsg))
-            ItemDetailsPanel.Instance.ShowEquipMessage(rewardMsg, 2.5f);
-
         if (!string.IsNullOrEmpty(rewardMsg))
+        {
+            if (ItemDetailsPanel.Instance != null)
+                ItemDetailsPanel.Instance.ShowEquipMessage(rewardMsg, 2.5f);
             Debug.Log("[QUEST REWARD] " + rewardMsg);
+        }
     }
 
     private string BuildRewardMessage(QuestReward reward)
@@ -678,7 +662,7 @@ public class AuthManager : MonoBehaviour
             yield break;
         }
 
-        string url = accountApiUrl + $"/stats/{SessionManager.AccountId}";
+        string url = ApiConfigManager.Instance.GetFullUrl($"Account/stats/{SessionManager.AccountId}");
         using UnityWebRequest req = UnityWebRequest.Get(url);
         req.SetRequestHeader("Authorization", "Bearer " + SessionManager.Token);
 
@@ -704,7 +688,7 @@ public class AuthManager : MonoBehaviour
             yield break;
         }
 
-        string url = accountApiUrl + "/stats/allocate";
+        string url = ApiConfigManager.Instance.GetFullUrl("Account/stats/allocate");
         AllocateStatsDto dto = new AllocateStatsDto
         {
             HP = addHp,

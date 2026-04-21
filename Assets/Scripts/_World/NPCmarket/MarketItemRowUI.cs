@@ -63,7 +63,7 @@ public class MarketItemRowUI : MonoBehaviour
 
     IEnumerator CoBuyMarketItem(BuyMarketItemDto dto, string token)
     {
-        string url = "https://localhost:7124/api/Account/market/buy";
+        string url = ApiConfigManager.Instance.GetFullUrl("Account/market/buy");
 
         string json = Newtonsoft.Json.JsonConvert.SerializeObject(dto);
         Debug.Log("JSON mua hàng gửi đi: " + json);
@@ -81,7 +81,8 @@ public class MarketItemRowUI : MonoBehaviour
         {
             ShowMessage("Mua thành công");
             InventoryManager.Instance.LoadInventory(null);
-            MarketShopUI.Instance.LoadMarketItems();
+            if (MarketShopUI.Instance != null)
+                MarketShopUI.Instance.LoadMarketItems();
         }
         else
         {

@@ -7,10 +7,17 @@ using UnityEngine.Networking;
 
 public static class AuthApiClient
 {
-    public static IEnumerator Register(string baseUrl, RegisterDto dto,
+    private static string GetAccountUrl(string endpoint)
+    {
+        return ApiConfigManager.Instance != null
+            ? ApiConfigManager.Instance.GetFullUrl("Account/" + endpoint.TrimStart('/'))
+            : "https://localhost:7124/api/Account/" + endpoint.TrimStart('/');
+    }
+
+    public static IEnumerator Register(RegisterDto dto,
         Action onSuccess, Action<string> onError)
     {
-        string fullUrl = baseUrl + "/register";   // ← endpoint đúng
+        string fullUrl = GetAccountUrl("register");
 
         string json = JsonUtility.ToJson(dto);
 
@@ -24,7 +31,6 @@ public static class AuthApiClient
         request.SetRequestHeader("Content-Type", "application/json");
         request.timeout = 12;
 
-        // Bypass cert cho localhost
         if (fullUrl.Contains("localhost"))
             request.certificateHandler = new AcceptAllCertificates();
 
@@ -41,15 +47,14 @@ public static class AuthApiClient
             string error = string.IsNullOrEmpty(request.downloadHandler.text)
                 ? request.error
                 : request.downloadHandler.text;
-
             onError?.Invoke(error);
         }
     }
 
-    public static IEnumerator Login(string baseUrl, LoginDto dto,
+    public static IEnumerator Login(LoginDto dto,
         Action<LoginResponse> onSuccess, Action<string> onError)
     {
-        string fullUrl = baseUrl + "/login";
+        string fullUrl = GetAccountUrl("login");
 
         string json = JsonUtility.ToJson(dto);
 
@@ -77,7 +82,6 @@ public static class AuthApiClient
 
             if (response != null && !string.IsNullOrEmpty(response.accessToken))
             {
-                // Lưu token
                 if (ApiService.Instance != null)
                     ApiService.Instance.SetTokens(response.accessToken, response.refreshToken);
 
@@ -95,7 +99,6 @@ public static class AuthApiClient
             string error = string.IsNullOrEmpty(request.downloadHandler.text)
                 ? request.error
                 : request.downloadHandler.text;
-
             onError?.Invoke(error);
         }
     }

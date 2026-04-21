@@ -2,12 +2,14 @@ public static class SessionManager
 {
     public static int AccountId { get; private set; }
     public static string Token { get; private set; }
+    public static string RefreshToken { get; private set; }   // ← MỚI THÊM
     public static string PlayerName { get; private set; }
 
-    public static void SetSession(int accountId, string token, string playerName = null)
+    public static void SetSession(int accountId, string token, string playerName = null, string refreshToken = null)
     {
         AccountId = accountId;
         Token = token;
+        RefreshToken = refreshToken ?? RefreshToken;
         PlayerName = playerName ?? PlayerName;
 
         PlayerDataHolder1.AccountId = accountId;
@@ -21,6 +23,7 @@ public static class SessionManager
     {
         AccountId = 0;
         Token = null;
+        RefreshToken = null;
         PlayerName = null;
 
         PlayerDataHolder1.AccountId = 0;

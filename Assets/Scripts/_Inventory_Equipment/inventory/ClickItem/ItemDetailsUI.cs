@@ -651,11 +651,12 @@ public class ItemDetailsUI : MonoBehaviour
         {
             AccountId = accountId,
             ItemId = itemId
-            // KHÔNG truyền Price!
         };
-        string json = Newtonsoft.Json.JsonConvert.SerializeObject(buyData);
 
-        UnityWebRequest req = new UnityWebRequest("https://localhost:7124/api/account/shop/buy", "POST");
+        string json = Newtonsoft.Json.JsonConvert.SerializeObject(buyData);
+        string url = ApiConfigManager.Instance.GetFullUrl("account/shop/buy");
+
+        UnityWebRequest req = new UnityWebRequest(url, "POST");
         byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(json);
         req.uploadHandler = new UploadHandlerRaw(bodyRaw);
         req.downloadHandler = new DownloadHandlerBuffer();
@@ -672,16 +673,18 @@ public class ItemDetailsUI : MonoBehaviour
             ShowEquipMessage("Mua thành công!");
 
             InventoryManager.Instance.LoadInventory(null);
+
+            // Ẩn panel shop sau khi mua
             switch (EquipmentSlotUI.Instante.shopPanelType)
             {
                 case EquipmentSlotUI.ShopPanelType.ShopTP:
-                    ShopTP.Instance.panelshopTP.SetActive(false); // Ẩn panel shop sau khi mua 
+                    ShopTP.Instance.panelshopTP.SetActive(false);
                     break;
                 case EquipmentSlotUI.ShopPanelType.ShopVK:
-                    shopvk.Instance.panelshopvk.SetActive(false); // Ẩn panel shop sau khi mua
+                    shopvk.Instance.panelshopvk.SetActive(false);
                     break;
                 case EquipmentSlotUI.ShopPanelType.ShopPK:
-                    shoppk.Instance.panelshoppk.SetActive(false); // Ẩn panel shop sau khi mua
+                    shoppk.Instance.panelshoppk.SetActive(false);
                     break;
             }
         }
@@ -804,7 +807,7 @@ public class ItemDetailsUI : MonoBehaviour
 
     IEnumerator CoDepositToMarket(MarketItemSendDto dto, string token)
     {
-        string url = "https://localhost:7124/api/Account/market/deposit";
+        string url = ApiConfigManager.Instance.GetFullUrl("Account/market/deposit");
         string json = Newtonsoft.Json.JsonConvert.SerializeObject(dto);
 
         Debug.Log("Json gửi đi: " + json);

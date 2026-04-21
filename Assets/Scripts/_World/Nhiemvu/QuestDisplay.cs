@@ -116,7 +116,9 @@ public class QuestDisplay : MonoBehaviour
     {
         ClaimQuestDto dto = new ClaimQuestDto { questId = questId };
         string json = JsonUtility.ToJson(dto);
-        string url = AuthManager.Instance.accountApiUrl + "/quests/claim";
+
+        // Sử dụng ApiConfigManager thay vì hardcode
+        string url = ApiConfigManager.Instance.GetFullUrl("Account/quests/claim");
 
         UnityWebRequest req = new UnityWebRequest(url, "POST");
         byte[] bodyRaw = Encoding.UTF8.GetBytes(json);
@@ -131,7 +133,6 @@ public class QuestDisplay : MonoBehaviour
 
         if (req.result == UnityWebRequest.Result.Success)
         {
-
             var res = JsonUtility.FromJson<QuestProgressRewardResponse>(req.downloadHandler.text);
 
             int gold = 0, exp = 0;
@@ -141,17 +142,14 @@ public class QuestDisplay : MonoBehaviour
                 exp = res.reward.exp;
             }
 
-
             // Reload lại quest UI
             ReloadQuests();
 
-            // **Reload lại PlayerState**
+            // Reload lại PlayerState
             StartCoroutine(AuthManager.Instance.GetPlayerState((state) => {
                 if (state != null)
                 {
-                    QuestResponse quest = new QuestResponse();
                     ItemDetailsUI.Instance.ShowEquipMessage($"+{gold} gold +{exp} exp");
-                    // Nếu có dùng PlayerDataHolder1 thì gán lại luôn:
                     PlayerDataHolder1.CurrentPlayerState = state;
                 }
             }));

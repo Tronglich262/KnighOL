@@ -8,7 +8,7 @@ public class ApiService : MonoBehaviour
 {
     public static ApiService Instance { get; private set; }
 
-    public string BaseUrl = "https://localhost:7124";   // Sau này đổi thành config
+    [SerializeField] private ApiConfigManager apiConfig;   // Kéo asset vào đây
 
     private string _accessToken = "";
     private string _refreshToken = "";
@@ -22,21 +22,31 @@ public class ApiService : MonoBehaviour
         }
         Instance = this;
         DontDestroyOnLoad(gameObject);
+
+        // Tự load config nếu chưa gán
+        if (apiConfig == null)
+            apiConfig = Resources.Load<ApiConfigManager>("ApiConfigManager");
     }
+
+    public string BaseUrl => apiConfig != null ? apiConfig.BaseUrl : "https://localhost:7124";
 
     public void SetTokens(string accessToken, string refreshToken)
     {
         _accessToken = accessToken;
         _refreshToken = refreshToken;
-        SessionManager.SetSession(SessionManager.AccountId, accessToken); // đồng bộ
+        SessionManager.SetSession(SessionManager.AccountId, accessToken);
     }
 
+    // ========== POST với config mới ==========
     public IEnumerator Post<T>(string endpoint, object data, Action<T> onSuccess, Action<string> onError)
     {
-        string url = BaseUrl + endpoint;
+        string fullUrl = apiConfig != null
+            ? apiConfig.GetFullUrl(endpoint)
+            : BaseUrl + endpoint;
+
         string json = JsonUtility.ToJson(data);
 
-        using var request = new UnityWebRequest(url, "POST");
+        using var request = new UnityWebRequest(fullUrl, "POST");
         byte[] bodyRaw = Encoding.UTF8.GetBytes(json);
         request.uploadHandler = new UploadHandlerRaw(bodyRaw);
         request.downloadHandler = new DownloadHandlerBuffer();
@@ -46,7 +56,7 @@ public class ApiService : MonoBehaviour
             request.SetRequestHeader("Authorization", "Bearer " + _accessToken);
 
         // Bypass cert cho localhost
-        if (url.Contains("localhost"))
+        if (fullUrl.Contains("localhost"))
             request.certificateHandler = new AcceptAllCertificates();
 
         yield return request.SendWebRequest();
@@ -61,7 +71,6 @@ public class ApiService : MonoBehaviour
             if (request.responseCode == 401)
             {
                 Debug.LogWarning("Token hết hạn → đang refresh...");
-                // Gọi refresh token ở đây (sẽ bổ sung sau)
             }
             onError?.Invoke(request.error + " | " + request.downloadHandler.text);
         }

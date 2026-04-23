@@ -5158,6 +5158,7 @@ GameObject:
   - component: {fileID: 87010096}
   - component: {fileID: 87010095}
   - component: {fileID: 87010094}
+  - component: {fileID: 87010097}
   m_Layer: 5
   m_Name: itemInfoPanel
   m_TagString: Untagged
@@ -5192,7 +5193,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 87010092}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6b8ebad4c97ea934fb253737e8076beb, type: 3}
   m_Name: 
@@ -5245,6 +5246,28 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 87010092}
   m_CullTransparentMesh: 1
+--- !u!114 &87010097
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 87010092}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: caf70d65e5788ed43b13aa8379520ee9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  panel: {fileID: 1271876546}
+  icon: {fileID: 848545203}
+  nameText: {fileID: 1460465975}
+  typeText: {fileID: 1107591678}
+  descriptionText: {fileID: 1867446033}
+  levelText: {fileID: 1336470562}
+  priceText: {fileID: 0}
+  notifyPanel: {fileID: 2051747359}
+  notifyBg: {fileID: 503218269}
+  notifyText: {fileID: 1765595291}
 --- !u!1 &90011878
 GameObject:
   m_ObjectHideFlags: 0
@@ -10740,7 +10763,7 @@ GameObject:
   - component: {fileID: 191837794}
   - component: {fileID: 191837793}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: name
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -36884,7 +36907,7 @@ GameObject:
   - component: {fileID: 709362360}
   - component: {fileID: 709362359}
   m_Layer: 5
-  m_Name: Text (TMP) (1)
+  m_Name: price
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -56472,7 +56495,7 @@ GameObject:
   - component: {fileID: 1065072228}
   - component: {fileID: 1065072227}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: des
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -58816,7 +58839,7 @@ GameObject:
   - component: {fileID: 1107591679}
   - component: {fileID: 1107591678}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: type
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -63044,7 +63067,7 @@ GameObject:
   - component: {fileID: 1184637915}
   - component: {fileID: 1184637914}
   m_Layer: 5
-  m_Name: Text (TMP) (1)
+  m_Name: Price
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -64593,6 +64616,7 @@ GameObject:
   - component: {fileID: 1207997070}
   - component: {fileID: 1207997069}
   - component: {fileID: 1207997071}
+  - component: {fileID: 1207997072}
   m_Layer: 5
   m_Name: itemInfoPanel
   m_TagString: Untagged
@@ -64665,7 +64689,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1207997066}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f04ce4bf7151df043939d4212616833a, type: 3}
   m_Name: 
@@ -64680,6 +64704,28 @@ MonoBehaviour:
   shopNotifyPanel: {fileID: 1847945160}
   shopNotifyBg: {fileID: 906542223}
   shopNotifyText: {fileID: 332461471}
+--- !u!114 &1207997072
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1207997066}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: caf70d65e5788ed43b13aa8379520ee9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  panel: {fileID: 715841792}
+  icon: {fileID: 435974473}
+  nameText: {fileID: 191837793}
+  typeText: {fileID: 1910708286}
+  descriptionText: {fileID: 1065072227}
+  levelText: {fileID: 1545752217}
+  priceText: {fileID: 2069806260}
+  notifyPanel: {fileID: 1847945160}
+  notifyBg: {fileID: 906542223}
+  notifyText: {fileID: 332461471}
 --- !u!1 &1208418085
 GameObject:
   m_ObjectHideFlags: 0
@@ -66159,7 +66205,7 @@ GameObject:
   - component: {fileID: 1231986032}
   - component: {fileID: 1231986031}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: des
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -66445,7 +66491,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 50cbbf00088427f42bb3c6fe1a49b44e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  resourcesPath: ItemStats
 --- !u!4 &1236207409
 Transform:
   m_ObjectHideFlags: 0
@@ -77612,7 +77657,7 @@ GameObject:
   - component: {fileID: 1460465976}
   - component: {fileID: 1460465975}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: Name
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -87762,7 +87807,7 @@ GameObject:
   - component: {fileID: 1649578671}
   - component: {fileID: 1649578670}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: type
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -91468,7 +91513,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 50cbbf00088427f42bb3c6fe1a49b44e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  resourcesPath: ItemStats
 --- !u!4 &1695511508
 Transform:
   m_ObjectHideFlags: 0
@@ -100451,7 +100495,7 @@ GameObject:
   - component: {fileID: 1867446034}
   - component: {fileID: 1867446033}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: des
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -103258,7 +103302,7 @@ GameObject:
   - component: {fileID: 1910708287}
   - component: {fileID: 1910708286}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: type
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -104485,7 +104529,7 @@ GameObject:
   - component: {fileID: 1935434790}
   - component: {fileID: 1935434789}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: name
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -108120,6 +108164,7 @@ GameObject:
   - component: {fileID: 2017279343}
   - component: {fileID: 2017279342}
   - component: {fileID: 2017279344}
+  - component: {fileID: 2017279345}
   m_Layer: 5
   m_Name: itemInfoPanel
   m_TagString: Untagged
@@ -108192,7 +108237,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2017279339}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4884b77bb35ce424081a6917390bdd4b, type: 3}
   m_Name: 
@@ -108207,6 +108252,28 @@ MonoBehaviour:
   shopNotifyPanel: {fileID: 1489524936}
   shopNotifyBg: {fileID: 1057204124}
   shopNotifyText: {fileID: 184396242}
+--- !u!114 &2017279345
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2017279339}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: caf70d65e5788ed43b13aa8379520ee9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  panel: {fileID: 1157973331}
+  icon: {fileID: 711421717}
+  nameText: {fileID: 1935434789}
+  typeText: {fileID: 1649578670}
+  descriptionText: {fileID: 1231986031}
+  levelText: {fileID: 821263505}
+  priceText: {fileID: 709362359}
+  notifyPanel: {fileID: 1489524936}
+  notifyBg: {fileID: 1057204124}
+  notifyText: {fileID: 184396242}
 --- !u!1 &2019028184
 GameObject:
   m_ObjectHideFlags: 0
@@ -112251,7 +112318,7 @@ GameObject:
   - component: {fileID: 2069806261}
   - component: {fileID: 2069806260}
   m_Layer: 5
-  m_Name: Text (TMP) (1)
+  m_Name: price
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

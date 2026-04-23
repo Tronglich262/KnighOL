@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class ShopVKUIManager : BaseShopUIManager
 {
@@ -8,17 +6,10 @@ public class ShopVKUIManager : BaseShopUIManager
 
     protected override void Awake()
     {
-        base.Awake();
+        if (Instance != null && Instance != this) { Destroy(gameObject); return; }
         Instance = this;
     }
 
-    protected override List<NpcShopItem> FilterItemsByCurrentType()
-    {
-        return allShopItems.Where(x => x.type == "Cape").ToList();
-    }
-
-    protected override EquipmentSlotUI.ShopPanelType GetShopPanelType()
-    {
-        return EquipmentSlotUI.ShopPanelType.ShopVK;
-    }
+    protected override ShopType CurrentShopType => ShopType.Weapon;
+    protected override EquipmentSlotUI.ShopPanelType GetShopPanelType() => EquipmentSlotUI.ShopPanelType.ShopVK;
 }

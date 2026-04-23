@@ -197,7 +197,25 @@ CREATE TABLE NpcShopItem (
     CONSTRAINT FK_NpcShopItem_NPC FOREIGN KEY (Npc_ID) REFERENCES NPC(Npc_ID) ON DELETE CASCADE,
     CONSTRAINT FK_NpcShopItem_Item FOREIGN KEY (Item_ID) REFERENCES Items(Item_ID) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+-- 1. Tạo bảng RefreshTokens (nếu chưa có)
+CREATE TABLE IF NOT EXISTS `RefreshTokens` (
+  `Id` int NOT NULL AUTO_INCREMENT,
+  `AccountId` int NOT NULL,
+  `TokenHash` longtext CHARACTER SET utf8mb4 NOT NULL,
+  `ExpiresAt` datetime(6) NOT NULL,
+  `CreatedAt` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+  `IsRevoked` tinyint(1) NOT NULL DEFAULT 0,
+  `ReplacedByToken` longtext CHARACTER SET utf8mb4 NULL,
+  PRIMARY KEY (`Id`),
+  KEY `IX_RefreshTokens_AccountId` (`AccountId`),
+  CONSTRAINT `FK_RefreshTokens_Account` 
+    FOREIGN KEY (`AccountId`) REFERENCES `Account` (`Account_ID`) 
+    ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- 2. Đánh dấu migration đã được áp dụng (quan trọng)
+INSERT INTO `__EFMigrationsHistory` (`MigrationId`, `ProductVersion`)
+VALUES ('20260420171450_AddRefreshTokenTable', '9.0.5');
 -- ====================== Seed base ======================
 INSERT INTO NPC (Npc_ID, Name, Description) VALUES
 (1, 'ShopKeeper', 'NPC bán đồ cơ bản'),

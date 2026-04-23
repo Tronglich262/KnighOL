@@ -101218,12 +101218,12 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 8889345539896880822, guid: debadc91740f7924eac8b81c0f62ebf0, type: 3}
+  m_Sprite: {fileID: -5455630811309129204, guid: 38d583f306a9e4e42b07d95c5dc24283, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 3.68, y: 5.38}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -101295,8 +101295,8 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 4.21, y: 5.74}
-    newSize: {x: 1, y: 1}
+    oldSize: {x: 3.68, y: 5.38}
+    newSize: {x: 3.68, y: 5.38}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
@@ -101354,7 +101354,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8149061b35de3b64495c091902c549b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  npcShopIcon: {fileID: -5156993582514690110, guid: ce6be7d5924ecb24a88d3d3d0e9f7c20, type: 3}
+  npcShopIcon: {fileID: -5156993582514690110, guid: 90e32c3a818ae9541a67eaa3ccf4ac35, type: 3}
   npcShopName: Oroai
   npcId: 10
 --- !u!1 &1882609628

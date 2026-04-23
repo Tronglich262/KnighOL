@@ -1,11 +1,9 @@
-﻿using System.Collections;
-using Unity.VisualScripting;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 /// <summary>
-/// Script gắn cho từng slot hiển thị trang bị, phân biệt Character/Shop.
+/// Slot UI dùng chung cho Character + Shop
 /// </summary>
 public class EquipmentSlotUI : MonoBehaviour, IPointerClickHandler
 {
@@ -13,25 +11,19 @@ public class EquipmentSlotUI : MonoBehaviour, IPointerClickHandler
     public Image iconImage;
     public string itemType;
     public int itemPrice;
-    public NpcShopItem npcShopItemData; 
-    public static EquipmentSlotUI Instante; 
-   
+    public NpcShopItem npcShopItemData;
+
     [Header("Check nếu là slot của Character UI")]
-    public bool isCharacterSlot; 
+    public bool isCharacterSlot;
 
     public enum ShopPanelType { None, ShopTP, ShopVK, ShopPK, Daily }
-    [Header("Phân biệt panel shop (nếu dùng chung prefab slot)")]
-
     public ShopPanelType shopPanelType = ShopPanelType.None;
-    public void Awake()
-    {
-        Instante = this;
-    }
+
     public void SetItem(string id, Sprite icon, string type = null, int price = 0)
     {
         itemId = id;
         itemType = type;
-        itemPrice = price; 
+        itemPrice = price;
         if (iconImage != null)
         {
             iconImage.sprite = icon;
@@ -39,136 +31,51 @@ public class EquipmentSlotUI : MonoBehaviour, IPointerClickHandler
         }
     }
 
-
     public void OnPointerClick(PointerEventData eventData)
     {
         if (string.IsNullOrEmpty(itemId)) return;
 
         if (isCharacterSlot)
         {
-            HideAllShopPanels();
+            // Slot trong inventory/character
             if (ItemDetailsPanel.Instance != null)
-            {
                 ItemDetailsPanel.Instance.Show(itemId, iconImage.sprite, itemType);
-            }
         }
         else
         {
-            if (ItemDetailsPanel.Instance != null) ItemDetailsPanel.Instance.Hide();
+            // Slot trong Shop
+            if (ItemDetailsPanel.Instance != null)
+                ItemDetailsPanel.Instance.Hide();
 
-            switch (shopPanelType)
+            // Gọi panel chi tiết mới
+            if (npcShopItemData != null && ShopItemDetailPanel.Instance != null)
             {
-                case ShopPanelType.ShopTP:
-                    ToggleShoptpPanel(ShopTP.Instance, itemId, iconImage.sprite, itemType);
-                    break;
-                case ShopPanelType.ShopVK:
-                    ToggleShopVKPanel(shopvk.Instance, itemId, iconImage.sprite, itemType);
-                    break;
-                case ShopPanelType.ShopPK:
-                    ToggleShopPKPanel(shoppk.Instance, itemId, iconImage.sprite, itemType);
-                    break;
-                default:
-                    Debug.LogWarning("Chưa gán đúng ShopPanelType cho slot!");
-                    break;
+                ItemStats stats = ItemStatDatabase.Instance.GetStats(itemId)
+                               ?? ItemStatDatabase.Instance.GetStatsdtb(int.Parse(itemId));
+
+                if (stats != null)
+                {
+                    ShopType shopType = GetShopTypeFromPanel();
+                    ShopItemDetailPanel.Instance.Show(npcShopItemData, stats, shopType);
+
+                    // QUAN TRỌNG: Set currentShopItem cho ItemDetailsUI để nút "Mua" hoạt động
+                    if (ItemDetailsUI.Instance != null)
+                        ItemDetailsUI.Instance.SetCurrentShopItem(npcShopItemData);
+                }
             }
         }
     }
 
-    private void HideAllShopPanels()
+    private ShopType GetShopTypeFromPanel()
     {
-        if (ShopTP.Instance != null) ShopTP.Instance.Hide();
-        if (shopvk.Instance != null) shopvk.Instance.Hide();
-        if (shoppk.Instance != null) shoppk.Instance.Hide();
-    }
-    public void OnSlotClicked()
-    {
-        if (string.IsNullOrEmpty(itemId)) return;
-        switch (shopPanelType)
+        return shopPanelType switch
         {
-            case ShopPanelType.ShopTP:
-                ShopTP.Instance.Show(itemId, iconImage.sprite, itemType, itemPrice);
-                break;
-            case ShopPanelType.ShopVK:
-                shopvk.Instance.Show(itemId, iconImage.sprite, itemType, itemPrice);
-                break;
-            case ShopPanelType.ShopPK:
-                shoppk.Instance.Show(itemId, iconImage.sprite, itemType, itemPrice);
-                break;
-        }
-        Debug.Log($"Slot clicked: {itemId}, Type: {itemType}");
-    }
-    private void ToggleShoptpPanel(ShopTP shopPanel, string id, Sprite icon, string type)
-    {
-        if (shopPanel == null)
-        {
-            Debug.LogError("ShopTP panel is null");
-            return;
-        }
-        if (ItemDetailsPanel.Instance != null) ItemDetailsPanel.Instance.Hide();
-
-        // LUÔN show, không toggle hide nữa!
-        shopPanel.Show(id, icon, type, itemPrice);
-        var itemDetailsUI = ItemDetailsUI.Instance;
-        if (itemDetailsUI != null)
-        {
-            itemDetailsUI.SetCurrentItemId(id, icon, type);
-            itemDetailsUI.SetCurrentShopItem(npcShopItemData);
-        }
+            ShopPanelType.ShopVK => ShopType.Weapon,
+            ShopPanelType.ShopPK => ShopType.Consumable,
+            ShopPanelType.ShopTP => ShopType.Accessory,
+            _ => ShopType.Other
+        };
     }
 
-
-    private void ToggleShopVKPanel(shopvk shopPanel, string id, Sprite icon, string type)
-    {
-        if (shopPanel == null)
-        {
-            Debug.LogError("ShopTP panel is null");
-            return;
-        }
-        if (ItemDetailsPanel.Instance != null) ItemDetailsPanel.Instance.Hide();
-
-        // LUÔN show, không toggle hide nữa!
-        shopPanel.Show(id, icon, type, itemPrice);
-        var itemDetailsUI = ItemDetailsUI.Instance;
-        if (itemDetailsUI != null)
-        {
-            itemDetailsUI.SetCurrentItemId(id, icon, type);
-            itemDetailsUI.SetCurrentShopItem(npcShopItemData); // <-- truyền sang
-            Debug.Log("Gán currentShopItem: " + (npcShopItemData != null ? npcShopItemData.itemId.ToString() : "null"));    
-
-
-        }
-    }
-    private void ToggleShopPKPanel(shoppk shopPanel, string id, Sprite icon, string type)
-    {
-        if (shopPanel == null)
-        {
-            Debug.LogError("ShopTP panel is null");
-            return;
-        }
-        if (ItemDetailsPanel.Instance != null) ItemDetailsPanel.Instance.Hide();
-
-        // LUÔN show, không toggle hide nữa!
-        shopPanel.Show(id, icon, type, itemPrice);
-        var itemDetailsUI = ItemDetailsUI.Instance;
-        if (itemDetailsUI != null)
-        {
-            itemDetailsUI.SetCurrentItemId(id, icon, type);
-            itemDetailsUI.SetCurrentShopItem(npcShopItemData);
-        }
-    }
-    private void ToggleDailyPanel(GameObject dailyPanel, string id, Sprite icon, string type)
-    {
-        if (dailyPanel == null) return;
-
-        if (!dailyPanel.activeSelf)
-            dailyPanel.SetActive(true); 
-
-        // Khi panel đã mở, chỉ cập nhật thông tin item
-        var itemDetailsUI = ItemDetailsUI.Instance;
-        if (itemDetailsUI != null)
-        {
-            itemDetailsUI.SetCurrentItemId(id, icon, type);
-            itemDetailsUI.SetCurrentShopItem(npcShopItemData);
-        }
-    }
+    public void OnSlotClicked() => OnPointerClick(null);
 }

@@ -130,10 +130,7 @@ public class CanvasShop : MonoBehaviour
         CharacterUIManager.Instance.Tui.SetActive(true);
         Bat();
         CharacterUIManager.Instance.Tui.SetActive(false);
-        if(ShopTP.Instance.panelshopTP != null)
-        {
-            ShopTP.Instance.panelshopTP.SetActive(false);
-        }
+        
         SkillButtonManager.Instance.ToggleSkills(true);
         FpsGame.Instance.ToggleBatBanghienthithongtin();
         WorldChatUIManager.Instance.Chat.SetActive(true);
@@ -148,10 +145,7 @@ public class CanvasShop : MonoBehaviour
         panelshoppk.SetActive(false);
      //   SkillButtonManager.Instance.Skillbutton.SetActive(true);
         CharacterUIManager.Instance.Tui.SetActive(false);
-        if (shoppk.Instance.panelshoppk != null)
-        {
-            shoppk.Instance.panelshoppk.SetActive(false);
-        }
+       
         WorldChatUIManager.Instance.Chat.SetActive(true);
         SkillButtonManager.Instance.ToggleSkills(true);
         FpsGame.Instance.ToggleBatBanghienthithongtin();
@@ -168,10 +162,6 @@ public class CanvasShop : MonoBehaviour
         panelshopvk.SetActive(false);
       //  SkillButtonManager.Instance.Skillbutton.SetActive(true);
         CharacterUIManager.Instance.Tui.SetActive(false);
-        if (shopvk.Instance.panelshopvk != null)
-        {
-            shopvk.Instance.panelshopvk.SetActive(false);
-        }
         WorldChatUIManager.Instance.Chat.SetActive(true);
         QuestDisplay.Instance.BatactiveallQuestDisplay();
         SkillButtonManager.Instance.ToggleSkills(true);

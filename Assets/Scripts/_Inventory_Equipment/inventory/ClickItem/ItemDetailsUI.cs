@@ -1,5 +1,4 @@
-﻿
-using Assets.HeroEditor.Common.CharacterScripts;
+﻿using Assets.HeroEditor.Common.CharacterScripts;
 using Assets.HeroEditor.FantasyInventory.Scripts.Data;
 using HeroEditor.Common.Enums;
 using Newtonsoft.Json;
@@ -12,15 +11,10 @@ using Unity.VisualScripting;
 using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using UnityEngine;
 using UnityEngine.UI;
-
-
 public class ItemDetailsUI : MonoBehaviour
 {
-
     public GameObject playerClone; // Clone preview trong scene
-
     public static ItemDetailsUI Instance;
-
     public GameObject panel;
     public GameObject PanelShop;
     public Image icon;
@@ -31,56 +25,42 @@ public class ItemDetailsUI : MonoBehaviour
     public Button closeButton;
     //sử dụng thông qua character ( sử dụng đồ )
     public Character character; // Gán trong Inspector
-
     // --- Biến phụ trợ từ code B (Tuấn Anh) ---
     private string currentItemId;
     private string currentItemType;
     private Sprite currentIcon;
-
     public GameObject PanelDaily;
-
     private InventoryItem1 currentItem;
-
     //text
     public TextMeshProUGUI equipMessageText;
     private Coroutine equipMessageCoroutine;
     private Vector3 equipMsgOriginPos;
-
-
     //ky gửi
     public TMP_InputField inputQuantity;
     public TMP_InputField inputPrice;
-
-    //itembuy 
+    //itembuy
     private NpcShopItem currentShopItem;
-
     // Cache tối ưu
     private static Dictionary<int, ItemStats> cachedShopStatsById;
     private EquipmentStatManager cachedEquipStatManager;
     private GameObject cachedPlayerObject;
-
-
     private void Start()
     {
         BuildShopStatsCacheIfNeeded();
         RefreshPlayerCache();
-
         if (character == null && CharacterUIManager1.Instance != null)
         {
             character = CharacterUIManager1.Instance.character;
             Debug.Log("character được gán từ CharacterUIManager1.");
         }
-
         StartCoroutine(EquipArmorFromSavedJson());
     }
     void Awake()
     {
         Debug.Log("Da chay awake ItemDetailsUI");
         Instance = this;
-
         if (panel != null)
             panel.SetActive(false);
-
         if (equipMessageText != null)
             equipMsgOriginPos = equipMessageText.rectTransform.anchoredPosition;
     }
@@ -88,11 +68,9 @@ public class ItemDetailsUI : MonoBehaviour
     {
         currentItem = item;
         Debug.Log($"[ItemDetailsUI] Show panel: {item.itemId} / {item.quantity}");
-
         icon.sprite = item.stats?.Icon;
         nameText.text = item.stats?.Name ?? "Không rõ";
         descText.text = $"ID: {item.itemId}\nSố lượng: {item.quantity}";
-
         if (item.stats != null)
         {
             descText.text = $"<b>{item.stats.Description}</b>\n" +
@@ -111,7 +89,6 @@ public class ItemDetailsUI : MonoBehaviour
         }
         panel.SetActive(true);
     }
-
     public void UseItem()
     {
         if (!TryValidateCurrentItem(out string failMessage))
@@ -119,64 +96,46 @@ public class ItemDetailsUI : MonoBehaviour
             ShowEquipMessage(failMessage);
             return;
         }
-
         RefreshPlayerCache();
-
         string type = currentItem.stats.Type;
         string newItemId = ItemIdUtility.Normalize(currentItem.itemId);
         var dict = CharacterJsonService.LoadDict();
-
         if (!TryHandleInventorySwapBeforeEquip(dict, type, newItemId, out failMessage))
         {
             ShowEquipMessage(failMessage);
             return;
         }
-
         bool ok = EquipmentCoordinator.Equip(currentItem, out string message);
         ShowEquipMessage(message);
-
         if (!ok)
             return;
-
         if (panel != null)
             panel.SetActive(false);
     }
     private string GetEquippedWeaponId(string type)
     {
         var dict = GetCharacterJsonDict();
-
         switch (type)
         {
             case "Bow":
                 return dict.TryGetValue(EquipKeys.Bow, out var bowId) ? bowId : null;
-
             case "MeleeWeapon1H":
                 if (dict.TryGetValue(EquipKeys.MeleeWeapon1H, out var melee1H) && !string.IsNullOrEmpty(melee1H))
                     return melee1H;
                 return dict.TryGetValue(EquipKeys.PrimaryMeleeWeapon, out var primary1H) ? primary1H : null;
-
             case "MeleeWeapon2H":
                 if (dict.TryGetValue(EquipKeys.MeleeWeapon2H, out var melee2H) && !string.IsNullOrEmpty(melee2H))
                     return melee2H;
                 return dict.TryGetValue(EquipKeys.PrimaryMeleeWeapon, out var primary2H) ? primary2H : null;
-
             default:
                 return CharacterUIManager1.Instance.GetItemIdFromJson(PlayerDataHolder1.CharacterJson, type);
         }
     }
-
     public IEnumerator EquipArmorNextFrame(string itemId)
     {
-
         yield return null; // Đợi 1 frame để SpriteCollection sẵn sàng
-
         CharacterEquipHandler.TestEquipArmor(character, itemId);
     }
-
-
-
-
-
     public void DropItem()
     {
         if (currentItem == null)
@@ -184,26 +143,18 @@ public class ItemDetailsUI : MonoBehaviour
             Debug.LogWarning("Chưa chọn item để vứt.");
             return;
         }
-
         int quantity = currentItem.quantity;
         string itemName = currentItem.stats != null ? currentItem.stats.Name : currentItem.itemId;
-
         // Luôn chỉ cần gọi RemoveItem, tự xử lý quantity
         InventoryManager.Instance.RemoveItem(currentItem.itemId, 1);
-
         ShowEquipMessage($"Đã vứt {(quantity > 1 ? "1" : "cuối cùng")} {itemName}!");
         Debug.Log($"Đã vứt {itemName}");
         panel.SetActive(false);
-
         if (InventoryUIManager.instance != null)
         {
             InventoryUIManager.instance.DisplayInventory(InventoryManager.Instance.playerInventory);
         }
     }
-
-
-
-
     public void Close()
     {
         panel.SetActive(false);
@@ -238,22 +189,16 @@ public class ItemDetailsUI : MonoBehaviour
                 break;
             case "Boots":
                 break;
-
             case "Gloves":
                 break;
-
             case "Pauldrons":
                 break;
-
             case "Vest":
                 break;
-
             case "Mask":
                 break;
-
             case "Belt":
                 break;
-
             // === Vũ khí ===
             case "PrimaryMeleeWeapon":
             case "MeleeWeapon1H":
@@ -261,50 +206,40 @@ public class ItemDetailsUI : MonoBehaviour
                          ?? stats.Icon;
                 character.PrimaryMeleeWeapon = sprite;
                 character.WeaponType = WeaponType.Melee1H;
-
                 break;
-
             // ===== Secondary Melee (Paired / 2H) =====
             case "MeleeWeapon2H":
             case "SecondaryMeleeWeapon":
                 {
                     var entry = character.SpriteCollection.MeleeWeapon2H
                         .FirstOrDefault(e => e.Id == stats.itemId);
-
                     if (entry == null)
                     {
                         Debug.LogError($"[ItemDetailsUI] Khong tim thay MeleeWeapon2H entry: {stats.itemId}");
                         return;
                     }
-
                     character.WeaponType = WeaponType.Melee2H;
                     character.Equip(entry, EquipmentPart.MeleeWeapon2H);
                     break;
                 }
-
             case "Bow":
                 {
                     var entry = character.SpriteCollection.Bow
                         .FirstOrDefault(e => e.Id == stats.itemId);
-
                     if (entry == null || entry.Sprites.Count < 2)
                     {
                         Debug.LogError($" Không tìm thấy Bow entry hoặc thiếu sprite: {stats.itemId}");
                         return;
                     }
-
                     character.WeaponType = WeaponType.Bow;
                     character.Equip(entry, EquipmentPart.Bow);
-
                     break;
                 }
             default:
                 Debug.LogWarning($" Không hỗ trợ loại trang bị: {stats.Type}");
                 break;
         }
-
     }
-
     private void EnsureArmorListSize(int index)
     {
         while (character.Armor.Count <= index)
@@ -318,7 +253,6 @@ public class ItemDetailsUI : MonoBehaviour
         int lastDot = itemId.LastIndexOf('.');
         return lastDot >= 0 ? itemId.Substring(lastDot + 1) : itemId;
     }
-
     private Sprite FindSpriteInCollection(string spriteName, List<HeroEditor.Common.SpriteGroupEntry> groupEntries)
     {
         foreach (var entry in groupEntries)
@@ -330,7 +264,6 @@ public class ItemDetailsUI : MonoBehaviour
                     return sprite;
             }
         }
-
         Debug.LogError($" Không tìm thấy sprite có tên: {spriteName}");
         return null;
     }
@@ -344,7 +277,6 @@ public class ItemDetailsUI : MonoBehaviour
                 dict.Remove(key);
             }
         }
-
         RemoveIfMissing("PrimaryMeleeWeapon", character.SpriteCollection.MeleeWeapon1H);
         RemoveIfMissing("SecondaryMeleeWeapon", character.SpriteCollection.MeleeWeapon2H);
         RemoveIfMissing("Bow", character.SpriteCollection.Bow);
@@ -357,26 +289,20 @@ public class ItemDetailsUI : MonoBehaviour
     private IEnumerator EquipArmorFromSavedJson()
     {
         yield return null;
-
         if (character == null && CharacterUIManager1.Instance != null)
             character = CharacterUIManager1.Instance.character;
-
         if (character == null)
             yield break;
-
         var json = PlayerDataHolder1.CharacterJson;
         if (string.IsNullOrEmpty(json))
             yield break;
-
         var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
         if (dict == null)
             yield break;
-
         if (dict.TryGetValue("Armor", out var armorId) && !string.IsNullOrEmpty(armorId))
         {
             CharacterEquipHandler.TestEquipArmor(character, armorId);
         }
-
         if (dict.TryGetValue("WeaponType", out var type) && type == "Melee2H")
         {
             if (dict.TryGetValue("PrimaryMeleeWeapon", out var weaponId) && !string.IsNullOrEmpty(weaponId))
@@ -395,7 +321,6 @@ public class ItemDetailsUI : MonoBehaviour
         currentItemId = id;
         currentItemType = type;
         currentIcon = icon;
-
         Debug.Log($"[ItemDetailsUI] Đã chọn item: {id}");
         Itemdaily();
     }
@@ -403,7 +328,7 @@ public class ItemDetailsUI : MonoBehaviour
     {
         if (currentShopItem == null)
         {
-            Debug.LogError("currentShopItem NULL! Bạn chưa chọn item shop?");
+            ShowEquipMessage("Chưa chọn item shop!");
             return;
         }
         Debug.Log($"[OnClickBuy] currentShopItem: {currentShopItem?.itemId}, price: {currentShopItem?.price}, name: {currentShopItem?.name}");
@@ -412,7 +337,6 @@ public class ItemDetailsUI : MonoBehaviour
         int currentGold = PlayerDataHolder1.CurrentPlayerState.gold;
         int accountId = SessionManager.AccountId;
         string token = SessionManager.Token;
-
         // Bước này chỉ để check nhanh UI, không đảm bảo hoàn toàn (chủ yếu UX).
         // Server sẽ kiểm tra lại!
         int expectedPrice = currentShopItem.price;
@@ -421,23 +345,18 @@ public class ItemDetailsUI : MonoBehaviour
             ShowEquipMessage("Không đủ vàng!");
             return;
         }
-
         StartCoroutine(CoBuyItemFromShop(accountId, itemId, token));
     }
     public void SetCurrentShopItem(NpcShopItem shopItem)
     {
         currentShopItem = shopItem;
-
         if (shopItem == null)
         {
             currentItem = null;
             return;
         }
-
         BuildShopStatsCacheIfNeeded();
-
         cachedShopStatsById.TryGetValue(shopItem.itemId, out var stats);
-
         currentItem = new InventoryItem1
         {
             itemId = shopItem.itemId.ToString(),
@@ -445,85 +364,64 @@ public class ItemDetailsUI : MonoBehaviour
             stats = stats
         };
     }
-
-
-
-
     private void RefreshEquippedSlotUI(string type, string itemId)
     {
         if (CharacterUIManager1.Instance == null || string.IsNullOrEmpty(type) || string.IsNullOrEmpty(itemId))
             return;
-
         var ui = CharacterUIManager1.Instance;
-
         switch (type)
         {
             case "Gloves":
                 ui.DisplayItem(ui.ArmorSlots[2], itemId, "Gloves");
                 CharacterEquipHandler.EquipPartialArmorFromEntry(character, itemId, type);
                 break;
-
             case "Belt":
                 ui.DisplayItem(ui.ArmorSlots[5], itemId, "Belt");
                 CharacterEquipHandler.EquipPartialArmorFromEntry(character, itemId, type);
                 break;
-
             case "Boots":
                 ui.DisplayItem(ui.ArmorSlots[1], itemId, "Boots");
                 CharacterEquipHandler.EquipPartialArmorFromEntry(character, itemId, type);
                 break;
-
             case "Vest":
                 ui.DisplayItem1(ui.ArmorSlots[4], itemId, "Vest");
                 CharacterEquipHandler.EquipPartialArmorFromEntry(character, itemId, type);
                 break;
-
             case "Armor":
                 ui.DisplayItem(ui.ArmorSlots[0], itemId, "Armor");
                 CharacterEquipHandler.TestEquipArmor(character, itemId);
                 break;
-
             case "Helmet":
                 ui.DisplayItem1(ui.Helmetslot, itemId, "Helmet");
                 break;
-
             case "MeleeWeapon1H":
                 ui.DisplayItem1(ui.MeleeWeapon1Hslot, itemId, "MeleeWeapon1H");
                 break;
-
             case "MeleeWeapon2H":
                 ui.DisplayItem1(ui.MeleeWeapon2Hslot, itemId, "MeleeWeapon2H");
                 break;
-
             case "Cape":
                 ui.DisplayItem1(ui.Capeslot, itemId, "Cape");
                 break;
-
             case "Shield":
                 ui.DisplayItem1(ui.Shieldslot, itemId, "Shield");
                 break;
-
             case "Pauldrons":
                 ui.DisplayItem1(ui.ArmorSlots[3], itemId, "Pauldrons");
                 CharacterEquipHandler.EquipPartialArmorFromEntry(character, itemId, type);
                 break;
-
             case "Glasses":
                 ui.DisplayItem1(ui.Glassesslot, itemId, "Glasses");
                 break;
-
             case "Hair":
                 ui.DisplayItem1(ui.Hairslot, itemId, "Hair");
                 break;
-
             case "Back":
                 ui.DisplayItem1(ui.Backslot, itemId, "Back");
                 break;
-
             case "Mask":
                 ui.DisplayItem1(ui.Maskslot, itemId, "Mask");
                 break;
-
             case "Bow":
                 ui.DisplayItem1(ui.Bowslot, itemId, "Bow");
                 CharacterEquipHandler.TestEquipBow(character, itemId);
@@ -535,7 +433,6 @@ public class ItemDetailsUI : MonoBehaviour
         if (type == "Bow" || type.Contains("Weapon"))
         {
             string[] weaponKeys = { "PrimaryMeleeWeapon", "SecondaryMeleeWeapon", "Bow" };
-
             foreach (string key in weaponKeys)
             {
                 if (dict.TryGetValue(key, out string oldWeaponId) &&
@@ -546,13 +443,10 @@ public class ItemDetailsUI : MonoBehaviour
                     dict[key] = "";
                 }
             }
-
             InventoryManager.Instance.RemoveItem(newItemId, 1);
             return;
         }
-
         string equippedItemId = CharacterUIManager1.Instance.GetItemIdFromJson(PlayerDataHolder1.CharacterJson, type);
-
         if (!string.IsNullOrEmpty(equippedItemId))
         {
             if (equippedItemId == newItemId)
@@ -584,21 +478,18 @@ public class ItemDetailsUI : MonoBehaviour
             dict.Remove("MeleeWeapon1H");
             dict.Remove("MeleeWeapon2H");
         }
-
         if (type == "PrimaryMeleeWeapon" || type == "MeleeWeapon1H")
         {
             dict.Remove("Bow");
             dict.Remove("SecondaryMeleeWeapon");
             dict.Remove("MeleeWeapon2H");
         }
-
         if (type == "MeleeWeapon2H")
         {
             dict.Remove("Bow");
             dict.Remove("SecondaryMeleeWeapon");
             dict.Remove("MeleeWeapon1H");
         }
-
         switch (type)
         {
             case "Helmet":
@@ -616,19 +507,16 @@ public class ItemDetailsUI : MonoBehaviour
             case "Mask":
                 dict[type] = itemId;
                 break;
-
             case "Bow":
                 dict["Bow"] = itemId;
                 dict["WeaponType"] = "Bow";
                 break;
-
             case "MeleeWeapon1H":
                 dict["PrimaryMeleeWeapon"] = itemId;
                 dict["MeleeWeapon1H"] = itemId;
                 dict.Remove("MeleeWeapon2H");
                 dict["WeaponType"] = "Melee1H";
                 break;
-
             case "MeleeWeapon2H":
                 dict["PrimaryMeleeWeapon"] = itemId;
                 dict["MeleeWeapon2H"] = itemId;
@@ -636,7 +524,6 @@ public class ItemDetailsUI : MonoBehaviour
                 dict.Remove("SecondaryMeleeWeapon");
                 dict["WeaponType"] = "Melee2H";
                 break;
-
             default:
                 Debug.LogWarning($"[ItemDetailsUI] Loai chua ho tro: {type}");
                 break;
@@ -649,7 +536,6 @@ public class ItemDetailsUI : MonoBehaviour
             AccountId = accountId,
             ItemId = itemId
         };
-
         yield return ApiClientBase.Instance.Post<ShopBuyResponse>(
             "account/shop/buy",
             buyData,
@@ -661,46 +547,28 @@ public class ItemDetailsUI : MonoBehaviour
                     if (CharacterUIManager1.Instance != null && CharacterUIManager1.Instance.gold != null)
                         CharacterUIManager1.Instance.gold.text = resp.newGold.ToString();
                 }
-
                 ShowEquipMessage("Mua thành công!");
+                if (ShopItemDetailPanel.Instance != null)
+                    ShopItemDetailPanel.Instance.Hide();
                 InventoryManager.Instance.LoadInventory(null);
-
-                // Ẩn panel shop tương ứng
-                switch (EquipmentSlotUI.Instante.shopPanelType)
-                {
-                    case EquipmentSlotUI.ShopPanelType.ShopTP:
-                        if (ShopTP.Instance != null) ShopTP.Instance.panelshopTP.SetActive(false);
-                        break;
-                    case EquipmentSlotUI.ShopPanelType.ShopVK:
-                        if (shopvk.Instance != null) shopvk.Instance.panelshopvk.SetActive(false);
-                        break;
-                    case EquipmentSlotUI.ShopPanelType.ShopPK:
-                        if (shoppk.Instance != null) shoppk.Instance.panelshoppk.SetActive(false);
-                        break;
-                }
             },
             error => ShowEquipMessage("Lỗi khi mua: " + error)
         );
     }
-
-
     public class ShopBuyResponse
     {
         public string message { get; set; }
         public int newGold { get; set; }
     }
-
     public void Itemdaily() //chung
     {
         if (PanelDaily != null && PanelDaily.activeSelf)
         {
             InventoryManager.Instance.AddItem(currentItemId, 1);
             Debug.Log(" PanelDaily đang bật → Đã thêm item vào inventory.");
-
         }
-
     }
-    //hiệu ứng text 
+    //hiệu ứng text
     public void ShowEquipMessage(string msg, float duration = 2.5f)
     {
         if (equipMessageCoroutine != null) StopCoroutine(equipMessageCoroutine);
@@ -714,7 +582,6 @@ public class ItemDetailsUI : MonoBehaviour
         rect.anchoredPosition = equipMsgOriginPos;
         equipMessageText.color = new Color(1, 1, 1, 0);
         equipMessageText.transform.localScale = Vector3.one * 1.15f;
-
         // Fade in + scale in (0.15s)
         float t = 0f;
         while (t < 0.15f)
@@ -726,7 +593,6 @@ public class ItemDetailsUI : MonoBehaviour
         }
         equipMessageText.color = new Color(1, 1, 1, 1);
         equipMessageText.transform.localScale = Vector3.one;
-
         // Bay lên (move y lên), giữ trong duration-0.3s
         float moveTime = duration - 0.3f;
         float yStart = equipMsgOriginPos.y;
@@ -741,7 +607,6 @@ public class ItemDetailsUI : MonoBehaviour
             yield return null;
         }
         rect.anchoredPosition = new Vector2(rect.anchoredPosition.x, yEnd);
-
         // Fade out + scale out (0.15s)
         t = 0f;
         while (t < 0.15f)
@@ -764,23 +629,19 @@ public class ItemDetailsUI : MonoBehaviour
         public int Quantity { get; set; }
         public int Price { get; set; }
     }
-
     // Trong ItemDetailsUI.cs hoặc class chứa hàm:
     public void OnClickDeposit()
     {
         int quantity = int.Parse(inputQuantity.text);
         int price = int.Parse(inputPrice.text);
-
         if (currentItem == null || currentItem.stats == null)
         {
             ShowEquipMessage("Không có item để ký gửi");
             return;
         }
-
         int itemIdInt = currentItem.stats.Item_ID;
         int accountId = SessionManager.AccountId;
         string token = SessionManager.Token;
-
         MarketItemSendDto dto = new MarketItemSendDto
         {
             SellerAccountId = accountId,
@@ -788,10 +649,8 @@ public class ItemDetailsUI : MonoBehaviour
             Quantity = quantity,
             Price = price
         };
-
         StartCoroutine(CoDepositToMarket(dto, token));
     }
-
     IEnumerator CoDepositToMarket(MarketItemSendDto dto, string token)
     {
         yield return ApiClientBase.Instance.Post<object>(
@@ -812,21 +671,16 @@ public class ItemDetailsUI : MonoBehaviour
     {
         if (cachedShopStatsById != null)
             return;
-
         cachedShopStatsById = new Dictionary<int, ItemStats>();
-
         var statsList = Resources.LoadAll<ItemStats>("ItemStats");
         foreach (var stats in statsList)
         {
             if (stats == null) continue;
-
             if (!cachedShopStatsById.ContainsKey(stats.Item_ID))
                 cachedShopStatsById.Add(stats.Item_ID, stats);
         }
-
         Debug.Log($"[ItemDetailsUI] Cached ItemStats: {cachedShopStatsById.Count}");
     }
-
     private void RefreshPlayerCache()
     {
         if (PlayerSpawner.LocalPlayerObject == null)
@@ -835,74 +689,60 @@ public class ItemDetailsUI : MonoBehaviour
             cachedEquipStatManager = null;
             return;
         }
-
         GameObject playerObj = PlayerSpawner.LocalPlayerObject.gameObject;
-
         if (cachedPlayerObject != playerObj)
         {
             cachedPlayerObject = playerObj;
             cachedEquipStatManager = playerObj.GetComponent<EquipmentStatManager>();
         }
-
         if (character == null && CharacterUIManager1.Instance != null)
         {
             character = CharacterUIManager1.Instance.character;
         }
-
         if (playerClone == null && PlayerCloneController.Instante != null)
         {
             playerClone = PlayerCloneController.Instante.gameObject;
         }
     }
-
     private Dictionary<string, string> GetCharacterJsonDict()
     {
         if (string.IsNullOrEmpty(PlayerDataHolder1.CharacterJson))
             return new Dictionary<string, string>();
-
         return JsonConvert.DeserializeObject<Dictionary<string, string>>(PlayerDataHolder1.CharacterJson)
                ?? new Dictionary<string, string>();
     }
     private bool TryValidateCurrentItem(out string message)
     {
         message = "";
-
         if (currentItem == null)
         {
             message = "Không có item để dùng.";
             return false;
         }
-
         if (currentItem.stats == null)
         {
             message = "Item bị thiếu dữ liệu stats.";
             return false;
         }
-
         if (PlayerDataHolder1.CurrentPlayerState == null)
         {
             message = "Chưa có dữ liệu nhân vật.";
             return false;
         }
-
         if (InventoryManager.Instance == null)
         {
             message = "InventoryManager chưa sẵn sàng.";
             return false;
         }
-
         int playerLevel = PlayerDataHolder1.CurrentPlayerState.level;
         int requiredLevel = currentItem.stats.LevelRequired;
-
         if (playerLevel < requiredLevel)
         {
             message = $"Cần cấp {requiredLevel} mới mặc được!";
             return false;
         }
-
         return true;
     }
-
     private bool TryHandleInventorySwapBeforeEquip(
         Dictionary<string, string> dict,
         string type,
@@ -910,62 +750,50 @@ public class ItemDetailsUI : MonoBehaviour
         out string message)
     {
         message = "";
-
         if (dict == null)
         {
             message = "Dữ liệu nhân vật bị lỗi.";
             return false;
         }
-
         bool isWeapon =
             type == EquipKeys.Bow ||
             type == EquipKeys.MeleeWeapon1H ||
             type == EquipKeys.MeleeWeapon2H ||
             type.Contains("Weapon");
-
         if (isWeapon)
             return TryHandleWeaponSwap(dict, newItemId, out message);
-
         return TryHandleNormalEquipSwap(dict, type, newItemId, out message);
     }
-
     private bool TryHandleWeaponSwap(
     Dictionary<string, string> dict,
     string newItemId,
     out string message)
     {
         message = "";
-
         if (InventoryManager.Instance == null)
         {
             message = "Inventory chưa sẵn sàng.";
             return false;
         }
-
         HashSet<string> equippedWeaponIds = new HashSet<string>();
-
         AddIfValid(equippedWeaponIds, CharacterJsonService.GetValue(dict, EquipKeys.PrimaryMeleeWeapon));
         AddIfValid(equippedWeaponIds, CharacterJsonService.GetValue(dict, EquipKeys.SecondaryMeleeWeapon));
         AddIfValid(equippedWeaponIds, CharacterJsonService.GetValue(dict, EquipKeys.MeleeWeapon1H));
         AddIfValid(equippedWeaponIds, CharacterJsonService.GetValue(dict, EquipKeys.MeleeWeapon2H));
         AddIfValid(equippedWeaponIds, CharacterJsonService.GetValue(dict, EquipKeys.Bow));
-
         if (equippedWeaponIds.Contains(newItemId))
         {
             message = "Vũ khí này đã đang được trang bị.";
             return false;
         }
-
         foreach (var oldWeaponId in equippedWeaponIds)
         {
             if (!string.IsNullOrEmpty(oldWeaponId))
                 InventoryManager.Instance.AddItem(oldWeaponId, 1);
         }
-
         InventoryManager.Instance.RemoveItem(newItemId, 1);
         return true;
     }
-
     private bool TryHandleNormalEquipSwap(
     Dictionary<string, string> dict,
     string type,
@@ -973,34 +801,27 @@ public class ItemDetailsUI : MonoBehaviour
     out string message)
     {
         message = "";
-
         if (InventoryManager.Instance == null)
         {
             message = "Inventory chưa sẵn sàng.";
             return false;
         }
-
         string equippedItemId = CharacterJsonService.GetValue(dict, type);
-
         if (!string.IsNullOrEmpty(equippedItemId) && equippedItemId == newItemId)
         {
             message = "Item này đã đang được trang bị.";
             return false;
         }
-
         if (!string.IsNullOrEmpty(equippedItemId))
         {
             InventoryManager.Instance.AddItem(equippedItemId, 1);
         }
-
         InventoryManager.Instance.RemoveItem(newItemId, 1);
         return true;
     }
-
     private void AddIfValid(HashSet<string> set, string itemId)
     {
         if (!string.IsNullOrWhiteSpace(itemId))
             set.Add(itemId);
     }
-
 }

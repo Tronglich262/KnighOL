@@ -1031,7 +1031,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -5102237246750870097, guid: 73fa0d8d6fb472948836b8ceae865aad, type: 3}
+  m_Sprite: {fileID: -8902363998838629117, guid: 7f9865cf6ac20f7468e13d5a5daff8ef, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -3213,7 +3213,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -5102237246750870097, guid: 73fa0d8d6fb472948836b8ceae865aad, type: 3}
+  m_Sprite: {fileID: -8902363998838629117, guid: 7f9865cf6ac20f7468e13d5a5daff8ef, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -5157,7 +5157,6 @@ GameObject:
   - component: {fileID: 87010093}
   - component: {fileID: 87010096}
   - component: {fileID: 87010095}
-  - component: {fileID: 87010094}
   - component: {fileID: 87010097}
   m_Layer: 5
   m_Name: itemInfoPanel
@@ -5186,28 +5185,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &87010094
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 87010092}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6b8ebad4c97ea934fb253737e8076beb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  panelshopTP: {fileID: 1271876546}
-  icon: {fileID: 848545203}
-  Level: {fileID: 1336470562}
-  description: {fileID: 1867446033}
-  Type: {fileID: 1107591678}
-  Name: {fileID: 1460465975}
-  Price: {fileID: 1184637914}
-  shopNotifyPanel: {fileID: 2051747359}
-  shopNotifyBg: {fileID: 503218269}
-  shopNotifyText: {fileID: 1765595291}
 --- !u!114 &87010095
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16558,7 +16535,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -5102237246750870097, guid: 73fa0d8d6fb472948836b8ceae865aad, type: 3}
+  m_Sprite: {fileID: -8902363998838629117, guid: 7f9865cf6ac20f7468e13d5a5daff8ef, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -32301,7 +32278,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -5102237246750870097, guid: 73fa0d8d6fb472948836b8ceae865aad, type: 3}
+  m_Sprite: {fileID: -8902363998838629117, guid: 7f9865cf6ac20f7468e13d5a5daff8ef, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -43063,7 +43040,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -5102237246750870097, guid: 73fa0d8d6fb472948836b8ceae865aad, type: 3}
+  m_Sprite: {fileID: -8902363998838629117, guid: 7f9865cf6ac20f7468e13d5a5daff8ef, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -57712,7 +57689,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -5102237246750870097, guid: 73fa0d8d6fb472948836b8ceae865aad, type: 3}
+  m_Sprite: {fileID: -8902363998838629117, guid: 7f9865cf6ac20f7468e13d5a5daff8ef, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -64615,7 +64592,6 @@ GameObject:
   - component: {fileID: 1207997067}
   - component: {fileID: 1207997070}
   - component: {fileID: 1207997069}
-  - component: {fileID: 1207997071}
   - component: {fileID: 1207997072}
   m_Layer: 5
   m_Name: itemInfoPanel
@@ -64682,28 +64658,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1207997066}
   m_CullTransparentMesh: 1
---- !u!114 &1207997071
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1207997066}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f04ce4bf7151df043939d4212616833a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  panelshopvk: {fileID: 715841792}
-  icon: {fileID: 435974473}
-  Level: {fileID: 1545752217}
-  description: {fileID: 1065072227}
-  Type: {fileID: 1910708286}
-  Name: {fileID: 191837793}
-  Price: {fileID: 2069806260}
-  shopNotifyPanel: {fileID: 1847945160}
-  shopNotifyBg: {fileID: 906542223}
-  shopNotifyText: {fileID: 332461471}
 --- !u!114 &1207997072
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -78185,7 +78139,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -5102237246750870097, guid: 73fa0d8d6fb472948836b8ceae865aad, type: 3}
+  m_Sprite: {fileID: -8902363998838629117, guid: 7f9865cf6ac20f7468e13d5a5daff8ef, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -79795,7 +79749,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -5102237246750870097, guid: 73fa0d8d6fb472948836b8ceae865aad, type: 3}
+  m_Sprite: {fileID: -8902363998838629117, guid: 7f9865cf6ac20f7468e13d5a5daff8ef, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -87094,7 +87048,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -5102237246750870097, guid: 73fa0d8d6fb472948836b8ceae865aad, type: 3}
+  m_Sprite: {fileID: -8902363998838629117, guid: 7f9865cf6ac20f7468e13d5a5daff8ef, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -95447,9 +95401,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1762635939}
-  - component: {fileID: 1762635938}
-  - component: {fileID: 1762635937}
-  - component: {fileID: 1762635936}
   - component: {fileID: 1762635935}
   m_Layer: 0
   m_Name: HCController
@@ -95473,49 +95424,6 @@ MonoBehaviour:
   Setting: {fileID: 874337826}
   settingPanel: {fileID: 1233215255}
   runner: {fileID: 222833255496970566, guid: 1c8b541b6caa51043a502d0e2b5eb4a3, type: 3}
---- !u!114 &1762635936
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1762635933}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 807e59c75ca7fb047b065632cc6fbe1d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &1762635937
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1762635933}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 763a842c062d5d1409b5c3e46b59f16e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  TimeHcfalse: {fileID: 0}
-  TimeHcTrue: {fileID: 0}
-  ItemslotHcfalse: {fileID: 0}
-  ItemslotHcTrue: {fileID: 0}
---- !u!114 &1762635938
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1762635933}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cd6d94bcb571a2547b4aa613ba8be0e7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  questData: {fileID: 11400000, guid: 35caef6a0a2364c4e9a25345861b48b7, type: 2}
-  playTime: 0
-  updateMission: {fileID: 1762635937}
 --- !u!4 &1762635939
 Transform:
   m_ObjectHideFlags: 0
@@ -108163,7 +108071,6 @@ GameObject:
   - component: {fileID: 2017279340}
   - component: {fileID: 2017279343}
   - component: {fileID: 2017279342}
-  - component: {fileID: 2017279344}
   - component: {fileID: 2017279345}
   m_Layer: 5
   m_Name: itemInfoPanel
@@ -108230,28 +108137,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2017279339}
   m_CullTransparentMesh: 1
---- !u!114 &2017279344
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2017279339}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4884b77bb35ce424081a6917390bdd4b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  panelshoppk: {fileID: 1157973331}
-  icon: {fileID: 711421717}
-  Level: {fileID: 821263505}
-  description: {fileID: 1231986031}
-  Type: {fileID: 1649578670}
-  Name: {fileID: 1935434789}
-  Price: {fileID: 709362359}
-  shopNotifyPanel: {fileID: 1489524936}
-  shopNotifyBg: {fileID: 1057204124}
-  shopNotifyText: {fileID: 184396242}
 --- !u!114 &2017279345
 MonoBehaviour:
   m_ObjectHideFlags: 0

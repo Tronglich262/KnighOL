@@ -89,7 +89,7 @@ public abstract class BaseShopUIManager : MonoBehaviour
         currentUIs.Add(obj);
     }
 
-    protected void ClearUI()
+    public void ClearUI()
     {
         foreach (var ui in currentUIs)
             if (ui != null) Destroy(ui);

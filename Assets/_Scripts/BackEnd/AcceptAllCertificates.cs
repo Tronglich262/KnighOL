@@ -5,13 +5,12 @@ public class AcceptAllCertificates : CertificateHandler
 {
     protected override bool ValidateCertificate(byte[] certificateData)
     {
-        // CHỈ bypass khi là Editor + localhost
-        // Production build sẽ dùng certificate thật (HTTPS)
+        // Trong Editor: bypass hết (localhost + Ngrok + bất kỳ HTTPS nào)
 #if UNITY_EDITOR
-        if (Application.isEditor)
-            return true;
+        Debug.Log("[AcceptAllCertificates] Bypass certificate trong Editor (Ngrok + localhost)");
+        return true;
 #endif
-        // Production: trả về false → Unity sẽ kiểm tra certificate bình thường
+        // Build production: kiểm tra certificate thật
         return false;
     }
 }

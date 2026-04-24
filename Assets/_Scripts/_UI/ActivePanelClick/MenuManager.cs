@@ -1,8 +1,6 @@
 ﻿using Fusion;
 using System.Collections;
-using Unity.VisualScripting.Antlr3.Runtime;
 using UnityEngine;
-using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
 
 public class MenuManager : MonoBehaviour
@@ -10,104 +8,94 @@ public class MenuManager : MonoBehaviour
     public GameObject btnChoiMoi;
     public GameObject btnChoiTiep;
 
-    private string apiUrl = "https://localhost:7124/api/Account";
     private int accountId;
 
     [System.Serializable]
-    public class CharacterResponse
+    public class CharacterSimpleResponse
     {
+        public string name;
         public string characterJson;
     }
 
     void Start()
     {
-        accountId = SessionManager.AccountId; 
+        accountId = SessionManager.AccountId;
         if (accountId == 0)
         {
             Debug.LogError("Không có accountId, cần đăng nhập lại.");
             return;
         }
+
+        Debug.Log("🔄 Bắt đầu CheckCharacterData với Production URL");
         StartCoroutine(CheckCharacterData());
     }
-    //Check dữ liệu CharacterData trên database của account ( nếu null hiện chơi mới , nếu !null  hiện chơi tiếp)
+
+    // ====================== KIỂM TRA CÓ NHÂN VẬT CHƯA ======================
     IEnumerator CheckCharacterData()
     {
-        string url = apiUrl + "/get-character/" + accountId;
-        UnityWebRequest request = UnityWebRequest.Get(url);
-        request.SetRequestHeader("Content-Type", "application/json");
+        string endpoint = $"Account/get-character/{accountId}";
 
-        yield return request.SendWebRequest();
-
-        if (request.result == UnityWebRequest.Result.Success)
-        {
-            string json = request.downloadHandler.text;
-            Debug.Log("Response JSON: " + json);
-
-            // Parse JSON
-            CharacterSimpleResponse response = JsonUtility.FromJson<CharacterSimpleResponse>(json);
-            PlayerDataHolder1.PlayerName = response.name;
-            PlayerDataHolder1.CharacterJson = response.characterJson;
-
-            string raw = response.characterJson?.Trim();
-
-            bool isEmptyCharacter =
-                string.IsNullOrEmpty(raw) ||
-                raw == "null" ||
-                raw == "{}" ||
-                raw == "\"{}\""; 
-            if (isEmptyCharacter)
+        yield return ApiClientBase.Instance.Get<CharacterSimpleResponse>(endpoint,
+            response =>
             {
-                Debug.Log("Chưa có nhân vật, hiện Chơi Mới");
+                Debug.Log("✅ CheckCharacterData thành công");
+
+                PlayerDataHolder1.PlayerName = response.name;
+                PlayerDataHolder1.CharacterJson = response.characterJson;
+
+                string raw = response.characterJson?.Trim();
+
+                bool isEmptyCharacter = string.IsNullOrEmpty(raw) ||
+                                        raw == "null" ||
+                                        raw == "{}" ||
+                                        raw == "\"{}\"";
+
+                if (isEmptyCharacter)
+                {
+                    Debug.Log("Chưa có nhân vật → Hiện CHƠI MỚI");
+                    btnChoiMoi.SetActive(true);
+                    btnChoiTiep.SetActive(false);
+                }
+                else
+                {
+                    Debug.Log("Đã có nhân vật → Hiện CHƠI TIẾP");
+                    btnChoiMoi.SetActive(false);
+                    btnChoiTiep.SetActive(true);
+                }
+            },
+            error =>
+            {
+                Debug.LogError("Lỗi khi kiểm tra nhân vật: " + error);
+                // Fallback: nếu lỗi thì coi như chưa có nhân vật
                 btnChoiMoi.SetActive(true);
                 btnChoiTiep.SetActive(false);
-            }
-            else
-            {
-                Debug.Log("Đã có nhân vật, hiện Chơi Tiếp");
-                btnChoiMoi.SetActive(false);
-                btnChoiTiep.SetActive(true);
-            }
-
-        }
-        else
-        {
-            Debug.LogError("Lỗi khi kiểm tra nhân vật: " + request.error);
-        }
+            });
     }
-    //Load dữ liệu từ Database
+
+    // ====================== LOAD DỮ LIỆU NHÂN VẬT ======================
     private IEnumerator LoadCharacterAndStartGame()
     {
-        string url = apiUrl + "/get-character/" + accountId;
-        UnityWebRequest request = UnityWebRequest.Get(url);
-        request.SetRequestHeader("Content-Type", "application/json");
+        string endpoint = $"Account/get-character/{accountId}";
 
-        yield return request.SendWebRequest();
-
-        if (request.result == UnityWebRequest.Result.Success)
-        {
-            string json = request.downloadHandler.text;
-            CharacterResponse response = JsonUtility.FromJson<CharacterResponse>(json);
-
-            if (!string.IsNullOrEmpty(response.characterJson) && response.characterJson != "null")
+        yield return ApiClientBase.Instance.Get<CharacterSimpleResponse>(endpoint,
+            response =>
             {
-                PlayerDataHolder1.CharacterJson = response.characterJson;
-                Debug.Log("Đã tải dữ liệu nhân vật: " + PlayerDataHolder1.CharacterJson);
-                PlayerDataHolder1.Character = JsonUtility.FromJson<CharacterData>(PlayerDataHolder1.CharacterJson);
+                if (!string.IsNullOrEmpty(response.characterJson) && response.characterJson != "null")
+                {
+                    PlayerDataHolder1.CharacterJson = response.characterJson;
+                    Debug.Log("Đã tải dữ liệu nhân vật thành công");
+                    // Nếu cần parse thêm CharacterData thì thêm ở đây
 
-                // Gọi luôn Fusion khởi động chế độ Shared và load scene Test
-                FusionManager.Instance.StartFusionSession("Test");
-            }
-            else
-            {
-                Debug.LogError("Không tìm thấy dữ liệu nhân vật.");
-            }
-        }
-        else
-        {
-            Debug.LogError(" Lỗi lấy dữ liệu nhân vật: " + request.error);
-        }
+                    // Khởi động Fusion + load scene
+                    FusionManager.Instance.StartFusionSession("Test");
+                }
+                else
+                {
+                    Debug.LogError("Không tìm thấy dữ liệu nhân vật.");
+                }
+            },
+            error => Debug.LogError("Lỗi lấy dữ liệu nhân vật: " + error));
     }
-
 
     public void OnClickChoiMoi()
     {

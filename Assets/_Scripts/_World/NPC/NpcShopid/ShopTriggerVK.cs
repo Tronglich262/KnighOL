@@ -125,7 +125,8 @@ public class ShopTriggerVK : MonoBehaviour
     IEnumerator LoadShopVK()
     {
         int npcId = 3;
-        string url = $"https://localhost:7124/api/account/npc-shop/{npcId}";
+        string endpoint = $"account/npc-shop/{npcId}";
+        string url = ApiConfigManager.Instance.GetFullUrl(endpoint);   
 
         using (UnityWebRequest www = UnityWebRequest.Get(url))
         {
@@ -136,16 +137,11 @@ public class ShopTriggerVK : MonoBehaviour
                 string json = "{\"items\":" + www.downloadHandler.text + "}";
                 var list = JsonUtility.FromJson<NpcShopItemList>(json);
 
-                //  GỌI THEO ĐÚNG DẠNG IEnumerator
                 yield return StartCoroutine(ShopVKUIManager.Instance.ShowShop(list.items));
 
-                //  MỞ UI SAU KHI LOAD XONG
                 shopPanel.SetActive(true);
-              //  MovementExample.Instante.checktoggle = true;
-              //  SkillButtonManager.Instance.Skillbutton.SetActive(false);
                 WorldChatUIManager.Instance.Chat.SetActive(false);
                 QuestDisplay.Instance.questPanel.SetActive(false);
-            //    CanvasShop.Instante.HideAllCanvas();
             }
             else
             {

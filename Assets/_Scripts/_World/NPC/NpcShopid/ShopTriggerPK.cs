@@ -124,7 +124,9 @@ public class ShopTriggerPK : MonoBehaviour
     IEnumerator LoadShopPK()
     {
         int npcId = 1;
-        string url = $"https://localhost:7124/api/account/npc-shop/{npcId}";
+        string endpoint = $"account/npc-shop/{npcId}";
+        string url = ApiConfigManager.Instance.GetFullUrl(endpoint);  
+
         using (UnityWebRequest www = UnityWebRequest.Get(url))
         {
             yield return www.SendWebRequest();
@@ -134,16 +136,11 @@ public class ShopTriggerPK : MonoBehaviour
                 string json = "{\"items\":" + www.downloadHandler.text + "}";
                 var list = JsonUtility.FromJson<NpcShopItemList>(json);
 
-                // ✅ Đổi sang coroutine đúng cách
                 yield return StartCoroutine(ShopPKUIManager.Instance.ShowShop(list.items));
 
-                // ✅ Mở UI sau khi load xong
-              //  shopPanel.SetActive(true);
-           //     MovementExample.Instante.checktoggle = true;
-             //   SkillButtonManager.Instance.Skillbutton.SetActive(false);
+                shopPanel.SetActive(true);
                 WorldChatUIManager.Instance.Chat.SetActive(false);
                 QuestDisplay.Instance.questPanel.SetActive(false);
-               // CanvasShop.Instante.HideAllCanvas();
             }
             else
             {

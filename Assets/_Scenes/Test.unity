@@ -5241,7 +5241,7 @@ MonoBehaviour:
   typeText: {fileID: 1107591678}
   descriptionText: {fileID: 1867446033}
   levelText: {fileID: 1336470562}
-  priceText: {fileID: 0}
+  priceText: {fileID: 1184637914}
   notifyPanel: {fileID: 2051747359}
   notifyBg: {fileID: 503218269}
   notifyText: {fileID: 1765595291}

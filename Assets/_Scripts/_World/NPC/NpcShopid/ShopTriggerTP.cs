@@ -124,7 +124,8 @@ public class ShopTriggerTP : MonoBehaviour
     IEnumerator LoadShopTP()
     {
         int npcId = 2;
-        string url = $"https://localhost:7124/api/account/npc-shop/{npcId}";
+        string endpoint = $"account/npc-shop/{npcId}";
+        string url = ApiConfigManager.Instance.GetFullUrl(endpoint); 
 
         using (UnityWebRequest www = UnityWebRequest.Get(url))
         {
@@ -135,16 +136,11 @@ public class ShopTriggerTP : MonoBehaviour
                 string json = "{\"items\":" + www.downloadHandler.text + "}";
                 var list = JsonUtility.FromJson<NpcShopItemList>(json);
 
-                //  Gọi coroutine từ UI Manager
                 yield return StartCoroutine(ShopTPUIManager.Instance.ShowShop(list.items));
 
-                //  Mở UI sau khi dữ liệu sẵn sàng
                 shopPanel.SetActive(true);
-          //      MovementExample.Instante.checktoggle = true;
-              //  SkillButtonManager.Instance.Skillbutton.SetActive(false);
                 WorldChatUIManager.Instance.Chat.SetActive(false);
                 QuestDisplay.Instance.questPanel.SetActive(false);
-              //  CanvasShop.Instante.HideAllCanvas();
             }
             else
             {

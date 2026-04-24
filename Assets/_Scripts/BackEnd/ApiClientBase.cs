@@ -48,9 +48,15 @@ public class ApiClientBase : MonoBehaviour
         if (!string.IsNullOrEmpty(SessionManager.Token))
             request.SetRequestHeader("Authorization", "Bearer " + SessionManager.Token);
 
-        // Bypass certificate cho localhost (Editor only)
-        if (fullUrl.Contains("localhost"))
+        // ====================== CERTIFICATE HANDLER (CHỈ EDITOR) ======================
+#if UNITY_EDITOR
+        // Chỉ bypass certificate khi chạy trong Editor (localhost)
+        if (fullUrl.Contains("localhost") || fullUrl.Contains("127.0.0.1"))
+        {
             request.certificateHandler = new AcceptAllCertificates();
+            Debug.Log("[ApiClientBase] Bypass certificate cho localhost (Editor only)");
+        }
+#endif
 
         yield return request.SendWebRequest();
 

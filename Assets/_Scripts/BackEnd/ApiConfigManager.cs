@@ -6,27 +6,27 @@ public class ApiConfigManager : ScriptableObject
     public static ApiConfigManager Instance { get; private set; }
 
     [Header("=== API CONFIG ===")]
-    [Tooltip("Đổi thành domain thật khi deploy")]
-    public string BaseUrl = "http://localhost:5072";
+    [Tooltip("URL dùng trong Editor (localhost)")]
+    public string EditorBaseUrl = "http://localhost:5072";
+
+    [Tooltip("URL thật khi build ra production (đổi thành domain của bạn)")]
+    public string ProductionBaseUrl = "https://api.yourgame.com";   // ← SỬA LẠI THEO DOMAIN CỦA BẠN
 
     [Tooltip("Thường là 'api'")]
     public string ApiVersion = "api";
 
     [Header("Editor Only")]
-    public bool UseLocalhostInEditor = true;
+    public bool ForceUseLocalhostInEditor = true;
 
     private void OnEnable()
     {
         if (Instance == null)
         {
             Instance = this;
-            Debug.Log("[ApiConfigManager] Instance đã được load thành công từ Resources.");
+            Debug.Log("[ApiConfigManager] Instance đã load thành công.");
         }
     }
 
-    /// <summary>
-    /// Load instance từ Resources (đảm bảo hoạt động trong Build)
-    /// </summary>
     public static ApiConfigManager GetInstance()
     {
         if (Instance == null)
@@ -34,22 +34,25 @@ public class ApiConfigManager : ScriptableObject
             Instance = Resources.Load<ApiConfigManager>("ApiConfig/ApiConfigManager");
             if (Instance == null)
                 Debug.LogError("❌ Không tìm thấy ApiConfigManager.asset trong Resources/ApiConfig/");
-            else
-                Debug.Log("[ApiConfigManager] Load từ Resources thành công.");
         }
         return Instance;
     }
 
+    /// <summary>
+    /// Tự động trả về URL phù hợp (Editor hay Production)
+    /// </summary>
     public string GetFullUrl(string endpoint)
     {
-        if (Instance == null) GetInstance(); // tự động load nếu chưa có
+        if (Instance == null) GetInstance();
 
-        string url = BaseUrl.TrimEnd('/');
+        string baseUrl = Application.isEditor && ForceUseLocalhostInEditor
+            ? EditorBaseUrl.TrimEnd('/')
+            : ProductionBaseUrl.TrimEnd('/');
 
         if (!string.IsNullOrEmpty(ApiVersion))
-            url += $"/{ApiVersion.Trim('/')}";
+            baseUrl += $"/{ApiVersion.Trim('/')}";
 
         endpoint = endpoint.TrimStart('/');
-        return $"{url}/{endpoint}";
+        return $"{baseUrl}/{endpoint}";
     }
 }

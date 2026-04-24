@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b6b16f5b7853f164d8a7722387225f6b, type: 3}
   m_Name: ApiConfigManager
   m_EditorClassIdentifier: 
-  BaseUrl: http://localhost:5072
+  EditorBaseUrl: http://localhost:5072
+  ProductionBaseUrl: https://emergency-vivacious-unusable.ngrok-free.dev
   ApiVersion: api
-  UseLocalhostInEditor: 1
+  ForceUseLocalhostInEditor: 1

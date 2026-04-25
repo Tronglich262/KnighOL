@@ -7,16 +7,16 @@ public class ApiConfigManager : ScriptableObject
 
     [Header("=== API CONFIG ===")]
     [Tooltip("URL dùng trong Editor (localhost)")]
-    public string EditorBaseUrl = "http://localhost:5072";
+    public string EditorBaseUrl = "https://emergency-vivacious-unusable.ngrok-free.dev";
 
-    [Tooltip("URL thật khi build ra production (đổi thành domain của bạn)")]
-    public string ProductionBaseUrl = "https://api.yourgame.com";   // ← SỬA LẠI THEO DOMAIN CỦA BẠN
+    [Tooltip("URL PUBLIC NGROK hiện tại")]
+    public string ProductionBaseUrl = "https://emergency-vivacious-unusable.ngrok-free.dev";
 
     [Tooltip("Thường là 'api'")]
     public string ApiVersion = "api";
 
     [Header("Editor Only")]
-    public bool ForceUseLocalhostInEditor = true;
+    public bool ForceUseLocalhostInEditor = false;   // ← Quan trọng: false
 
     private void OnEnable()
     {

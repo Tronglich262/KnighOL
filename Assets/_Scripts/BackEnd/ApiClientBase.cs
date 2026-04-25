@@ -1,4 +1,4 @@
-// Scripts/BackEnd/ApiClientBase.cs
+// Assets/_Scripts/BackEnd/ApiClientBase.cs
 using Newtonsoft.Json;
 using System;
 using System.Collections;
@@ -10,6 +10,10 @@ public class ApiClientBase : MonoBehaviour
 {
     public static ApiClientBase Instance { get; private set; }
 
+    private static bool _isRefreshing = false;
+    private const int MAX_REFRESH_RETRY = 2;   // Giới hạn retry
+    private int refreshRetryCount = 0;
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -19,24 +23,23 @@ public class ApiClientBase : MonoBehaviour
         }
         Instance = this;
         DontDestroyOnLoad(gameObject);
+        Debug.Log("[ApiClientBase] Đã khởi tạo thành công!");
     }
 
-    // ====================== POST ======================
     public IEnumerator Post<T>(string endpoint, object data, Action<T> onSuccess, Action<string> onError)
     {
-        yield return SendRequest("POST", endpoint, data, onSuccess, onError);
+        yield return SendRequest("POST", endpoint, data, onSuccess, onError, endpoint.Contains("refresh"));
     }
 
-    // ====================== GET ======================
     public IEnumerator Get<T>(string endpoint, Action<T> onSuccess, Action<string> onError)
     {
         yield return SendRequest("GET", endpoint, null, onSuccess, onError);
     }
 
-    // ====================== CORE REQUEST ======================
-    private IEnumerator SendRequest<T>(string method, string endpoint, object data, Action<T> onSuccess, Action<string> onError)
+    private IEnumerator SendRequest<T>(string method, string endpoint, object data, Action<T> onSuccess, Action<string> onError, bool isRefreshRequest = false)
     {
         string fullUrl = ApiConfigManager.Instance.GetFullUrl(endpoint);
+        Debug.Log($"[ApiClientBase] 🚀 Gọi API: {method} {fullUrl}");
 
         UnityWebRequest request = method switch
         {
@@ -44,50 +47,76 @@ public class ApiClientBase : MonoBehaviour
             _ => CreatePostRequest(fullUrl, data)
         };
 
-        // Thêm Token tự động
-        if (!string.IsNullOrEmpty(SessionManager.Token))
-            request.SetRequestHeader("Authorization", "Bearer " + SessionManager.Token);
-
-        // ====================== CERTIFICATE HANDLER (CHỈ EDITOR) ======================
-#if UNITY_EDITOR
-        // Chỉ bypass certificate khi chạy trong Editor (localhost)
-        if (fullUrl.Contains("localhost") || fullUrl.Contains("127.0.0.1"))
+        // Thêm token nếu có
+        if (PlayerSessionService.Instance != null
+    && !string.IsNullOrEmpty(PlayerSessionService.Instance.Token)
+    && !isRefreshRequest)   // ← Quan trọng: bỏ qua khi refresh
         {
-            request.certificateHandler = new AcceptAllCertificates();
-            Debug.Log("[ApiClientBase] Bypass certificate cho localhost (Editor only)");
+            request.SetRequestHeader("Authorization", "Bearer " + PlayerSessionService.Instance.Token);
         }
-#endif
+
+        // Bypass certificate cho ngrok (cả Editor + Build)
+        if (fullUrl.Contains("localhost") || fullUrl.Contains("ngrok"))
+            request.certificateHandler = new AcceptAllCertificates();
 
         yield return request.SendWebRequest();
 
+        string rawResponse = request.downloadHandler?.text ?? "[NULL]";
+
         if (request.result == UnityWebRequest.Result.Success)
         {
+            Debug.Log($"[ApiClientBase] ✅ 200 OK - {endpoint} | Raw: {rawResponse}");
+
             try
             {
-                string json = request.downloadHandler.text;
-                T result = JsonConvert.DeserializeObject<T>(json);
+                T result = JsonConvert.DeserializeObject<T>(rawResponse);
                 onSuccess?.Invoke(result);
+                refreshRetryCount = 0; // Reset retry khi thành công
             }
             catch (Exception ex)
             {
-                onError?.Invoke("Lỗi parse JSON: " + ex.Message);
+                Debug.LogError($"[ApiClientBase] Parse JSON thất bại: {ex.Message}\nRaw: {rawResponse}");
+                onError?.Invoke("Lỗi parse JSON");
+            }
+        }
+        else if (request.responseCode == 401 && !isRefreshRequest)
+        {
+            Debug.LogWarning($"[ApiClientBase] 401 tại {endpoint} → Thử refresh token...");
+
+            if (_isRefreshing || refreshRetryCount >= MAX_REFRESH_RETRY)
+            {
+                Debug.LogError("[ApiClientBase] Refresh thất bại nhiều lần → Đăng xuất");
+                PlayerSessionService.Instance.ClearSession();
+                onError?.Invoke("Token hết hạn. Vui lòng đăng nhập lại.");
+                yield break;
+            }
+
+            refreshRetryCount++;
+            _isRefreshing = true;
+
+            bool refreshSuccess = false;
+            yield return PerformRefresh(() => refreshSuccess = true);
+
+            _isRefreshing = false;
+
+            if (refreshSuccess)
+            {
+                // Retry request gốc sau khi refresh thành công
+                if (method == "GET")
+                    yield return Get<T>(endpoint, onSuccess, onError);
+                else
+                    yield return Post<T>(endpoint, data, onSuccess, onError);
+            }
+            else
+            {
+                PlayerSessionService.Instance.ClearSession();
+                onError?.Invoke("Refresh token thất bại. Đăng nhập lại.");
             }
         }
         else
         {
-            // Xử lý 401 → tự động refresh token
-            if (request.responseCode == 401)
-            {
-                Debug.LogWarning("Token hết hạn → đang refresh...");
-                yield return RefreshTokenRoutine(onSuccess, onError, endpoint, method, data);
-                yield break;
-            }
-
-            string errorMsg = request.downloadHandler.text;
-            if (string.IsNullOrEmpty(errorMsg))
-                errorMsg = request.error;
-
-            onError?.Invoke(errorMsg);
+            Debug.LogError($"[ApiClientBase] ❌ Lỗi {request.responseCode} tại {endpoint}\nRaw: {rawResponse}");
+            onError?.Invoke(rawResponse);
         }
     }
 
@@ -103,35 +132,19 @@ public class ApiClientBase : MonoBehaviour
         return request;
     }
 
-    // ====================== TỰ ĐỘNG REFRESH TOKEN ======================
-    private IEnumerator RefreshTokenRoutine<T>(Action<T> onSuccess, Action<string> onError, string originalEndpoint, string originalMethod, object originalData)
+    private IEnumerator PerformRefresh(Action onSuccess)
     {
-        if (string.IsNullOrEmpty(SessionManager.RefreshToken))
-        {
-            onError?.Invoke("Refresh token không tồn tại. Vui lòng đăng nhập lại.");
-            yield break;
-        }
+        Debug.Log("[ApiClientBase] Đang refresh token...");
 
-        var refreshData = new { refreshToken = SessionManager.RefreshToken };
-        bool refreshSuccess = false;
-
-        yield return Post<LoginResponse>("Account/refresh", refreshData,
+        yield return AuthApiClient.RefreshToken(
             response =>
             {
-                refreshSuccess = true;
-                SessionManager.SetSession(response.accountId, response.accessToken, response.name, response.refreshToken);
-                // XÓA DÒNG NÀY: ApiService.Instance?.SetTokens(...);
-                // Không cần ApiService nữa
+                Debug.Log("[ApiClientBase] Refresh token THÀNH CÔNG!");
+                onSuccess?.Invoke();
             },
-            err => onError?.Invoke("Refresh token thất bại: " + err));
-
-        if (refreshSuccess)
-        {
-            // Gọi lại request ban đầu
-            if (originalMethod == "GET")
-                yield return Get<T>(originalEndpoint, onSuccess, onError);
-            else
-                yield return Post<T>(originalEndpoint, originalData, onSuccess, onError);
-        }
+            error =>
+            {
+                Debug.LogError("[ApiClientBase] Refresh token THẤT BẠI: " + error);
+            });
     }
 }

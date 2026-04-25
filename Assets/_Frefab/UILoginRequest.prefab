@@ -1295,7 +1295,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   loadingSlider: {fileID: 3359869055873990505}
-  loadingText: {fileID: 7054606102552738695}
+  loadingText: {fileID: 0}
   loadDuration: 5
   textScaleRange: {x: 1, y: 1.3}
   objectToActivateAfterLoad: {fileID: 3806082975509422623}

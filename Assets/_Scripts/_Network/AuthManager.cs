@@ -332,7 +332,14 @@ public class AuthManager : MonoBehaviour
     private void ApplySession(LoginResponse loginResponse)
     {
         SessionManager.SetSession(loginResponse.accountId, loginResponse.accessToken);
-        Debug.Log($"[LOGIN OK] accountId={SessionManager.AccountId}, token={SessionManager.Token}");
+        PlayerSessionService.Instance.SetSession(
+            loginResponse.accountId,
+            loginResponse.accessToken,
+            loginResponse.name,
+            loginResponse.refreshToken
+        );
+
+        Debug.Log($"[LOGIN OK] Synced to PlayerSessionService - AccountId: {loginResponse.accountId}");
     }
 
     private void RestartTokenChecker()
@@ -345,15 +352,41 @@ public class AuthManager : MonoBehaviour
 
     private IEnumerator TokenChecker()
     {
+        // Delay 8 giây sau login để refresh token ổn định
+        yield return new WaitForSeconds(8f);
+
         while (true)
         {
-            if (!gameObject.activeInHierarchy)
+            if (!gameObject.activeInHierarchy || !PlayerSessionService.Instance.HasValidSession())
                 yield break;
 
-            if (!HasValidSession())
-                yield break;
+            // Tăng khoảng cách check lên 60 giây (không cần check quá nhanh)
+            yield return new WaitForSeconds(60f);
 
-            yield return new WaitForSeconds(TokenCheckInterval);
+            Debug.Log("[TokenChecker] Bắt đầu refresh token...");
+
+            bool refreshSuccess = false;
+
+            yield return AuthApiClient.RefreshToken(
+                response =>
+                {
+                    refreshSuccess = true;
+                    Debug.Log("[TokenChecker] Refresh token THÀNH CÔNG");
+                },
+                error =>
+                {
+                    Debug.LogWarning("[TokenChecker] Refresh token thất bại: " + error);
+                    refreshSuccess = false;
+                });
+
+            if (!refreshSuccess)
+            {
+                Debug.LogWarning("[TokenChecker] Refresh thất bại → Logout");
+                ClearSession();
+                ForceBackToLogin();
+                yield break;
+            }
+
             yield return StartCoroutine(GetUserProfile());
         }
     }
@@ -769,7 +802,7 @@ public class AuthManager : MonoBehaviour
 
     private bool HasValidSession()
     {
-        return SessionManager.HasValidSession();
+        return PlayerSessionService.Instance.HasValidSession();  
     }
 
     private string NormalizeError(string raw, string fallback)
@@ -793,6 +826,7 @@ public class AuthManager : MonoBehaviour
     private void ClearSession()
     {
         SessionManager.Clear();
+        PlayerSessionService.Instance.ClearSession();   
 
         isSavingCharacter = false;
         pendingCharacterJson = null;

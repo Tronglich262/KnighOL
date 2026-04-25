@@ -5,11 +5,8 @@ public class ItemStatDatabase : MonoBehaviour
 {
     public static ItemStatDatabase Instance { get; private set; }
 
-    // Cache nhanh
-    private Dictionary<string, ItemStats> _statsByStringId = new Dictionary<string, ItemStats>();
-    private Dictionary<int, ItemStats> _statsByIntId = new Dictionary<int, ItemStats>();
-
-    private bool _isInitialized = false;
+    private Dictionary<string, ItemStats> _statsByStringId = new();
+    private Dictionary<int, ItemStats> _statsByIntId = new();
 
     private void Awake()
     {
@@ -26,8 +23,6 @@ public class ItemStatDatabase : MonoBehaviour
 
     private void InitializeDatabase()
     {
-        if (_isInitialized) return;
-
         ItemStats[] allStats = Resources.LoadAll<ItemStats>("ItemStats");
 
         foreach (var stat in allStats)
@@ -40,54 +35,24 @@ public class ItemStatDatabase : MonoBehaviour
             _statsByIntId[stat.Item_ID] = stat;
         }
 
-        _isInitialized = true;
-        Debug.Log($"[ItemStatDatabase] Đã load {allStats.Length} item stats vào cache.");
+        Debug.Log($"[ItemStatDatabase] Đã load {allStats.Length} item stats thành công.");
     }
 
-    // ====================== CÁC METHOD CŨ (để tương thích) ======================
+    // ==================== METHOD CŨ (GIỮ TƯƠNG THÍCH) ====================
+    public ItemStats GetStatsByStringId(string stringId) => _statsByStringId.GetValueOrDefault(stringId);
+    public ItemStats GetStatsByIntId(int intId) => _statsByIntId.GetValueOrDefault(intId);
 
-    public ItemStats GetStats(string stringId)
-    {
-        if (string.IsNullOrEmpty(stringId)) return null;
-        _statsByStringId.TryGetValue(stringId, out var stats);
-        return stats;
-    }
+    // ==================== METHOD MỚI (ĐÃ TỐI ƯU) ====================
+    public ItemStats GetStats(string stringId) => GetStatsByStringId(stringId);
+    public ItemStats GetStatsdtb(int itemId) => GetStatsByIntId(itemId);
 
-    public ItemStats GetStatsdtb(int itemId)
-    {
-        if (itemId <= 0) return null;
-        _statsByIntId.TryGetValue(itemId, out var stats);
-        return stats;
-    }
-
-    /// <summary>
-    /// Method cũ trong InventoryManager.cs
-    /// </summary>
     public string GetStringIdFromInt(int intId)
     {
-        if (_statsByIntId.TryGetValue(intId, out var stats) && stats != null && !string.IsNullOrEmpty(stats.itemId))
+        if (_statsByIntId.TryGetValue(intId, out var stats) && !string.IsNullOrEmpty(stats.itemId))
             return stats.itemId;
-
         return null;
     }
 
-    /// <summary>
-    /// Method cũ trong EquipmentStatManager.cs
-    /// </summary>
-    public ItemStats GetStatsByIntId(int id)
-    {
-        return GetStatsdtb(id);
-    }
-
-    /// <summary>
-    /// Method cũ trong EquipmentStatManager.cs
-    /// </summary>
-    public ItemStats GetStatsByStringId(string id)
-    {
-        return GetStats(id);
-    }
-
-    // ====================== DEBUG ======================
     public void LogCacheStatus()
     {
         Debug.Log($"[ItemStatDatabase] Cache: {_statsByStringId.Count} string IDs | {_statsByIntId.Count} int IDs");

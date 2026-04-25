@@ -29,6 +29,17 @@ SELECT * FROM TradeItems;
 SELECT * FROM NPC;
 SELECT * FROM NpcShopItem;
 
+-- 1. Tắt Safe Update Mode tạm thời
+SET SQL_SAFE_UPDATES = 0;
+
+-- 2. Xóa hết RefreshTokens
+DELETE FROM RefreshTokens;
+
+-- 3. Bật lại Safe Update Mode
+SET SQL_SAFE_UPDATES = 1;
+
+-- Kiểm tra đã xóa chưa
+SELECT * FROM RefreshTokens;
 -- ====================== Account ======================
 CREATE TABLE Account (
     Account_ID     INT AUTO_INCREMENT PRIMARY KEY,

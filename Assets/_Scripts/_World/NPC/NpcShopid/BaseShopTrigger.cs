@@ -64,7 +64,14 @@ public abstract class BaseShopTrigger : MonoBehaviour
     private IEnumerator OpenShop()
     {
         string endpoint = $"account/npc-shop/{NpcId}";
-        string url = ApiConfigManager.Instance.GetFullUrl(endpoint);
+        var apiConfig = ApiConfigManager.GetInstance();
+        if (apiConfig == null)
+        {
+            Debug.LogError("ApiConfigManager chua khoi tao.");
+            yield break;
+        }
+
+        string url = apiConfig.GetFullUrl(endpoint);
 
         using (UnityWebRequest www = UnityWebRequest.Get(url))
         {

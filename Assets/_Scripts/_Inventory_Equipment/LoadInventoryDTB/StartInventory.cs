@@ -12,14 +12,14 @@ public class StartInventory : MonoBehaviour
 
     private IEnumerator Start()
     {
-        // Chờ InventoryManager và SessionManager sẵn sàng
+        // Chá» InventoryManager vÃ  SessionManager sáºµn sÃ ng
         yield return new WaitUntil(() => InventoryManager.Instance != null);
         yield return new WaitUntil(() => SessionManager.HasValidSession());
 
-        Debug.Log($"[StartInventory] Đang load inventory cho accountId: {SessionManager.AccountId}");
+        Debug.Log($"[StartInventory] Dang load inventory cho accountId: {SessionManager.AccountId}");
 
-        // Load PlayerState trước
-        yield return StartCoroutine(AuthManager.Instance.GetPlayerState((state) =>
+        // Load PlayerState trÆ°á»›c
+        yield return StartCoroutine(AuthManager.GetOrCreate().GetPlayerState((state) =>
         {
             if (state != null)
             {
@@ -28,15 +28,15 @@ public class StartInventory : MonoBehaviour
             }
             else
             {
-                Debug.LogError("[StartInventory] Không load được PlayerState!");
+                Debug.LogError("[StartInventory] Khong load duoc PlayerState!");
             }
         }));
 
-        // Chờ local player spawn
+        // Chá» local player spawn
         yield return new WaitUntil(() => PlayerSpawner.LocalPlayerObject != null);
 
-        // Load PlayerStats rồi gán vào local player
-        yield return StartCoroutine(AuthManager.Instance.GetPlayerStats(stats =>
+        // Load PlayerStats rá»“i gÃ¡n vÃ o local player
+        yield return StartCoroutine(AuthManager.GetOrCreate().GetPlayerStats(stats =>
         {
             if (stats != null)
             {
@@ -50,25 +50,25 @@ public class StartInventory : MonoBehaviour
                     if (cs != null)
                     {
                         cs.InitFromPlayerStats(stats);
-                        Debug.Log("[StartInventory] Gán PlayerStats vào CharacterStats thành công.");
+                        Debug.Log("[StartInventory] Gan PlayerStats vao CharacterStats thanh cong.");
                     }
                     else
                     {
-                        Debug.LogError("[StartInventory] Player không có component CharacterStats!");
+                        Debug.LogError("[StartInventory] Player khong co component CharacterStats!");
                     }
                 }
                 else
                 {
-                    Debug.LogError("[StartInventory] LocalPlayerObject chưa có.");
+                    Debug.LogError("[StartInventory] LocalPlayerObject chua co.");
                 }
             }
             else
             {
-                Debug.LogError("[StartInventory] Không lấy được PlayerStats từ server!");
+                Debug.LogError("[StartInventory] Khong lay duoc PlayerStats tu server!");
             }
         }));
 
-        // Load inventory sau khi state/stats đã sẵn sàng
+        // Load inventory sau khi state/stats Ä‘Ã£ sáºµn sÃ ng
         InventoryManager.Instance.LoadInventory(null);
         Debug.Log($"[StartInventory] Load inventory xong cho accountId: {SessionManager.AccountId}");
     }

@@ -9,9 +9,9 @@ public static class AuthApiClient
     // ====================== REGISTER ======================
     public static IEnumerator Register(RegisterDto dto, Action onSuccess, Action<string> onError)
     {
-        yield return ApiClientBase.Instance.Post<LoginResponse>("Account/register", dto,
-            response => { Debug.Log("Đăng ký thành công!"); onSuccess?.Invoke(); },
-            error => { Debug.LogError("Đăng ký thất bại: " + error); onError?.Invoke(error); });
+        yield return ApiClientBase.GetOrCreate().Post<LoginResponse>("Account/register", dto,
+            response => { Debug.Log("Register success."); onSuccess?.Invoke(); },
+            error => { Debug.LogError("Register failed: " + error); onError?.Invoke(error); });
     }
 
     // ====================== LOGIN ======================
@@ -19,39 +19,39 @@ public static class AuthApiClient
     {
         Debug.Log("=== AuthApiClient.Login CALLED ===");
 
-        if (ApiClientBase.Instance == null)
+        if (ApiClientBase.GetOrCreate() == null)
         {
-            Debug.LogError("❌ ApiClientBase.Instance = NULL !");
-            onError?.Invoke("ApiClientBase chưa khởi tạo");
+            Debug.LogError("ApiClientBase.GetOrCreate returned null.");
+            onError?.Invoke("ApiClientBase is not initialized");
             yield break;
         }
 
-        yield return ApiClientBase.Instance.Post<LoginResponse>("Account/login", dto,
+        yield return ApiClientBase.GetOrCreate().Post<LoginResponse>("Account/login", dto,
             response =>
             {
-                Debug.Log("→ Post Login thành công, nhận response");
+                Debug.Log("Login request succeeded.");
 
                 if (response != null && !string.IsNullOrEmpty(response.accessToken))
                 {
-                    PlayerSessionService.Instance.SetSession(
+                    PlayerSessionService.GetOrCreate().SetSession(
                         response.accountId,
                         response.accessToken,
                         response.name,
                         response.refreshToken
                     );
 
-                    Debug.Log($"[AuthApiClient] ✅ Đăng nhập thành công | AccountId: {response.accountId} | RefreshToken: {(string.IsNullOrEmpty(response.refreshToken) ? "NULL" : "CÓ")}");
+                    Debug.Log($"[AuthApiClient] Login success | AccountId: {response.accountId} | RefreshToken: {(string.IsNullOrEmpty(response.refreshToken) ? "NULL" : "YES")}");
                     onSuccess?.Invoke(response);
                 }
                 else
                 {
-                    Debug.LogWarning("Response không có accessToken");
-                    onError?.Invoke("Response không hợp lệ");
+                    Debug.LogWarning("Login response has no accessToken.");
+                    onError?.Invoke("Invalid login response");
                 }
             },
             error =>
             {
-                Debug.LogError("Đăng nhập thất bại: " + error);
+                Debug.LogError("Login failed: " + error);
                 onError?.Invoke(error);
             });
     }
@@ -61,51 +61,52 @@ public static class AuthApiClient
     {
         Debug.Log("=== AuthApiClient.RefreshToken CALLED ===");
 
-        if (ApiClientBase.Instance == null)
+        if (ApiClientBase.GetOrCreate() == null)
         {
             onError?.Invoke("ApiClientBase chưa khởi tạo");
             yield break;
         }
 
-        string refreshToken = PlayerSessionService.Instance.RefreshToken;
+        var session = PlayerSessionService.GetOrCreate();
+        string refreshToken = session.RefreshToken;
 
-        Debug.Log($"[RefreshToken] RefreshToken từ PlayerSessionService: {(string.IsNullOrEmpty(refreshToken) ? "NULL" : "CÓ - Length = " + refreshToken.Length)}");
+        Debug.Log($"[RefreshToken] Current refresh token: {(string.IsNullOrEmpty(refreshToken) ? "NULL" : "YES - Length = " + refreshToken.Length)}");
 
         if (string.IsNullOrEmpty(refreshToken))
         {
-            Debug.LogWarning("[RefreshToken] ❌ Không có RefreshToken");
-            onError?.Invoke("Không có refresh token");
+            Debug.LogWarning("[RefreshToken] Missing refresh token.");
+            onError?.Invoke("Missing refresh token");
             yield break;
         }
 
         RefreshTokenDto dto = new RefreshTokenDto { RefreshToken = refreshToken };
 
-        Debug.Log($"[RefreshToken] Đang gửi POST /Account/refresh với RefreshToken length = {refreshToken.Length}");
+        Debug.Log($"[RefreshToken] Sending POST /Account/refresh with token length = {refreshToken.Length}");
 
-        yield return ApiClientBase.Instance.Post<LoginResponse>("Account/refresh", dto,
+        yield return ApiClientBase.GetOrCreate().Post<LoginResponse>("Account/refresh", dto,
             response =>
             {
                 if (response != null && !string.IsNullOrEmpty(response.accessToken))
                 {
-                    PlayerSessionService.Instance.SetSession(
+                    session.SetSession(
                         response.accountId,
                         response.accessToken,
                         response.name,
                         response.refreshToken
                     );
 
-                    Debug.Log("[RefreshToken] ✅ THÀNH CÔNG - Token mới đã được lưu");
+                    Debug.Log("[RefreshToken] Success. New token saved.");
                     onSuccess?.Invoke(response);
                 }
                 else
                 {
-                    Debug.LogWarning("[RefreshToken] Response không hợp lệ");
-                    onError?.Invoke("Refresh token thất bại - response không hợp lệ");
+                    Debug.LogWarning("[RefreshToken] Invalid response.");
+                    onError?.Invoke("Refresh token failed: invalid response");
                 }
             },
             error =>
             {
-                Debug.LogError("[RefreshToken] ❌ Lỗi từ server: " + error);
+                Debug.LogError("[RefreshToken] Server error: " + error);
                 onError?.Invoke(error);
             });
     }

@@ -1,4 +1,4 @@
-﻿
+
 //new gỡ trang bị swap
 using Newtonsoft.Json;
 using System.Collections;
@@ -43,7 +43,7 @@ public class ItemDetailsPanel : MonoBehaviour
         currentType = type;
 
 
-        var stats = ItemStatDatabase.Instance.GetStats(id);
+        var stats = ItemStatDatabase.GetOrCreate().GetStats(id);
         string name = id.Split('.').Length > 0 ? id.Split('.').Last() : id;
         string displayType = type ?? "Không rõ loại";
 
@@ -62,7 +62,7 @@ public class ItemDetailsPanel : MonoBehaviour
 
     private string GetStatsFromId(string id)
     {
-        var stats = ItemStatDatabase.Instance.GetStats(id);
+        var stats = ItemStatDatabase.GetOrCreate().GetStats(id);
         if (stats == null)
             return "Không có thông tin.";
 

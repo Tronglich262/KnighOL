@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
@@ -50,8 +50,8 @@ public class EquipmentSlotUI : MonoBehaviour, IPointerClickHandler
             // Gọi panel chi tiết mới
             if (npcShopItemData != null && ShopItemDetailPanel.Instance != null)
             {
-                ItemStats stats = ItemStatDatabase.Instance.GetStats(itemId)
-                               ?? ItemStatDatabase.Instance.GetStatsdtb(int.Parse(itemId));
+                ItemStats stats = ItemStatDatabase.GetOrCreate().GetStats(itemId)
+                               ?? ItemStatDatabase.GetOrCreate().GetStatsdtb(int.Parse(itemId));
 
                 if (stats != null)
                 {

@@ -1,4 +1,4 @@
-﻿using Assets.HeroEditor.FantasyInventory.Scripts.Interface.Elements;
+using Assets.HeroEditor.FantasyInventory.Scripts.Interface.Elements;
 using System.Collections;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -28,7 +28,7 @@ public class AuthManager : MonoBehaviour
     public TMP_Text loginMessageText;
     public TMP_Text registerMessageText;
 
-    [Header("Toggle mật khẩu")]
+    [Header("Toggle m?t kh?u")]
     public Button loginPasswordToggleBtn;
     public Image loginPasswordEyeIcon;
     public Sprite eyeOpen;
@@ -46,7 +46,7 @@ public class AuthManager : MonoBehaviour
     private bool isSavingCharacter = false;
     private string pendingCharacterJson = null;
 
-    private const float TokenCheckInterval = 60f; // Silent refresh mỗi 60 giây
+    private const float TokenCheckInterval = 60f; // Silent refresh every 60 seconds
 
     private void Awake()
     {
@@ -57,6 +57,15 @@ public class AuthManager : MonoBehaviour
         }
         Instance = this;
         DontDestroyOnLoad(gameObject);
+    }
+
+    public static AuthManager GetOrCreate()
+    {
+        if (Instance != null)
+            return Instance;
+
+        var go = new GameObject("AuthManager");
+        return go.AddComponent<AuthManager>();
     }
 
     private void Start()
@@ -126,13 +135,13 @@ public class AuthManager : MonoBehaviour
         yield return StartCoroutine(AuthApiClient.Register(
             registerDto,
             () => { success = true; done = true; },
-            error => { errorMsg = NormalizeError(error, "Đăng ký thất bại!"); done = true; }));
+            error => { errorMsg = NormalizeError(error, "Ðang ký th?t b?i!"); done = true; }));
 
         yield return new WaitUntil(() => done);
 
         if (success)
         {
-            ShowRegisterMessage("Đăng ký thành công!\nVui lòng đăng nhập.");
+            ShowRegisterMessage("Ðang ký thành công!\nVui lòng dang nh?p.");
             yield return new WaitForSeconds(1f);
             if (registerPanel != null) registerPanel.SetActive(false);
             if (loginPanel != null) loginPanel.SetActive(true);
@@ -168,19 +177,19 @@ public class AuthManager : MonoBehaviour
         yield return StartCoroutine(AuthApiClient.Login(
             loginDto,
             response => loginResponse = response,
-            error => errorMsg = NormalizeError(error, "Đăng nhập thất bại!")));
+            error => errorMsg = NormalizeError(error, "Ðang nh?p th?t b?i!")));
 
         if (loginResponse != null && loginResponse.accountId > 0 && !string.IsNullOrEmpty(loginResponse.accessToken))
         {
             ApplySession(loginResponse);
-            ShowLoginMessage("Đăng nhập thành công!");
+            ShowLoginMessage("Ðang nh?p thành công!");
             yield return new WaitForSeconds(0.5f);
             SceneManager.LoadScene("MenuGame");
             RestartTokenChecker();
         }
         else
         {
-            ShowLoginMessage(string.IsNullOrEmpty(errorMsg) ? "Đăng nhập thất bại!" : errorMsg);
+            ShowLoginMessage(string.IsNullOrEmpty(errorMsg) ? "Ðang nh?p th?t b?i!" : errorMsg);
         }
 
         isLoggingIn = false;
@@ -188,14 +197,11 @@ public class AuthManager : MonoBehaviour
 
     private void ApplySession(LoginResponse loginResponse)
     {
-        PlayerSessionService.Instance.SetSession(
+        PlayerSessionService.GetOrCreate().SetSession(
             loginResponse.accountId,
             loginResponse.accessToken,
             loginResponse.name,
             loginResponse.refreshToken);
-
-        SessionManager.SetSession(loginResponse.accountId, loginResponse.accessToken,
-            loginResponse.name, loginResponse.refreshToken);
     }
 
     private void RestartTokenChecker()
@@ -211,21 +217,21 @@ public class AuthManager : MonoBehaviour
 
         while (true)
         {
-            if (!PlayerSessionService.Instance.HasValidSession())
+            if (!PlayerSessionService.GetOrCreate().HasValidSession())
                 yield break;
 
             yield return new WaitForSeconds(TokenCheckInterval);
 
-            Debug.Log("[TokenChecker] Bắt đầu refresh token...");
+            Debug.Log("[TokenChecker] Starting refresh token...");
 
             bool refreshSuccess = false;
             yield return AuthApiClient.RefreshToken(
-                _ => { refreshSuccess = true; Debug.Log("[TokenChecker] Refresh token THÀNH CÔNG"); },
-                error => Debug.LogWarning("[TokenChecker] Refresh thất bại: " + error));
+                _ => { refreshSuccess = true; Debug.Log("[TokenChecker] Refresh token success"); },
+                error => Debug.LogWarning("[TokenChecker] Refresh failed: " + error));
 
             if (!refreshSuccess)
             {
-                Debug.LogWarning("[TokenChecker] Refresh thất bại → Logout");
+                Debug.LogWarning("[TokenChecker] Refresh failed -> Logout");
                 ClearSession();
                 ForceBackToLogin();
                 yield break;
@@ -236,17 +242,17 @@ public class AuthManager : MonoBehaviour
     // ========================= GET PROFILE =========================
     public IEnumerator GetUserProfile()
     {
-        if (!PlayerSessionService.Instance.HasValidSession())
+        if (!PlayerSessionService.GetOrCreate().HasValidSession())
             yield break;
 
-        yield return ApiClientBase.Instance.Get<object>("Account/profile",
-            response => Debug.Log("[PROFILE] Thành công! Dữ liệu user: " + JsonUtility.ToJson(response)),
+        yield return ApiClientBase.GetOrCreate().Get<object>("Account/profile",
+            response => Debug.Log("[PROFILE] Success. User data: " + JsonUtility.ToJson(response)),
             error =>
             {
-                Debug.LogError("Lỗi lấy dữ liệu user: " + error);
+                Debug.LogError("Failed to get user data: " + error);
                 if (error.Contains("401"))
                 {
-                    Debug.LogWarning("Token không hợp lệ hoặc đã đăng nhập ở nơi khác.");
+                    Debug.LogWarning("Token khong hop le hoac da dang nhap o noi khac.");
                     ClearSession();
                     ForceBackToLogin();
                 }
@@ -256,7 +262,7 @@ public class AuthManager : MonoBehaviour
     // ========================= SAVE CHARACTER =========================
     public IEnumerator SaveCharacterToServer(string characterJson)
     {
-        if (string.IsNullOrEmpty(characterJson) || !PlayerSessionService.Instance.HasValidSession())
+        if (string.IsNullOrEmpty(characterJson) || !PlayerSessionService.GetOrCreate().HasValidSession())
             yield break;
 
         if (isSavingCharacter)
@@ -285,55 +291,55 @@ public class AuthManager : MonoBehaviour
             CharacterJson = characterJson
         };
 
-        yield return ApiClientBase.Instance.Post<object>("Account/save-character", dto,
-            _ => Debug.Log("Lưu nhân vật lên server thành công."),
-            error => Debug.LogError("Lỗi khi lưu nhân vật: " + error));
+        yield return ApiClientBase.GetOrCreate().Post<object>("Account/save-character", dto,
+            _ => Debug.Log("Luu nhan vat len server thanh cong."),
+            error => Debug.LogError("Loi khi luu nhan vat: " + error));
     }
 
     // ========================= PLAYER STATE =========================
     public IEnumerator GetPlayerState(System.Action<PlayerState> onDone)
     {
-        if (!PlayerSessionService.Instance.HasValidSession())
+        if (!PlayerSessionService.GetOrCreate().HasValidSession())
         {
             onDone?.Invoke(null);
             yield break;
         }
 
-        yield return ApiClientBase.Instance.Get<PlayerState>($"Account/playerstate/{SessionManager.AccountId}",
+        yield return ApiClientBase.GetOrCreate().Get<PlayerState>($"Account/playerstate/{SessionManager.AccountId}",
             state => onDone?.Invoke(state),
-            error => { Debug.LogError("Lỗi GetPlayerState: " + error); onDone?.Invoke(null); });
+            error => { Debug.LogError("GetPlayerState failed: " + error); onDone?.Invoke(null); });
     }
 
     public IEnumerator UpdatePlayerState(UpdatePlayerStateDto dto, System.Action<bool> onDone)
     {
-        if (!PlayerSessionService.Instance.HasValidSession())
+        if (!PlayerSessionService.GetOrCreate().HasValidSession())
         {
             onDone?.Invoke(false);
             yield break;
         }
 
-        yield return ApiClientBase.Instance.Post<object>("Account/playerstate/update", dto,
+        yield return ApiClientBase.GetOrCreate().Post<object>("Account/playerstate/update", dto,
             _ => onDone?.Invoke(true),
-            error => { Debug.LogError("Update PlayerState thất bại: " + error); onDone?.Invoke(false); });
+            error => { Debug.LogError("UpdatePlayerState failed: " + error); onDone?.Invoke(false); });
     }
 
     // ========================= STATS =========================
     public IEnumerator GetPlayerStats(System.Action<PlayerStats> onDone)
     {
-        if (!PlayerSessionService.Instance.HasValidSession())
+        if (!PlayerSessionService.GetOrCreate().HasValidSession())
         {
             onDone?.Invoke(null);
             yield break;
         }
 
-        yield return ApiClientBase.Instance.Get<PlayerStats>($"Account/stats/{SessionManager.AccountId}",
+        yield return ApiClientBase.GetOrCreate().Get<PlayerStats>($"Account/stats/{SessionManager.AccountId}",
             stats => onDone?.Invoke(stats),
-            error => { Debug.LogError("Lỗi GetPlayerStats: " + error); onDone?.Invoke(null); });
+            error => { Debug.LogError("GetPlayerStats failed: " + error); onDone?.Invoke(null); });
     }
 
     public IEnumerator AllocateStats(int addHp, int addStrength, int addSpeed, int addAgility, int addSpirit, int addDefense, System.Action<bool> onDone)
     {
-        if (!PlayerSessionService.Instance.HasValidSession())
+        if (!PlayerSessionService.GetOrCreate().HasValidSession())
         {
             onDone?.Invoke(false);
             yield break;
@@ -349,28 +355,28 @@ public class AuthManager : MonoBehaviour
             Defense = addDefense
         };
 
-        yield return ApiClientBase.Instance.Post<object>("Account/stats/allocate", dto,
+        yield return ApiClientBase.GetOrCreate().Post<object>("Account/stats/allocate", dto,
             _ => onDone?.Invoke(true),
-            error => { Debug.LogError("Lỗi AllocateStats: " + error); onDone?.Invoke(false); });
+            error => { Debug.LogError("AllocateStats failed: " + error); onDone?.Invoke(false); });
     }
 
     // ========================= QUEST =========================
     public IEnumerator GetUserQuests(System.Action<QuestResponse[]> onDone)
     {
-        if (!PlayerSessionService.Instance.HasValidSession())
+        if (!PlayerSessionService.GetOrCreate().HasValidSession())
         {
             onDone?.Invoke(null);
             yield break;
         }
 
-        yield return ApiClientBase.Instance.Get<QuestResponse[]>("Account/quests",
+        yield return ApiClientBase.GetOrCreate().Get<QuestResponse[]>("Account/quests",
             onDone,
-            error => { Debug.LogError("Lỗi GetUserQuests: " + error); onDone?.Invoke(null); });
+            error => { Debug.LogError("GetUserQuests failed: " + error); onDone?.Invoke(null); });
     }
 
     public void UpdateQuestProgress(string targetType, int targetId, int amount)
     {
-        if (!PlayerSessionService.Instance.HasValidSession()) return;
+        if (!PlayerSessionService.GetOrCreate().HasValidSession()) return;
         StartCoroutine(UpdateQuestProgressCoroutine(targetType, targetId, amount));
     }
 
@@ -383,7 +389,7 @@ public class AuthManager : MonoBehaviour
             amount = amount
         };
 
-        yield return ApiClientBase.Instance.Post<object>("Account/quests/progress", dto,
+        yield return ApiClientBase.GetOrCreate().Post<object>("Account/quests/progress", dto,
             _ =>
             {
                 QuestDisplay questDisplay = FindAnyObjectByType<QuestDisplay>();
@@ -395,8 +401,7 @@ public class AuthManager : MonoBehaviour
     // ========================= CLEAR SESSION =========================
     private void ClearSession()
     {
-        SessionManager.Clear();
-        PlayerSessionService.Instance.ClearSession();
+        PlayerSessionService.GetOrCreate().ClearSession();
         isSavingCharacter = false;
         pendingCharacterJson = null;
 

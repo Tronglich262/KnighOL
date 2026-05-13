@@ -23,7 +23,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/_Scenes/Test.unity
     guid: 268c21fa1e8a84a47bee0594d2e51e7a
-  - enabled: 1
+  - enabled: 0
     path: Assets/_AssetUI/Foder Asset/HeroEditor/QUICK START.unity
     guid: cb276a8ee57340c9a153edf75bd96b62
   - enabled: 0

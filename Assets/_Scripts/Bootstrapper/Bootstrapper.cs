@@ -28,6 +28,11 @@ public class Bootstrapper : MonoBehaviour
             Instantiate(itemStatDatabasePrefab);
             Debug.Log("[Bootstrapper] → ItemStatDatabase đã tạo");
         }
+        else if (ItemStatDatabase.Instance == null)
+        {
+            ItemStatDatabase.GetOrCreate();
+            Debug.Log("[Bootstrapper] → ItemStatDatabase tạo fallback");
+        }
 
         // 2. PlayerSessionService
         if (PlayerSessionService.Instance == null && playerSessionServicePrefab != null)
@@ -45,7 +50,10 @@ public class Bootstrapper : MonoBehaviour
         // 3. ApiConfigManager
         ApiConfigManager.GetInstance();
 
-        Debug.Log("[Bootstrapper] ✅ TẤT CẢ CORE SERVICES ĐÃ KHỞI TẠO THÀNH CÔNG!");
+        // 4. ApiClientBase
+        ApiClientBase.GetOrCreate();
+
+        Debug.Log("[Bootstrapper] All core services initialized successfully!");
 
         // ==================== TỰ ĐỘNG LOAD SCENE LOGIN ====================
         Invoke("LoadLoginScene", 0.3f); // delay nhẹ để log hiện rõ

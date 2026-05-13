@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using UnityEngine;
 using Newtonsoft.Json;
 
@@ -95,12 +95,13 @@ public class EquipmentStatManager : MonoBehaviour
 
     private ItemStats FindItemStats(string itemId)
     {
-        if (ItemStatDatabase.Instance == null || string.IsNullOrWhiteSpace(itemId))
+        if (string.IsNullOrWhiteSpace(itemId))
             return null;
 
+        var itemDatabase = ItemStatDatabase.GetOrCreate();
         if (int.TryParse(itemId, out int intId))
-            return ItemStatDatabase.Instance.GetStatsByIntId(intId);
+            return itemDatabase.GetStatsByIntId(intId);
 
-        return ItemStatDatabase.Instance.GetStatsByStringId(itemId);
+        return itemDatabase.GetStatsByStringId(itemId);
     }
 }

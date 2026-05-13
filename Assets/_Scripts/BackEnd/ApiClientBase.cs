@@ -37,6 +37,15 @@ public class ApiClientBase : MonoBehaviour
         Debug.Log("[ApiClientBase] Đã khởi tạo thành công!");
     }
 
+    public static ApiClientBase GetOrCreate()
+    {
+        if (Instance != null)
+            return Instance;
+
+        var go = new GameObject("ApiClientBase");
+        return go.AddComponent<ApiClientBase>();
+    }
+
     public IEnumerator Post<T>(string endpoint, object data, Action<T> onSuccess, Action<string> onError)
     {
         yield return SendRequest("POST", endpoint, data, onSuccess, onError);
@@ -49,10 +58,17 @@ public class ApiClientBase : MonoBehaviour
 
     private IEnumerator SendRequest<T>(string method, string endpoint, object data, Action<T> onSuccess, Action<string> onError)
     {
-        string fullUrl = ApiConfigManager.Instance.GetFullUrl(endpoint);
+        var apiConfig = ApiConfigManager.GetInstance();
+        if (apiConfig == null)
+        {
+            onError?.Invoke("ApiConfigManager chua khoi tao");
+            yield break;
+        }
+
+        string fullUrl = apiConfig.GetFullUrl(endpoint);
         Debug.Log($"[ApiClientBase] 🚀 Gọi API: {method} {fullUrl}");
 
-        if (_isRefreshing)
+        if (_isRefreshing && !IsRefreshEndpoint(endpoint))
         {
             Debug.Log("[ApiClientBase] Đang refresh → Đẩy request vào queue");
             var pending = new PendingRequest
@@ -110,6 +126,12 @@ public class ApiClientBase : MonoBehaviour
         }
     }
 
+    private bool IsRefreshEndpoint(string endpoint)
+    {
+        return !string.IsNullOrEmpty(endpoint) &&
+               endpoint.ToLowerInvariant().Contains("refresh");
+    }
+
     private void HandleSuccess<T>(UnityWebRequest request, Action<T> onSuccess, Action<string> onError)
     {
         try
@@ -129,7 +151,8 @@ public class ApiClientBase : MonoBehaviour
     {
         if (_isRefreshing || refreshRetryCount >= MAX_REFRESH_RETRY)
         {
-            PlayerSessionService.Instance.ClearSession();
+            PlayerSessionService.GetOrCreate().ClearSession();
+            FailPendingRequests("Token het han. Vui long dang nhap lai.");
             onError?.Invoke("Token hết hạn. Vui lòng đăng nhập lại.");
             yield break;
         }
@@ -153,18 +176,69 @@ public class ApiClientBase : MonoBehaviour
             else
                 yield return Post<T>(endpoint, data, onSuccess, onError);
 
-            // Xử lý các request đang chờ
-            while (_pendingRequests.Count > 0)
-            {
-                var pending = _pendingRequests.Dequeue();
-                // Gọi lại request đang chờ (bạn có thể mở rộng thêm)
-                Debug.Log($"[ApiClientBase] Retry pending request: {pending.Endpoint}");
-            }
+            yield return ProcessPendingRequests();
+
         }
         else
         {
-            PlayerSessionService.Instance.ClearSession();
+            PlayerSessionService.GetOrCreate().ClearSession();
+            FailPendingRequests("Refresh token that bai.");
             onError?.Invoke("Refresh token thất bại.");
+        }
+    }
+
+    private void FailPendingRequests(string error)
+    {
+        while (_pendingRequests.Count > 0)
+        {
+            var pending = _pendingRequests.Dequeue();
+            pending.OnError?.Invoke(error);
+        }
+    }
+
+    private IEnumerator ProcessPendingRequests()
+    {
+        while (_pendingRequests.Count > 0)
+        {
+            var pending = _pendingRequests.Dequeue();
+            Debug.Log($"[ApiClientBase] Retry pending request: {pending.Endpoint}");
+
+            var apiConfig = ApiConfigManager.GetInstance();
+            if (apiConfig == null)
+            {
+                pending.OnError?.Invoke("ApiConfigManager chua khoi tao");
+                continue;
+            }
+
+            string fullUrl = apiConfig.GetFullUrl(pending.Endpoint);
+            UnityWebRequest request = pending.Method == "GET"
+                ? UnityWebRequest.Get(fullUrl)
+                : CreatePostRequest(fullUrl, pending.Data);
+
+            AddAuthHeader(request);
+
+            if (fullUrl.Contains("localhost") || fullUrl.Contains("ngrok"))
+                request.certificateHandler = new AcceptAllCertificates();
+
+            yield return request.SendWebRequest();
+
+            if (request.result == UnityWebRequest.Result.Success)
+            {
+                try
+                {
+                    object result = JsonConvert.DeserializeObject(request.downloadHandler.text, pending.ResponseType);
+                    pending.OnSuccess?.Invoke(result);
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogError($"Parse JSON pending request failed: {ex.Message}");
+                    pending.OnError?.Invoke("Loi parse JSON");
+                }
+            }
+            else
+            {
+                pending.OnError?.Invoke(request.downloadHandler?.text ?? "Unknown error");
+            }
         }
     }
 

@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 public static class EquipmentSyncService
 {
@@ -9,8 +9,8 @@ public static class EquipmentSyncService
 
         PlayerDataHolder1.CharacterJson = fullJson;
 
-        if (AuthManager.Instance != null)
-            AuthManager.Instance.StartCoroutine(AuthManager.Instance.SaveCharacterToServer(fullJson));
+        if (AuthManager.GetOrCreate() != null)
+            AuthManager.GetOrCreate().StartCoroutine(AuthManager.GetOrCreate().SaveCharacterToServer(fullJson));
 
         if (playerClone != null)
         {

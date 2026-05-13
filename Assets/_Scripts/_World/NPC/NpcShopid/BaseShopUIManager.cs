@@ -17,13 +17,13 @@ public abstract class BaseShopUIManager : MonoBehaviour
 
     protected virtual void Awake() { }
 
-    // ====================== MỞ SHOP → AUTO TAB ĐẦU TIÊN ======================
+    // ====================== Má»ž SHOP â†’ AUTO TAB Äáº¦U TIÃŠN ======================
     public virtual IEnumerator ShowShop(List<NpcShopItem> items)
     {
         allShopItems = items ?? new List<NpcShopItem>();
 
         string defaultType = GetDefaultFilterType();
-        Debug.Log($"[Shop {CurrentShopType}] Mở shop → AUTO filter tab đầu tiên: {defaultType} | Tổng {allShopItems.Count} items");
+        Debug.Log($"[Shop {CurrentShopType}] Mo shop -> AUTO filter tab dau tien: {defaultType} | Tong {allShopItems.Count} items");
 
         yield return StartCoroutine(FilterShopByTypeCoroutine(defaultType));
     }
@@ -51,7 +51,7 @@ public abstract class BaseShopUIManager : MonoBehaviour
             .Where(x => x.type.Equals(type, System.StringComparison.OrdinalIgnoreCase))
             .ToList();
 
-        Debug.Log($"[Filter] Type '{type}' → Tìm thấy {filtered.Count} items");
+        Debug.Log($"[Filter] Type '{type}' -> Tim thay {filtered.Count} items");
         yield return StartCoroutine(DisplayFilteredItems(filtered));
     }
 
@@ -69,13 +69,13 @@ public abstract class BaseShopUIManager : MonoBehaviour
     {
         if (item == null) return;
 
-        ItemStats stats = ItemStatDatabase.Instance.GetStats(item.itemId.ToString());
+        ItemStats stats = ItemStatDatabase.GetOrCreate().GetStats(item.itemId.ToString());
         if (stats == null)
-            stats = ItemStatDatabase.Instance.GetStatsdtb(item.itemId);
+            stats = ItemStatDatabase.GetOrCreate().GetStatsdtb(item.itemId);
 
         if (stats == null)
         {
-            Debug.LogWarning($"Không tìm thấy stats cho itemId: {item.itemId}");
+            Debug.LogWarning($"Khong tim thay stats cho itemId: {item.itemId}");
             return;
         }
 

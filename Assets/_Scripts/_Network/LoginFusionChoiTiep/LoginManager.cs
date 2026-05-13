@@ -32,7 +32,7 @@ public class LoginManager : MonoBehaviour
 
     private void TryAutoLogin()
     {
-        if (PlayerSessionService.Instance.HasValidSession())
+        if (PlayerSessionService.GetOrCreate().HasValidSession())
         {
             Debug.Log("[LoginManager] Có session cũ → Auto login");
             ShowLoading(true);
@@ -55,7 +55,7 @@ public class LoginManager : MonoBehaviour
             {
                 if (response != null && !string.IsNullOrEmpty(response.accessToken))
                 {
-                    PlayerSessionService.Instance.SetSession(
+                    PlayerSessionService.GetOrCreate().SetSession(
                         response.accountId,
                         response.accessToken,
                         response.name,
@@ -92,7 +92,7 @@ public class LoginManager : MonoBehaviour
 
     public void Logout()
     {
-        PlayerSessionService.Instance.ClearSession();
+        PlayerSessionService.GetOrCreate().ClearSession();
         SceneManager.LoadScene("Login");
     }
 }

@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -23,7 +23,7 @@ public class InventoryManager : MonoBehaviour
         Instance = this;
     }
 
-    // Gọi sau khi Login thành công
+    // G?i sau khi Login thành công
     public void OnLoginSuccess()
     {
         playerInventory.Clear();
@@ -39,15 +39,15 @@ public class InventoryManager : MonoBehaviour
 
     private IEnumerator CoLoadInventory(Action<InventoryItemDto[]> onLoaded)
     {
-        yield return ApiClientBase.Instance.Get<InventoryItemDto[]>(
+        yield return ApiClientBase.GetOrCreate().Get<InventoryItemDto[]>(
             $"Account/inventory/{SessionManager.AccountId}",
             items =>
             {
                 playerInventory.Clear();
                 foreach (var item in items)
                 {
-                    string stringId = ItemStatDatabase.Instance.GetStringIdFromInt(item.itemId);
-                    var stats = ItemStatDatabase.Instance.GetStats(stringId);
+                    string stringId = ItemStatDatabase.GetOrCreate().GetStringIdFromInt(item.itemId);
+                    var stats = ItemStatDatabase.GetOrCreate().GetStats(stringId);
 
                     if (stats != null)
                     {
@@ -60,7 +60,7 @@ public class InventoryManager : MonoBehaviour
                     }
                     else
                     {
-                        Debug.LogWarning($"Không tìm thấy ItemStats cho itemId: {item.itemId}");
+                        Debug.LogWarning($"ItemStats not found for itemId: {item.itemId}");
                     }
                 }
 
@@ -68,7 +68,7 @@ public class InventoryManager : MonoBehaviour
                 onLoaded?.Invoke(items);
                 Debug.Log($"[Inventory] Load xong {playerInventory.Count} items");
             },
-            error => Debug.LogError("Lỗi load inventory: " + error)
+            error => Debug.LogError("Load inventory failed: " + error)
         );
     }
 
@@ -83,7 +83,7 @@ public class InventoryManager : MonoBehaviour
         }
         else
         {
-            var stats = ItemStatDatabase.Instance.GetStats(itemId);
+            var stats = ItemStatDatabase.GetOrCreate().GetStats(itemId);
             if (stats == null) return;
 
             item = new InventoryItem1 { itemId = itemId, quantity = quantity, stats = stats };
@@ -121,11 +121,11 @@ public class InventoryManager : MonoBehaviour
         int parsedId = 0;
         if (!int.TryParse(itemId, out parsedId))
         {
-            var stat = ItemStatDatabase.Instance.GetStats(itemId);
+            var stat = ItemStatDatabase.GetOrCreate().GetStats(itemId);
             if (stat != null) parsedId = stat.Item_ID;
             else
             {
-                Debug.LogWarning($"Không convert được itemId: {itemId}");
+                Debug.LogWarning($"Cannot convert itemId: {itemId}");
                 yield break;
             }
         }
@@ -137,11 +137,11 @@ public class InventoryManager : MonoBehaviour
             Quantity = quantity
         };
 
-        yield return ApiClientBase.Instance.Post<object>(
+        yield return ApiClientBase.GetOrCreate().Post<object>(
             "Account/add-item",
             dto,
-            _ => Debug.Log($"Đã lưu item {itemId} x{quantity} lên server"),
-            error => Debug.LogError("Lỗi save item: " + error)
+            _ => Debug.Log($"Saved item {itemId} x{quantity} to server"),
+            error => Debug.LogError("Save item failed: " + error)
         );
     }
 

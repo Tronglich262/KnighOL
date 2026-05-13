@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using Fusion;
 
 public class ItemPickup : MonoBehaviour
@@ -17,16 +17,16 @@ public class ItemPickup : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        // Chỉ cho phép player nhặt
+        // Chá»‰ cho phÃ©p player nháº·t
         if (!other.CompareTag("Player")) return;
 
         var netObj = other.GetComponent<NetworkObject>();
         if (netObj == null || !netObj.HasInputAuthority) return; 
 
-        // 1. Thêm item vào inventory (tự lưu lên server nếu InventoryManager đã setup đúng)
+        // 1. ThÃªm item vÃ o inventory (tá»± lÆ°u lÃªn server náº¿u InventoryManager Ä‘Ã£ setup Ä‘Ãºng)
         InventoryManager.Instance.AddItem(itemId, quantity);
 
-        // 2. Lấy itemId dạng int để báo nhiệm vụ
+        // 2. Láº¥y itemId dáº¡ng int Ä‘á»ƒ bÃ¡o nhiá»‡m vá»¥
         int itemIdInt = 0;
         if (info != null && info.Itemid > 0)
         {
@@ -34,27 +34,27 @@ public class ItemPickup : MonoBehaviour
         }
         else if (!int.TryParse(itemId, out itemIdInt) && !string.IsNullOrEmpty(itemId))
         {
-            var stat = ItemStatDatabase.Instance.GetStats(itemId);
+            var stat = ItemStatDatabase.GetOrCreate().GetStats(itemId);
             if (stat != null) itemIdInt = stat.Item_ID;
             else
             {
-                Debug.LogWarning($"Không convert được itemId '{itemId}' sang int.");
+                Debug.LogWarning($"Khong convert duoc itemId '{itemId}' sang int.");
             }
         }
 
-        // 3. Báo nhiệm vụ "CollectItem" với itemId thực tế
+        // 3. BÃ¡o nhiá»‡m vá»¥ "CollectItem" vá»›i itemId thá»±c táº¿
         if (itemIdInt > 0)
         {
-            AuthManager.Instance?.UpdateQuestProgress("CollectItem", itemIdInt, quantity);
+            AuthManager.GetOrCreate()?.UpdateQuestProgress("CollectItem", itemIdInt, quantity);
         }
 
-        // 4. Logic nhiệm vụ cũ (item đặc biệt, ví dụ nhiệm vụ test nhặt 5 HC)
+        // 4. Logic nhiá»‡m vá»¥ cÅ© (item Ä‘áº·c biá»‡t, vÃ­ dá»¥ nhiá»‡m vá»¥ test nháº·t 5 HC)
         if (CompareTag("ItemHC"))
         {
             if (!missionCompleted)
             {
                 localItemHCCount++;
-                Debug.Log($"[Client] Đã nhặt {localItemHCCount}/5 item HC");
+                Debug.Log($"[Client] Da nhat {localItemHCCount}/5 item HC");
                 if (localItemHCCount >= 5)
                 {
                     missionCompleted = true;

@@ -1,4 +1,4 @@
-﻿using System.Data;
+using System.Data;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -49,7 +49,7 @@ public class PotentialStatsPanel : MonoBehaviour
 
     public void ReloadStats()
     {
-        StartCoroutine(AuthManager.Instance.GetPlayerStats(result =>
+        StartCoroutine(AuthManager.GetOrCreate().GetPlayerStats(result =>
         {
             if (result != null)
             {
@@ -116,7 +116,7 @@ public class PotentialStatsPanel : MonoBehaviour
             Debug.Log("Bạn chưa cộng điểm nào!");
             return;
         }
-        StartCoroutine(AuthManager.Instance.AllocateStats(
+        StartCoroutine(AuthManager.GetOrCreate().AllocateStats(
             addHp, addStrength, addSpeed, addAgility, addSpirit, addDefense,
             success =>
             {
@@ -124,7 +124,7 @@ public class PotentialStatsPanel : MonoBehaviour
                 {
                     Debug.Log("Cộng điểm thành công!");
                     // Lấy lại chỉ số mới nhất sau khi cộng điểm
-                    StartCoroutine(AuthManager.Instance.GetPlayerStats(newStats =>
+                    StartCoroutine(AuthManager.GetOrCreate().GetPlayerStats(newStats =>
                     {
                         stats = newStats;
                         ThongTin.instance.UpdateCharacterStatsFromServer(newStats);

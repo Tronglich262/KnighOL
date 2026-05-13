@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 public class PlayerLevelManager : MonoBehaviour
 {
@@ -65,8 +65,8 @@ public class PlayerLevelManager : MonoBehaviour
         };
         Debug.Log($"UpdatePlayerState: AccountId={dto.AccountId}, Level={dto.Level}, Exp={dto.Exp}, Gold={dto.Gold}, Diamond={dto.Diamond}");
 
-        AuthManager.Instance.StartCoroutine(
-            AuthManager.Instance.UpdatePlayerState(dto, (success) =>
+        AuthManager.GetOrCreate().StartCoroutine(
+            AuthManager.GetOrCreate().UpdatePlayerState(dto, (success) =>
             {
                 if (success)
                     Debug.Log("[PlayerLevelManager] Sync exp/level/gold/diamond lên server OK");

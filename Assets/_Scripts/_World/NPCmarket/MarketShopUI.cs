@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,8 +8,8 @@ public class MarketShopUI : MonoBehaviour
     public static MarketShopUI Instance;
 
     [Header("UI References")]
-    public Transform Content;                    // Parent chứa các row
-    public GameObject MarketItemRowPrefab;       // Prefab của một hàng item
+    public Transform Content;                    // Parent ch?a các row
+    public GameObject MarketItemRowPrefab;       // Prefab c?a m?t hàng item
 
     private bool isLoading = false;
 
@@ -25,18 +25,18 @@ public class MarketShopUI : MonoBehaviour
 
     private void OnEnable()
     {
-        // Khi panel Market được bật → load dữ liệu một lần
+        // Khi panel Market du?c b?t ? load d? li?u m?t l?n
         LoadMarketItems();
     }
 
     private void OnDisable()
     {
-        // Khi tắt panel → dọn dẹp UI để tránh rò rỉ memory
+        // Khi t?t panel ? d?n d?p UI d? tránh rò r? memory
         ClearAllItems();
     }
 
     /// <summary>
-    /// Load danh sách item từ server
+    /// Load danh sách item t? server
     /// </summary>
     public void LoadMarketItems()
     {
@@ -47,17 +47,17 @@ public class MarketShopUI : MonoBehaviour
     }
 
     /// <summary>
-    /// Gọi từ nút "Làm mới" trên UI
+    /// G?i t? nút "Làm m?i" trên UI
     /// </summary>
     public void RefreshMarket()
     {
-        ClearAllItems();        // Xóa UI cũ trước
+        ClearAllItems();        // Xóa UI cu tru?c
         LoadMarketItems();
     }
 
     private IEnumerator CoLoadMarketItems()
     {
-        yield return ApiClientBase.Instance.Get<MarketItemDto[]>(
+        yield return ApiClientBase.GetOrCreate().Get<MarketItemDto[]>(
             "Account/market/all",
             items =>
             {
@@ -68,12 +68,12 @@ public class MarketShopUI : MonoBehaviour
                     CreateMarketItemRow(item);
                 }
 
-                Debug.Log($"[MarketShopUI] Load thành công {items.Length} items từ market.");
+                Debug.Log($"[MarketShopUI] Loaded {items.Length} items from market.");
                 isLoading = false;
             },
             error =>
             {
-                Debug.LogError("Lỗi load market: " + error);
+                Debug.LogError("Load market failed: " + error);
                 isLoading = false;
             }
         );
@@ -88,7 +88,7 @@ public class MarketShopUI : MonoBehaviour
 
         if (rowUI != null)
         {
-            var stats = ItemStatDatabase.Instance.GetStatsdtb(item.item_ID);
+            var stats = ItemStatDatabase.GetOrCreate().GetStatsdtb(item.item_ID);
             rowUI.SetData(item, stats);
         }
         else

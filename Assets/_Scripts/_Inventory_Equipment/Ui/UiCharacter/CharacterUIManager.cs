@@ -1,4 +1,4 @@
-﻿using Assets.HeroEditor.Common.CommonScripts;
+using Assets.HeroEditor.Common.CommonScripts;
 using Assets.HeroEditor.Common.ExampleScripts;
 using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using UnityEngine;
@@ -197,7 +197,7 @@ public class CharacterUIManager : MonoBehaviour
         if (ThongTin.instance != null && ThongTin.instance.gameObject.activeInHierarchy)
         {
             ThongTin.instance.StartCoroutine(
-                AuthManager.Instance.GetPlayerStats(result =>
+                AuthManager.GetOrCreate().GetPlayerStats(result =>
                 {
                     ThongTin.instance.stats1 = result;
                     ThongTin.instance.UpdateStatsUI();

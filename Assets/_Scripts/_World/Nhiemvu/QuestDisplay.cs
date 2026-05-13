@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using System.Collections;
 using TMPro;
 using UnityEngine;
@@ -36,14 +36,14 @@ public class QuestDisplay : MonoBehaviour
 
     private IEnumerator CoGetUserQuests(System.Action<QuestResponse[]> onSuccess)
     {
-        yield return ApiClientBase.Instance.Get<QuestResponse[]>(
+        yield return ApiClientBase.GetOrCreate().Get<QuestResponse[]>(
             "Account/quests",
             quests =>
             {
                 currentQuests = quests;
                 onSuccess?.Invoke(quests);
             },
-            error => Debug.LogError("Lỗi load quest: " + error)
+            error => Debug.LogError("Load quest failed: " + error)
         );
     }
 
@@ -56,7 +56,7 @@ public class QuestDisplay : MonoBehaviour
 
         if (quests == null || quests.Length == 0)
         {
-            CreateQuestItem("Không tải được danh sách nhiệm vụ!", false, -1, false);
+            CreateQuestItem("Kh�ng t?i du?c danh s�ch nhi?m v?!", false, -1, false);
             return;
         }
 
@@ -69,16 +69,16 @@ public class QuestDisplay : MonoBehaviour
             bool canClaim = quest.progress >= quest.targetAmount && !quest.is_completed;
 
             if (canClaim)
-                CreateQuestItem(questText + " (Hoàn thành! Nhấn nhận thưởng)", true, quest.quest_ID, false);
+                CreateQuestItem(questText + " (Ho�n th�nh! Nh?n nh?n thu?ng)", true, quest.quest_ID, false);
             else
-                CreateQuestItem(questText + " (Chưa xong)", false, -1, false);
+                CreateQuestItem(questText + " (Chua xong)", false, -1, false);
 
             activeQuestCount++;
         }
 
         if (activeQuestCount == 0)
         {
-            CreateQuestItem("Đã hoàn thành tất cả nhiệm vụ!", false, -1, false);
+            CreateQuestItem("�� ho�n th�nh t?t c? nhi?m v?!", false, -1, false);
             if (questPanel != null) questPanel.SetActive(false);
         }
         else
@@ -118,16 +118,16 @@ public class QuestDisplay : MonoBehaviour
     {
         var dto = new ClaimQuestDto { questId = questId };
 
-        yield return ApiClientBase.Instance.Post<object>(
+        yield return ApiClientBase.GetOrCreate().Post<object>(
             "Account/quests/claim",
             dto,
             _ =>
             {
-                Debug.Log("Nhận thưởng quest thành công!");
+                Debug.Log("Claim quest reward success!");
                 ReloadQuests();
-                ItemDetailsUI.Instance.ShowEquipMessage("Nhận thưởng thành công!");
+                ItemDetailsUI.Instance.ShowEquipMessage("Nh?n thu?ng th�nh c�ng!");
             },
-            error => ItemDetailsUI.Instance.ShowEquipMessage("Nhận thưởng thất bại: " + error)
+            error => ItemDetailsUI.Instance.ShowEquipMessage("Nh?n thu?ng th?t b?i: " + error)
         );
     }
 

@@ -21,6 +21,15 @@ public class ItemStatDatabase : MonoBehaviour
         InitializeDatabase();
     }
 
+    public static ItemStatDatabase GetOrCreate()
+    {
+        if (Instance != null)
+            return Instance;
+
+        var go = new GameObject("ItemStatDatabase");
+        return go.AddComponent<ItemStatDatabase>();
+    }
+
     private void InitializeDatabase()
     {
         ItemStats[] allStats = Resources.LoadAll<ItemStats>("ItemStats");

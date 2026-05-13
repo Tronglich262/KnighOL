@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using System.Collections;
 using TMPro;
 using UnityEngine;
@@ -20,22 +20,22 @@ public class MarketItemRowUI : MonoBehaviour
         currentMarketItem = item;
 
         Name.text = stats != null ? stats.Name : $"ID:{item.item_ID}";
-        SoLuong.text = $"Số Lượng: {item.quantity}";
-        Price.text = $"Giá: {item.price}";
+        SoLuong.text = $"S? Lu?ng: {item.quantity}";
+        Price.text = $"Gi�: {item.price}";
 
         if (Icon != null && stats?.Icon != null)
             Icon.sprite = stats.Icon;
 
         StatsText.text = stats != null
-            ? $"Sức mạnh: {stats.Strength}\nPhòng thủ: {stats.Defense}\nNhanh nhẹn: {stats.Agility}\nTrí tuệ: {stats.Intelligence}\nSinh lực: {stats.Vitality}"
-            : "Không có dữ liệu";
+            ? $"S?c m?nh: {stats.Strength}\nPh�ng th?: {stats.Defense}\nNhanh nh?n: {stats.Agility}\nTr� tu?: {stats.Intelligence}\nSinh l?c: {stats.Vitality}"
+            : "Kh�ng c� d? li?u";
     }
 
     public void OnClickBuy()
     {
         if (currentMarketItem == null)
         {
-            ItemDetailsUI.Instance.ShowEquipMessage("Chưa chọn món hàng");
+            ItemDetailsUI.Instance.ShowEquipMessage("Chua ch?n m�n h�ng");
             return;
         }
 
@@ -51,17 +51,17 @@ public class MarketItemRowUI : MonoBehaviour
 
     private IEnumerator CoBuyMarketItem(BuyMarketItemDto dto)
     {
-        yield return ApiClientBase.Instance.Post<object>(
+        yield return ApiClientBase.GetOrCreate().Post<object>(
             "Account/market/buy",
             dto,
             _ =>
             {
-                ItemDetailsUI.Instance.ShowEquipMessage("Mua thành công!");
+                ItemDetailsUI.Instance.ShowEquipMessage("Mua th�nh c�ng!");
                 InventoryManager.Instance.LoadInventory(null);
                 if (MarketShopUI.Instance != null)
                     MarketShopUI.Instance.LoadMarketItems();
             },
-            error => ItemDetailsUI.Instance.ShowEquipMessage("Lỗi mua hàng: " + error)
+            error => ItemDetailsUI.Instance.ShowEquipMessage("L?i mua h�ng: " + error)
         );
     }
 }

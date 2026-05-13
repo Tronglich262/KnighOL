@@ -1,4 +1,4 @@
-﻿using Assets.HeroEditor.Common.CharacterScripts;
+using Assets.HeroEditor.Common.CharacterScripts;
 using Assets.HeroEditor.FantasyInventory.Scripts.Data;
 using HeroEditor.Common.Enums;
 using Newtonsoft.Json;
@@ -60,22 +60,22 @@ public class ItemDetailsUI : MonoBehaviour
         currentShopItem = null;
 
         icon.sprite = item.stats?.Icon;
-        nameText.text = item.stats?.Name ?? "Không rõ";
+        nameText.text = item.stats?.Name ?? "Kh�ng r�";
 
         if (item.stats != null)
         {
             descText.text = $"<b>{item.stats.Description}</b>\n" +
-                            $"<b>Yêu cầu cấp:</b> {item.stats.LevelRequired}\n" +
-                            $"<b>Chỉ số:</b>\n" +
-                            $"• Sức mạnh: {item.stats.Strength}\n" +
-                            $"• Phòng thủ: {item.stats.Defense}\n" +
-                            $"• Nhanh nhẹn: {item.stats.Agility}\n" +
-                            $"• Trí tuệ: {item.stats.Intelligence}\n" +
-                            $"• Sinh lực: {item.stats.Vitality}";
+                            $"<b>Y�u c?u c?p:</b> {item.stats.LevelRequired}\n" +
+                            $"<b>Ch? s?:</b>\n" +
+                            $"� S?c m?nh: {item.stats.Strength}\n" +
+                            $"� Ph�ng th?: {item.stats.Defense}\n" +
+                            $"� Nhanh nh?n: {item.stats.Agility}\n" +
+                            $"� Tr� tu?: {item.stats.Intelligence}\n" +
+                            $"� Sinh l?c: {item.stats.Vitality}";
         }
         else
         {
-            descText.text = $"ID: {item.itemId}\nSố lượng: {item.quantity}";
+            descText.text = $"ID: {item.itemId}\nS? lu?ng: {item.quantity}";
         }
 
         panel.SetActive(true);
@@ -115,7 +115,7 @@ public class ItemDetailsUI : MonoBehaviour
         string itemName = currentItem.stats?.Name ?? currentItem.itemId;
         InventoryManager.Instance.RemoveItem(currentItem.itemId, 1);
 
-        ShowEquipMessage($"Đã vứt {(currentItem.quantity > 1 ? "1" : "cuối cùng")} {itemName}!");
+        ShowEquipMessage($"�� v?t {(currentItem.quantity > 1 ? "1" : "cu?i c�ng")} {itemName}!");
         panel.SetActive(false);
 
         if (InventoryUIManager.instance != null)
@@ -127,7 +127,7 @@ public class ItemDetailsUI : MonoBehaviour
     {
         if (currentShopItem == null)
         {
-            ShowEquipMessage("Chưa chọn item shop!");
+            ShowEquipMessage("Chua ch?n item shop!");
             return;
         }
 
@@ -136,7 +136,7 @@ public class ItemDetailsUI : MonoBehaviour
 
         var buyData = new { AccountId = accountId, ItemId = itemId };
 
-        StartCoroutine(ApiClientBase.Instance.Post<ShopBuyResponse>(
+        StartCoroutine(ApiClientBase.GetOrCreate().Post<ShopBuyResponse>(
             "account/shop/buy",
             buyData,
             resp =>
@@ -145,12 +145,12 @@ public class ItemDetailsUI : MonoBehaviour
                 if (CharacterUIManager1.Instance?.gold != null)
                     CharacterUIManager1.Instance.gold.text = resp.newGold.ToString();
 
-                ShowEquipMessage("Mua thành công!");
+                ShowEquipMessage("Mua th�nh c�ng!");
                 if (ShopItemDetailPanel.Instance != null) ShopItemDetailPanel.Instance.Hide();
                 InventoryManager.Instance.LoadInventory(null);
                 panel.SetActive(false);
             },
-            error => ShowEquipMessage("Lỗi mua: " + error)
+            error => ShowEquipMessage("L?i mua: " + error)
         ));
     }
 
@@ -167,7 +167,7 @@ public class ItemDetailsUI : MonoBehaviour
     {
         if (currentItem == null || currentItem.stats == null)
         {
-            ShowEquipMessage("Không có item để ký gửi");
+            ShowEquipMessage("Kh�ng c� item d? k� g?i");
             return;
         }
 
@@ -176,23 +176,23 @@ public class ItemDetailsUI : MonoBehaviour
 
         if (quantity <= 0 || price <= 0)
         {
-            ShowEquipMessage("Số lượng hoặc giá không hợp lệ!");
+            ShowEquipMessage("S? lu?ng ho?c gi� kh�ng h?p l?!");
             return;
         }
 
         var dto = new { ItemId = currentItem.stats.Item_ID, Quantity = quantity, Price = price };
 
-        StartCoroutine(ApiClientBase.Instance.Post<object>(
+        StartCoroutine(ApiClientBase.GetOrCreate().Post<object>(
             "Account/market/deposit",
             dto,
             _ =>
             {
-                ShowEquipMessage("Đã ký gửi thành công!");
+                ShowEquipMessage("�� k� g?i th�nh c�ng!");
                 InventoryManager.Instance.LoadInventory(null);
                 if (MarketShopUI.Instance != null) MarketShopUI.Instance.LoadMarketItems();
                 panel.SetActive(false);
             },
-            error => ShowEquipMessage("Lỗi ký gửi: " + error)
+            error => ShowEquipMessage("L?i k� g?i: " + error)
         ));
     }
 
@@ -255,13 +255,13 @@ public class ItemDetailsUI : MonoBehaviour
         onUpdate(1f);
     }
 
-    // ====================== LOGIC CŨ CỦA BẠN (đã giữ lại) ======================
+    // ====================== LOGIC CU C?A B?N (d� gi? l?i) ======================
     private bool TryValidateCurrentItem(out string message)
     {
         message = "";
-        if (currentItem?.stats == null) { message = "Item bị thiếu dữ liệu stats."; return false; }
+        if (currentItem?.stats == null) { message = "Item b? thi?u d? li?u stats."; return false; }
         int playerLevel = PlayerDataHolder1.CurrentPlayerState?.level ?? 0;
-        if (playerLevel < currentItem.stats.LevelRequired) { message = $"Cần cấp {currentItem.stats.LevelRequired} mới mặc được!"; return false; }
+        if (playerLevel < currentItem.stats.LevelRequired) { message = $"C?n c?p {currentItem.stats.LevelRequired} m?i m?c du?c!"; return false; }
         return true;
     }
 
@@ -276,7 +276,7 @@ public class ItemDetailsUI : MonoBehaviour
     private bool TryHandleWeaponSwap(Dictionary<string, string> dict, string newItemId, out string message)
     {
         message = "";
-        // Logic vũ khí từ code cũ của bạn
+        // Logic vu kh� t? code cu c?a b?n
         InventoryManager.Instance.RemoveItem(newItemId, 1);
         return true;
     }

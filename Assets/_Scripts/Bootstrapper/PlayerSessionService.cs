@@ -21,6 +21,15 @@ public class PlayerSessionService : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
+    public static PlayerSessionService GetOrCreate()
+    {
+        if (Instance != null)
+            return Instance;
+
+        var go = new GameObject("PlayerSessionService");
+        return go.AddComponent<PlayerSessionService>();
+    }
+
     public void Initialize()
     {
         Debug.Log("[PlayerSessionService] Initialized");
@@ -30,14 +39,11 @@ public class PlayerSessionService : MonoBehaviour
     {
         AccountId = accountId;
         Token = token;
-        RefreshToken = refreshToken;
-        PlayerName = playerName;
+        RefreshToken = refreshToken ?? RefreshToken;
+        PlayerName = playerName ?? PlayerName;
 
         // Đồng bộ với PlayerDataHolder1 (giữ tương thích)
-        PlayerDataHolder1.AccountId = accountId;
-        PlayerDataHolder1.Token = token;
-        if (!string.IsNullOrEmpty(playerName))
-            PlayerDataHolder1.PlayerName = playerName;
+        SessionManager.SetSession(accountId, token, PlayerName, RefreshToken);
     }
 
     public void ClearSession()
@@ -48,9 +54,7 @@ public class PlayerSessionService : MonoBehaviour
         PlayerName = null;
 
         // Clear PlayerDataHolder1 an toàn (không gọi Clear() vì nó không tồn tại)
-        PlayerDataHolder1.AccountId = 0;
-        PlayerDataHolder1.Token = null;
-        PlayerDataHolder1.PlayerName = null;
+        SessionManager.Clear();
 
         Debug.Log("[PlayerSessionService] Session đã được clear");
     }
